@@ -1,0 +1,5 @@
+- [x] Update UserController::register() to detect AJAX requests and return JSON responses instead of rendering views
+- [x] Update UserController::login() to detect AJAX requests and return JSON responses instead of rendering views
+- [x] Modify views/register.php to add JavaScript for client-side validation and async form submission with fetch(), displaying errors in form
+- [x] Modify views/login.php to add JavaScript for client-side validation and async form submission with fetch(), displaying errors in form
+- [ ] Test async submission on register and login pages

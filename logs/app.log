@@ -1,0 +1,24 @@
+[2025-10-29 11:27:59] [INFO] User registered: anjola101 (anjolaakinsoyinu@gmail.com)
+[2025-10-29 11:28:20] [ERROR] Failed to send verification email to anjolaakinsoyinu@gmail.com: SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2025-10-29 11:40:12] [INFO] User registered: anjola101 (anjolaakinsoyinu@gmail.com)
+[2025-10-29 11:40:15] [ERROR] Failed to send verification email to anjolaakinsoyinu@gmail.com: SMTP Error: Could not authenticate.
+[2025-10-29 11:42:31] [INFO] User registered: anjola101 (anjolaakinsoyinu@gmail.com)
+[2025-10-29 11:53:26] [WARNING] Failed login attempt for: anjola101
+[2025-10-29 11:53:34] [INFO] User logged in: anjola101
+[2025-10-29 12:34:34] [INFO] User logged in: anjola101
+[2025-10-29 13:08:42] [INFO] User logged in: anjola101
+[2025-10-29 13:25:14] [INFO] User logged in: anjola101
+[2025-10-29 13:30:20] [INFO] User logged in: anjola101
+[2025-10-29 13:30:57] [INFO] User logged in: anjola101
+[2025-10-29 13:35:39] [INFO] User logged in: anjola101
+[2025-10-29 13:55:31] [INFO] User logged in: anjola101
+[2025-10-29 14:00:05] [INFO] User logged in: anjola101
+[2025-10-29 14:09:03] [INFO] User logged in: anjola101
+[2025-10-29 14:09:40] [INFO] User logged in: anjola101
+[2025-10-29 14:11:48] [INFO] User logged in: anjola101
+[2025-10-29 14:20:20] [INFO] User logged in: anjola101
+[2025-10-29 14:28:58] [INFO] User logged in: anjola101
+[2025-10-30 00:14:55] [INFO] User logged in: anjola101
+[2025-10-30 00:36:25] [INFO] User logged in: anjola101
+[2025-10-30 00:48:45] [INFO] User logged in: anjola101
+[2025-10-30 01:15:46] [INFO] SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: messages.content
