@@ -20,6 +20,40 @@ class SQLiteDatabase implements DatabaseInterface
         $this->pdo = new PDO("sqlite:" . $dbPath);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->createTables();
+
+        // extra tables for media
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS photos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                message_id INTEGER NOT NULL,
+                file_path VARCHAR(255) NOT NULL,
+                mime_type VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (message_id) REFERENCES messages(id)
+            );
+        ");
+
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS videos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                message_id INTEGER NOT NULL,
+                file_path VARCHAR(255) NOT NULL,
+                mime_type VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (message_id) REFERENCES messages(id)
+            );
+        ");
+
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS audio (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                message_id INTEGER NOT NULL,
+                file_path VARCHAR(255) NOT NULL,
+                mime_type VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (message_id) REFERENCES messages(id)
+            );
+        ");
     }
 
     private function createTables(): void
@@ -97,7 +131,7 @@ class SQLiteDatabase implements DatabaseInterface
     public function getMessages($username)
     {
         $stmt = $this->pdo->prepare("
-            SELECT m.content, m.created_at
+            SELECT m.id, m.content, m.created_at
             FROM messages m
             JOIN users u ON m.user_id = u.id
             WHERE u.username = ?
@@ -114,10 +148,72 @@ class SQLiteDatabase implements DatabaseInterface
                 INSERT INTO messages (user_id, content)
                 SELECT id, ? FROM users WHERE username = ?
             ");
-            return $stmt->execute([$message['content'], $message['username']]);
+            if($stmt->execute([$message['content'], $message['username']])){
+                //return the message id of the last inserted message
+
+                $stmt = $this->pdo->prepare("SELECT id FROM messages WHERE content = ? ORDER BY     created_at DESC LIMIT 1");
+                $stmt->execute([$message['content']]);
+                return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+            }else{
+                return false;
+            }
         } catch (PDOException $e) {
             $this->logger->log($e->getMessage());
             return false;
         }
+    }
+
+    public function savePhoto($media)
+    {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO photos (message_id, file_path, mime_type) VALUES (?, ?, ?)");
+            return $stmt->execute([$media['message_id'], $media['file_path'], $media['mime_type']]);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function saveVideo($media)
+    {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO videos (message_id, file_path, mime_type) VALUES (?, ?, ?)");
+            return $stmt->execute([$media['message_id'], $media['file_path'], $media['mime_type']]);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function saveAudio($media)
+    {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO audio (message_id, file_path, mime_type) VALUES (?, ?, ?)");
+            return $stmt->execute([$media['message_id'], $media['file_path'], $media['mime_type']]);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function getPhotos($messageId)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM photos WHERE message_id = ?");
+        $stmt->execute([$messageId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getVideos($messageId)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM videos WHERE message_id = ?");
+        $stmt->execute([$messageId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAudios($messageId)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM audio WHERE message_id = ?");
+        $stmt->execute([$messageId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

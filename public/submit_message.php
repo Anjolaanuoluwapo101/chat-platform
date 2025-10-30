@@ -1,7 +1,4 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 //check request method
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     throw new Exception('Invalid request method');
