@@ -10,7 +10,7 @@
     <?php include "navigation.php"; ?>
 
     <div class="parentDiv">
-        <form method="POST" action="" class="w3-container">
+        <form method="POST" action="/reset.php" class="w3-container">
             <label> USERNAME </label> <?php echo $errors['username'] ?? ''; ?><br>
             <input name="username" value="<?php echo $_POST['username'] ?? ''; ?>" min="5" placeholder="minimum 5 characters" class="w3-input" type="text" required> <br>
             <br>

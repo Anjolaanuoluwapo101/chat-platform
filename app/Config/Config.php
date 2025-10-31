@@ -24,6 +24,12 @@ class Config
                 'smtp_secure' => PHPMailer::ENCRYPTION_SMTPS,
                 'smtp_port' => 465,
             ],
+            'pusher' => [
+                'app_id' => '1678820',
+                'key' => '7e136cd2a9797c421ac1',
+                'secret' => '8998ff663690c6c06322',
+                'cluster' => 'eu',
+            ],
         ];
 
         return $config[$key] ?? null;

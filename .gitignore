@@ -1,2 +1,5 @@
 /vendor
 vendor
+/public/uploads/images
+/public/uploads/audios
+/public/uploads/videos

@@ -109,10 +109,10 @@ class UserController extends BaseController
             if ($userData['is_verified']) {
                 $this->logger->info("User logged in: $username");
                 //destroy previous session
-                //$this->destroySession();
+                $this->destroySession();
                 //create new session
+                session_start();
                 $_SESSION['user'] = $userData;
-                $_SESSION['user']['username'] = password_hash($username,PASSWORD_DEFAULT);
 
                 if ($this->isAjax()) {
                     header('Content-Type: application/json');

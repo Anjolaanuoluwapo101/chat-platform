@@ -29,7 +29,7 @@ if (isset($_SESSION['user'])) {
             <div style="color:blue;text-align:center;margin-bottom:20px;"><?php echo htmlspecialchars($messages['info']); ?>
             </div>
         <?php endif; ?>
-        <form method="POST" action="../public/login.php" class="w3-container">
+        <form method="POST" action="login.php" class="w3-container">
             <label> USERNAME </label> <span
                 style="color:red;"><?php echo htmlspecialchars($errors['username'] ?? ''); ?></span><br>
             <input name="username" value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>"

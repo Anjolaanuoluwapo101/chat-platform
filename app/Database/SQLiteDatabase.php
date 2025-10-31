@@ -76,7 +76,20 @@ class SQLiteDatabase implements DatabaseInterface
                 user_id INTEGER NOT NULL,
                 content TEXT NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id)
+                group_id INTEGER DEFAULT NULL,
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (group_id) REFERENCES groups(id)
+            )
+        ");
+
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS groups (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                creator_id INTEGER NOT NULL,
+                password_hash TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (creator_id) REFERENCES users(id)
             )
         ");
     }
@@ -134,29 +147,80 @@ class SQLiteDatabase implements DatabaseInterface
             SELECT m.id, m.content, m.created_at
             FROM messages m
             JOIN users u ON m.user_id = u.id
-            WHERE u.username = ?
+            WHERE u.username = ? AND m.group_id IS NULL
             ORDER BY m.created_at DESC
         ");
         $stmt->execute([$username]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getGroupMessages($groupId)
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT m.id, m.content, m.created_at, u.username
+            FROM messages m
+            JOIN users u ON m.user_id = u.id
+            WHERE m.group_id = ?
+            ORDER BY m.created_at DESC
+        ");
+        $stmt->execute([$groupId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function saveMessage($message)
     {
         try {
+            return var_dump($message);
             $stmt = $this->pdo->prepare("
-                INSERT INTO messages (user_id, content)
-                SELECT id, ? FROM users WHERE username = ?
+                INSERT INTO messages (user_id, content, group_id)
+                SELECT id, ?, ? FROM users WHERE username = ?
             ");
-            if($stmt->execute([$message['content'], $message['username']])){
+            $groupId = $message['group_id'] ?? null;
+            if($stmt->execute([$message['content'], $groupId, $message['username']])){
                 //return the message id of the last inserted message
 
-                $stmt = $this->pdo->prepare("SELECT id FROM messages WHERE content = ? ORDER BY     created_at DESC LIMIT 1");
+                $stmt = $this->pdo->prepare("SELECT id FROM messages WHERE content = ? ORDER BY created_at DESC LIMIT 1");
                 $stmt->execute([$message['content']]);
                 return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
             }else{
                 return false;
             }
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function getGroup($groupId)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM groups WHERE id = ?");
+        $stmt->execute([$groupId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllGroups()
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM groups ORDER BY created_at DESC");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function saveGroup($group)
+    {
+        try {
+            $stmt = $this->pdo->prepare("INSERT INTO groups (name, creator_id, password_hash) VALUES (?, ?, ?)");
+            return $stmt->execute([$group['name'], $group['creator_id'], $group['password_hash'] ?? null]);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteGroup($groupId, $creatorId)
+    {
+        try {
+            $stmt = $this->pdo->prepare("DELETE FROM groups WHERE id = ? AND creator_id = ?");
+            return $stmt->execute([$groupId, $creatorId]);
         } catch (PDOException $e) {
             $this->logger->log($e->getMessage());
             return false;

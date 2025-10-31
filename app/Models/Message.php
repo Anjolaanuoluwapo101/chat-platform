@@ -31,12 +31,13 @@ class Message
         return $messages;
     }
 
-    public function saveMessage($username, $text, $time, $mediaUrls = [])
+    public function saveMessage($username, $text, $time, $mediaUrls = [], $groupId = null)
     {
         $message = [
             'username' => $username,
             'content' => htmlspecialchars($text),
             'time' => $time,
+            'group_id' => $groupId,
         ];
         try {
             $messageId = $this->db->saveMessage($message);
@@ -63,4 +64,22 @@ class Message
             return false;
         }
     }
+
+    /**
+     * Get messages for a group.
+     *
+     * @param int $groupId
+     * @return array
+     */
+    public function getGroupMessages($groupId)
+    {
+        $messages = $this->db->getGroupMessages($groupId);
+        foreach ($messages as &$message) {
+            $message['photos'] = Photo::getByMessageId($message['id']);
+            $message['videos'] = Video::getByMessageId($message['id']);
+            $message['audios'] = Audio::getByMessageId($message['id']);
+        }
+        return $messages;
+    }
+    
 }

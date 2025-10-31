@@ -71,7 +71,7 @@
 
             // Send AJAX request
             const formData = new FormData(this);
-            fetch('../public/register.php', {
+            fetch('register.php', {
                 method: 'POST',
                 body: formData,
                 headers: {

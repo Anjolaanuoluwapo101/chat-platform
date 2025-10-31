@@ -23,3 +23,7 @@
 [2025-10-30 00:48:45] [INFO] User logged in: anjola101
 [2025-10-30 01:15:46] [INFO] SQLSTATE[23000]: Integrity constraint violation: 19 NOT NULL constraint failed: messages.content
 [2025-10-30 22:08:09] [INFO] SQLSTATE[HY000]: General error: 1 no such column: message_id
+[2025-10-31 00:59:59] [INFO] User registered: qwerty101 (anjolaakinsoyinu@gmail.com)
+[2025-10-31 01:01:05] [INFO] User logged in: qwerty101
+[2025-10-31 01:27:07] [INFO] User logged in: anjola101
+[2025-10-31 01:28:09] [INFO] User logged in: qwerty101

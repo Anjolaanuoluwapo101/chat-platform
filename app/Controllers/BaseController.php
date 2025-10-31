@@ -9,6 +9,7 @@ class BaseController
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
+
     }
     protected function render($view, $data = [])
     {

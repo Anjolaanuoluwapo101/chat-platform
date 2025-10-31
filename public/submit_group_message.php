@@ -7,16 +7,9 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 
-
-//check request method
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    throw new Exception('Invalid request method');
-}
-
-
-use App\Controllers\MessageController;
+use App\Controllers\GroupController;
 
 require_once '../vendor/autoload.php';
 
-$controller = new MessageController();
-$controller->submitMessage();
+$controller = new GroupController();
+$controller->submitGroupMessage();
