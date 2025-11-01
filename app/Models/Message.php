@@ -22,13 +22,7 @@ class Message
 
     public function getMessages($username)
     {
-        $messages = $this->db->getMessages($username);
-        foreach ($messages as &$message) {
-            $message['photos'] = Photo::getByMessageId($message['id']);
-            $message['videos'] = Video::getByMessageId($message['id']);
-            $message['audios'] = Audio::getByMessageId($message['id']);
-        }
-        return $messages;
+        return $this->db->getMessages($username);
     }
 
     public function saveMessage($username, $text, $time, $mediaUrls = [], $groupId = null)
@@ -71,15 +65,5 @@ class Message
      * @param int $groupId
      * @return array
      */
-    public function getGroupMessages($groupId)
-    {
-        $messages = $this->db->getGroupMessages($groupId);
-        foreach ($messages as &$message) {
-            $message['photos'] = Photo::getByMessageId($message['id']);
-            $message['videos'] = Video::getByMessageId($message['id']);
-            $message['audios'] = Audio::getByMessageId($message['id']);
-        }
-        return $messages;
-    }
     
 }

@@ -38,7 +38,9 @@ class MessageFormHandler {
                     if (response.success) {
                         this.showSuccess();
                         this.clearForm();
-                    } 
+                    } else {
+                        alert('Error: ' + (response.error || 'Unknown error'));
+                    }
                 } catch (error) {
                     console.error('Error parsing response:', error);
                     alert('Error: Invalid response from server');

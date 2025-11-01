@@ -3,3 +3,9 @@ vendor
 /public/uploads/images
 /public/uploads/audios
 /public/uploads/videos
+.blackboxrules
+TODO.md
+/node_modules
+node_modules
+/frontend
+frontend

@@ -5,33 +5,48 @@ namespace App\Controllers;
 use App\Models\Group;
 use App\Models\Message;
 use App\Factory\StorageFactory;
+use App\Services\AuthService;
 use App\Models\Photo;
 use App\Models\Video;
 use App\Models\Audio;
 use App\Services\PusherService;
 use App\Services\ChannelManager;
+use App\Log\Logger;
 
 /**
  * GroupController handles group creation, viewing, messaging, and management.
  */
+ // Removed Backward Compability. Only accessible with JWT token and returns JSON responses
 class GroupController extends BaseController
 {
-    /**
-     * Display all groups.
-     */
+    private $authService;
+    private $user;
+    private $userId;
+    private $logger;
+
     public function __construct()
     {
         parent::__construct();
+        $this->logger = new Logger();
+        // Authenticate user via JWT
+        $this->authService = new AuthService();
+        $this->user = $this->authService->authenticateFromToken();
+        if (!$this->user) {
+            $this->jsonResponse(['error' => 'Unauthorized'], 401);
+            return;
+        }
+        $this->userId = $this->user['id'];
     }
 
+    /**
+     * API endpoint to get all groups for a user.
+     */
     public function viewGroups()
     {
         $groupModel = new Group();
-        $groups = $groupModel->getAllGroups();
+        $groups = $groupModel->getAllGroups($this->userId);
 
-        $this->render('groups', [
-            'groups' => $groups
-        ]);
+        $this->jsonResponse(['success' => true, 'groups' => $groups]);
     }
 
     /**
@@ -69,10 +84,8 @@ class GroupController extends BaseController
         $messageModel = new Message();
         $messages = $groupModel->getGroupMessages($groupId);
 
-        $this->render('group_messages', [
-            'group' => $group,
-            'messages' => $messages
-        ]);
+        //return messages via JSON
+        $this->jsonResponse(['success' => true, 'messages' => $messages]);
     }
 
     /**
@@ -80,83 +93,60 @@ class GroupController extends BaseController
      */
     public function showCreateGroupForm()
     {
-        if (!isset($_SESSION['user'])) {
-            header('Location: /login.php');
-            exit;
+        if (isset($this->user)) {
+            $this->render('create_group');
         }
-
-        $this->render('create_group');
     }
 
     /**
-     * Create a new group.
+     * API endpoint to create a group.
      */
     public function createGroup()
     {
-        if (!isset($_SESSION['user'])) {
-            header('Location: /login.php');
-            exit;
-        }
+        $input = json_decode(file_get_contents('php://input'), true);
 
-        $name = trim($_POST['name'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $name = trim($input['name'] ?? '');
+        $password = $input['password'] ?? '';
 
         if (empty($name)) {
-            $this->render('create_group', ['error' => 'Group name is required']);
+            $this->jsonResponse(['success' => false, 'errors' => ['name' => 'Group name is required']], 400);
             return;
         }
 
         $groupModel = new Group();
         $groupData = [
             'name' => $name,
-            'creator_id' => $_SESSION['user']['id'],
+            'creator_id' => $this->userId,
             'password_hash' => !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : null
         ];
 
         if ($groupModel->createGroup($groupData)) {
-            header('Location: /groups.php');
-            exit;
+            $this->jsonResponse(['success' => true, 'message' => 'Group created successfully']);
         } else {
-            $this->render('create_group', ['error' => 'Failed to create group']);
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Failed to create group']], 500);
         }
     }
 
     /**
-     * Submit a message to a group.
+     * API endpoint to submit a message to a group.
      */
     public function submitGroupMessage()
     {
-        header('Content-Type: application/json');
-
-        if (!isset($_SESSION['user'])) {
-            http_response_code(401);
-            echo json_encode(['error' => 'Unauthorized']);
-            return;
-        }
-
         $groupId = $_POST['group_id'] ?? '';
         $text = $_POST['message'] ?? '';
         $time = date('Y-m-d H:i:s');
 
         if (!$groupId || !$text) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Missing group_id or message']);
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Group ID and message are required']], 400);
             return;
         }
 
-        // Verify group exists and user has access
+        // Verify group exists
         $groupModel = new Group();
         $group = $groupModel->getGroup($groupId);
         if (!$group) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Group not found']);
+            $this->jsonResponse(['error' => 'Group not found'], 404);
             return;
-        }
-
-        // Check password if required (assume user has already accessed the group)
-        if (!empty($group['password_hash'])) {
-            // For simplicity, assume access is granted via session or previous check
-            // In production, implement proper session-based access control
         }
 
         $messageModel = new Message();
@@ -192,7 +182,7 @@ class GroupController extends BaseController
             }
         }
 
-        $username = $_SESSION['user']['username'];
+        $username = $this->user['username'];
         $messageModel->saveMessage($username, $text, $time, $mediaUrls, $groupId);
 
         // Use ChannelManager to get the group channel
@@ -210,39 +200,40 @@ class GroupController extends BaseController
         ];
         $pusherService->triggerEvent($channel, 'new-message', $eventData);
 
-        $response = ['success' => true];
+        $response = ['success' => true, 'message' => 'Message sent to group'];
         if (!empty($errors)) {
             $response['errors'] = $errors;
         }
-        echo json_encode($response);
+        $this->jsonResponse($response);
     }
 
     /**
-     * Delete a group (only by creator).
+     * API endpoint to delete a group (only by creator).
      */
     public function deleteGroup()
     {
-        // if (!isset($_SESSION['user'])) {
-        //     header('Location: /login');
-        //     exit;
-        // }
-
         $groupId = $_POST['group_id'] ?? '';
         if (!$groupId) {
-            die("Invalid group ID");
+            $this->jsonResponse(['error' => 'Group ID parameter required'], 400);
+            return;
         }
 
         $groupModel = new Group();
         $group = $groupModel->getGroup($groupId);
-        if (!$group || $group['creator_id'] != $_SESSION['user']['id']) {
-            die("Unauthorized");
+        if (!$group) {
+            $this->jsonResponse(['error' => 'Group not found'], 404);
+            return;
         }
 
-        if ($groupModel->deleteGroup($groupId, $_SESSION['user']['id'])) {
-            header('Location: /groups.php');
-            exit;
+        if ($group['creator_id'] != $this->userId) {
+            $this->jsonResponse(['error' => 'Unauthorized'], 403);
+            return;
+        }
+
+        if ($groupModel->deleteGroup($groupId, $this->userId)) {
+            $this->jsonResponse(['success' => true, 'message' => 'Group deleted successfully']);
         } else {
-            die("Failed to delete group");
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Failed to delete group']], 500);
         }
     }
 }

@@ -20,8 +20,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="/create_group.php"
-            class="w3-card w3-padding">
+        <form method="POST" class="w3-card w3-padding">
             <div class="w3-margin-bottom">
                 <label for="name">Group Name:</label>
                 <input type="text" id="name" name="name" class="w3-input" required>
@@ -33,7 +32,7 @@
             </div>
 
             <button type="submit" class="w3-button w3-blue">Create Group</button>
-            <a href="/groups.php" class="w3-button w3-grey">Cancel</a>
+            <a href="/groups" class="w3-button w3-grey">Cancel</a>
         </form>
     </div>
 

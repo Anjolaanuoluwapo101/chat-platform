@@ -21,7 +21,7 @@ interface DatabaseInterface
 
     // Group-related methods
     public function getGroup($groupId);
-    public function getAllGroups();
+    public function getAllGroups($userId);
     public function saveGroup($group);
     public function deleteGroup($groupId, $creatorId);
     public function getGroupMessages($groupId);

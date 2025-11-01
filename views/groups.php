@@ -25,13 +25,11 @@
                                 <h4><?php echo htmlspecialchars($group['name']); ?></h4>
                                 <p>Created: <?php echo $group['created_at']; ?></p>
                                 <p><?php echo $group['password_hash'] ? 'Password Protected' : 'Public'; ?></p>
-                                <a href="/group_messages.php?id=<?php echo $group['id']; ?>" class="w3-button w3-green">View
-                                    Messages</a>
+                                <a href="/group_messages.php?id=<?php echo $group['id']; ?>" class="w3-button w3-green">View Messages</a>
                                 <?php if (isset($_SESSION['user']) && $_SESSION['user']['id'] == $group['creator_id']): ?>
                                     <form method="POST" action="/delete_group.php" style="display:inline;">
                                         <input type="hidden" name="group_id" value="<?php echo $group['id']; ?>">
-                                        <button type="submit" class="w3-button w3-red"
-                                            onclick="return confirm('Are you sure?')">Delete</button>
+                                        <button type="submit" class="w3-button w3-red" onclick="return confirm('Are you sure?')">Delete</button>
                                     </form>
                                 <?php endif; ?>
                             </div>

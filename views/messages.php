@@ -71,7 +71,7 @@
         <?php endif; ?>
 
         <?php if (!$isOwner): ?>
-            <form id="messageForm" method="POST" action="/submit_message.php" class="w3-container"
+            <form id="messageForm" method="POST" action="../public/submit_message.php" class="w3-container"
                 enctype="multipart/form-data">
                 <input type="hidden" name="username" value="<?php echo $username; ?>">
                 <input name="message" id="messageText" class="w3-input" type="text"

@@ -51,11 +51,9 @@
             <br>
         <?php endforeach; ?>
 
-        <form id="messageForm" method="POST" action="/submit_group_message.php" class="w3-container"
-            enctype="multipart/form-data">
+            <form id="messageForm" method="POST" action="/submit_group_message.php" class="w3-container" enctype="multipart/form-data">
             <input type="hidden" name="group_id" value="<?php echo $group['id']; ?>">
-            <textarea name="message" id="messageText" class="w3-input" placeholder="Type your message..."
-                style="height:150px;width:100%;border-radius:20px;padding:20px;" required></textarea>
+            <textarea name="message" id="messageText" class="w3-input" placeholder="Type your message..." style="height:150px;width:100%;border-radius:20px;padding:20px;" required></textarea>
             <input type="file" name="media[]" multiple accept="image/*, video/*, audio/*">
             <br><br>
             <button style="width:200px" type="submit">SEND MESSAGE</button>
@@ -66,7 +64,7 @@
         <script src="js/pusher.js"></script>
         <script>
             // Initialize Pusher for group messages
-            const messagePusher = new MessagePusher('7e136cd2a9797c421ac1', 'eu', '/authenticate-pusher.php');
+            const messagePusher = new MessagePusher('7e136cd2a9797c421ac1', 'eu', '/authenticate-pusher');
             messagePusher.setChannel('group', <?php echo $group['id']; ?>);
             messagePusher.subscribeToChannel();
         </script>

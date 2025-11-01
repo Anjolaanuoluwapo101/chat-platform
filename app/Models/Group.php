@@ -35,9 +35,9 @@ class Group
      *
      * @return array
      */
-    public function getAllGroups()
+    public function getAllGroups($userId)
     {
-        return $this->db->getAllGroups();
+        return $this->db->getAllGroups($groupId);
     }
 
     /**

@@ -7,5 +7,5 @@ $controller = new MessageController();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $controller->submitMessage();
 } else {
-    $controller->showMessages();
+    $controller->viewMessages();
 }

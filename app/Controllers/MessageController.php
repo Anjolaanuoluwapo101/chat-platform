@@ -4,61 +4,104 @@ namespace App\Controllers;
 
 use App\Models\Message;
 use App\Factory\StorageFactory;
+use App\Services\AuthService;
 use App\Models\Photo;
 use App\Models\Video;
 use App\Models\Audio;
 use App\Services\PusherService;
 use App\Services\ChannelManager;
+use App\Log\Logger;
 
 /**
  * MessageController handles message viewing, submission, and Pusher authentication.
+ * submitMessage() allows anonymous users, while other methods require JWT authentication.
  */
 class MessageController extends BaseController
 {
+    private $authService;
+    private $user;
+    private $userId;
+    private $logger;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logger = new Logger();
+        $this->authService = new AuthService();
+    }
+
     /**
-     * Displays messages for a given username.
+     * Authenticate user and set user properties.
+     * Call this in methods that require authentication.
+     */
+    protected function authenticateUser()
+    {
+        if (!$this->user) {
+            $this->user = $this->authService->authenticateFromToken();
+            if ($this->user) {
+                $this->userId = $this->user['id'];
+            }
+        }
+        return $this->user;
+    }
+
+    /**
+     * API endpoint to get messages for a username.
      */
     public function viewMessages()
     {
+        // Authenticate user for viewing messages
+        $user = $this->authenticateUser();
+        if (!$user) {
+            $this->jsonResponse(['error' => 'Authentication required'], 401);
+            return;
+        }
+
         $username = $_GET['q'] ?? '';
         if (!$username) {
-           die("Invalid URL");
+            $this->jsonResponse(['error' => 'Username parameter required'], 400);
+            return;
         }
 
         $messageModel = new Message();
         $messages = $messageModel->getMessages($username);
-        
 
-        $isOwner = isset($_SESSION['user']) && $username == $_SESSION['user']['username'];
+        $isOwner = $username === $this->user['username'];
 
-        $this->render('messages', [
+        $this->jsonResponse([
+            'success' => true,
             'messages' => $messages,
-            'isOwner' => $isOwner,
-            'username' => $username
+            'isOwner' => $isOwner
         ]);
     }
 
     /**
-     * Alias for viewMessages.
-     */
-    public function showMessages()
-    {
-        $this->viewMessages();
-    }
-
-    /**
-     * Submits a new message and triggers real-time update.
+     * API endpoint to submit a new message.
+     * Supports both individual and group messages.
      */
     public function submitMessage()
     {
-        header('Content-Type: application/json');
-        $username = $_POST['username'] ?? '';
-        $text = $_POST['message'] ?? '';
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $username = $input['username'] ?? '';
+        $text = $input['message'] ?? '';
+        $type = $input['type'] ?? 'individual'; // 'individual' or 'group'
         $time = date('Y-m-d H:i:s');
+
+        if (!$username || !$text) {
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Username and message are required']], 400);
+            return;
+        }
+
+        // Validate type
+        if (!in_array($type, ['individual', 'group'])) {
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Invalid message type']], 400);
+            return;
+        }
 
         $messageModel = new Message();
 
-        // Handle file uploads first
+        // Handle file uploads (if any, via multipart/form-data)
         $storage = StorageFactory::create('local');
         $mediaUrls = [];
         $errors = [];
@@ -93,7 +136,7 @@ class MessageController extends BaseController
 
         // Use ChannelManager to get the appropriate channel
         $channelManager = new ChannelManager();
-        $channelInfo = $channelManager->getChannel('individual', $username);
+        $channelInfo = $channelManager->getChannel($type, $username);
         $channel = $channelInfo['name'];
 
         // Trigger Pusher event for real-time updates
@@ -102,29 +145,32 @@ class MessageController extends BaseController
             'username' => $username,
             'content' => htmlspecialchars($text),
             'created_at' => $time,
-            'media_urls' => $mediaUrls
+            'media_urls' => $mediaUrls,
+            'type' => $type
         ];
         $pusherService->triggerEvent($channel, 'new-message', $eventData);
 
-        $response = ['success' => true];
+        $response = [
+            'success' => true,
+            'message' => 'Message sent',
+            'channel' => $channel,
+            'is_private' => $channelInfo['isPrivate']
+        ];
         if (!empty($errors)) {
             $response['errors'] = $errors;
         }
-        echo json_encode($response);
+        $this->jsonResponse($response);
     }
 
     /**
      * Authenticates users for private Pusher channels (e.g., groups).
-     * This endpoint is called by Pusher client-side library for private channel auth.
      */
     public function authenticatePusher()
     {
-        header('Content-Type: application/json');
-
-        // Check if user is logged in
-        if (!isset($_SESSION['user'])) {
-            http_response_code(401);
-            echo json_encode(['error' => 'Unauthorized']);
+        // Authenticate user for private channel access
+        $user = $this->authenticateUser();
+        if (!$user) {
+            $this->jsonResponse(['error' => 'Authentication required'], 401);
             return;
         }
 
@@ -132,26 +178,22 @@ class MessageController extends BaseController
         $socketId = $_POST['socket_id'] ?? '';
 
         if (!$channelName || !$socketId) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Missing channel_name or socket_id']);
+            $this->jsonResponse(['error' => 'Missing channel_name or socket_id'], 400);
             return;
         }
 
         $channelManager = new ChannelManager();
         if (!$channelManager->isPrivateChannel($channelName)) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Channel is not private']);
+            $this->jsonResponse(['error' => 'Channel is not private'], 400);
             return;
         }
 
         try {
             $pusherService = new PusherService();
-            $userId = $_SESSION['user']['id'] ?? null; // Assuming user ID is stored in session
-            $authResponse = $pusherService->authenticatePrivateChannel($channelName, $socketId, $userId);
+            $authResponse = $pusherService->authenticatePrivateChannel($channelName, $socketId, $this->userId);
             echo $authResponse;
         } catch (\Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            $this->jsonResponse(['error' => $e->getMessage()], 500);
         }
     }
 }

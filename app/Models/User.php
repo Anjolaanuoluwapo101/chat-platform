@@ -59,7 +59,7 @@ class User
 
             $this->db->saveUser($user);
             return $verificationCode; // Return code for email sending
-        } catch(Exception $e){
+        } catch (Exception $e) {
             return $e->getMessage();
         }
     }
@@ -86,5 +86,10 @@ class User
     public function updateVerified($username)
     {
         $this->db->updateUser($username, ['is_verified' => 1]);
+    }
+
+    public function getById($id)
+    {
+        return $this->db->getUserById($id);
     }
 }

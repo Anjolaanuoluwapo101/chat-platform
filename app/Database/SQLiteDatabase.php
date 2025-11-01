@@ -101,10 +101,15 @@ class SQLiteDatabase implements DatabaseInterface
 
     public function getUser($username)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE username = ?");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $user ?: null;
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $user ?: null;
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 
     public function saveUser($user)
@@ -143,46 +148,104 @@ class SQLiteDatabase implements DatabaseInterface
 
     public function getMessages($username)
     {
-        $stmt = $this->pdo->prepare("
-            SELECT m.id, m.content, m.created_at
-            FROM messages m
-            JOIN users u ON m.user_id = u.id
-            WHERE u.username = ? AND m.group_id IS NULL
-            ORDER BY m.created_at DESC
-        ");
-        $stmt->execute([$username]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT
+                    m.id,
+                    m.content,
+                    m.created_at,
+                    GROUP_CONCAT(DISTINCT p.file_path) as photos,
+                    GROUP_CONCAT(DISTINCT v.file_path) as videos,
+                    GROUP_CONCAT(DISTINCT a.file_path) as audios
+                FROM messages m
+                JOIN users u ON m.user_id = u.id
+                LEFT JOIN photos p ON m.id = p.message_id
+                LEFT JOIN videos v ON m.id = v.message_id
+                LEFT JOIN audio a ON m.id = a.message_id
+                WHERE u.username = ? AND m.group_id IS NULL
+                GROUP BY m.id, m.content, m.created_at
+                ORDER BY m.created_at DESC
+            ");
+            $stmt->execute([$username]);
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Convert comma-separated strings to arrays and merge into media_urls
+            foreach ($messages as &$message) {
+                $photos = $message['photos'] ? explode(',', $message['photos']) : [];
+                $videos = $message['videos'] ? explode(',', $message['videos']) : [];
+                $audios = $message['audios'] ? explode(',', $message['audios']) : [];
+
+                $message['media_urls'] = array_merge($photos, $videos, $audios);
+
+                // Remove the separate arrays
+                unset($message['photos'], $message['videos'], $message['audios']);
+            }
+
+            return $messages;
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 
     public function getGroupMessages($groupId)
     {
-        $stmt = $this->pdo->prepare("
-            SELECT m.id, m.content, m.created_at, u.username
-            FROM messages m
-            JOIN users u ON m.user_id = u.id
-            WHERE m.group_id = ?
-            ORDER BY m.created_at DESC
-        ");
-        $stmt->execute([$groupId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT
+                    m.id,
+                    m.content,
+                    m.created_at,
+                    GROUP_CONCAT(DISTINCT p.file_path) as photos,
+                    GROUP_CONCAT(DISTINCT v.file_path) as videos,
+                    GROUP_CONCAT(DISTINCT a.file_path) as audios
+                FROM messages m
+                JOIN users u ON m.user_id = u.id
+                LEFT JOIN photos p ON m.id = p.message_id
+                LEFT JOIN videos v ON m.id = v.message_id
+                LEFT JOIN audio a ON m.id = a.message_id
+                WHERE m.group_id = ?
+                GROUP BY m.id, m.content, m.created_at
+                ORDER BY m.created_at DESC
+            ");
+            $stmt->execute([$groupId]);
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Convert comma-separated strings to arrays and merge into media_urls
+            foreach ($messages as &$message) {
+                $photos = $message['photos'] ? explode(',', $message['photos']) : [];
+                $videos = $message['videos'] ? explode(',', $message['videos']) : [];
+                $audios = $message['audios'] ? explode(',', $message['audios']) : [];
+
+                $message['media_urls'] = array_merge($photos, $videos, $audios);
+
+                // Remove the separate arrays
+                unset($message['photos'], $message['videos'], $message['audios']);
+            }
+
+            return $messages;
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 
     public function saveMessage($message)
     {
         try {
-            return var_dump($message);
+
             $stmt = $this->pdo->prepare("
                 INSERT INTO messages (user_id, content, group_id)
                 SELECT id, ?, ? FROM users WHERE username = ?
             ");
             $groupId = $message['group_id'] ?? null;
-            if($stmt->execute([$message['content'], $groupId, $message['username']])){
+            if ($stmt->execute([$message['content'], $groupId, $message['username']])) {
                 //return the message id of the last inserted message
 
                 $stmt = $this->pdo->prepare("SELECT id FROM messages WHERE content = ? ORDER BY created_at DESC LIMIT 1");
                 $stmt->execute([$message['content']]);
                 return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
-            }else{
+            } else {
                 return false;
             }
         } catch (PDOException $e) {
@@ -191,18 +254,41 @@ class SQLiteDatabase implements DatabaseInterface
         }
     }
 
-    public function getGroup($groupId)
+    public function getUserById($userId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM groups WHERE id = ?");
-        $stmt->execute([$groupId]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $user ?: null;
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 
-    public function getAllGroups()
+    public function getGroup($groupId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM groups ORDER BY created_at DESC");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM groups WHERE id = ?");
+            $stmt->execute([$groupId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function getAllGroups($userId)
+    {
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM groups WHERE creator_id = ? ORDER BY created_at DESC");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 
     public function saveGroup($group)
@@ -262,22 +348,37 @@ class SQLiteDatabase implements DatabaseInterface
 
     public function getPhotos($messageId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM photos WHERE message_id = ?");
-        $stmt->execute([$messageId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM photos WHERE message_id = ?");
+            $stmt->execute([$messageId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 
     public function getVideos($messageId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM videos WHERE message_id = ?");
-        $stmt->execute([$messageId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM videos WHERE message_id = ?");
+            $stmt->execute([$messageId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 
     public function getAudios($messageId)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM audio WHERE message_id = ?");
-        $stmt->execute([$messageId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $this->pdo->prepare("SELECT * FROM audio WHERE message_id = ?");
+            $stmt->execute([$messageId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            return false;
+        }
     }
 }

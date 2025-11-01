@@ -6,8 +6,13 @@ use App\Models\User;
 use App\Services\Encryption;
 use App\Services\Mailer;
 use App\Config\Config;
+use App\Services\AuthService;
 use App\Log\Logger;
 
+/**
+ * UserController handles user registration, login, and password reset.
+ * Only accessible via API with JSON responses.
+ */
 class UserController extends BaseController
 {
     private $logger;
@@ -18,18 +23,21 @@ class UserController extends BaseController
         $this->logger = new Logger();
     }
 
+    /**
+     * API endpoint for user registration.
+     */
     public function register()
     {
+        $input = json_decode(file_get_contents('php://input'), true);
         $user = new User();
         $mailer = new Mailer();
         $errors = [];
 
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $email = $_POST['email'] ?? '';
+        $username = $input['username'] ?? '';
+        $password = $input['password'] ?? '';
+        $email = $input['email'] ?? '';
 
-
-        //Validation
+        // Validation
         if (empty($username) || strlen($username) < 5) {
             $errors['username'] = 'Username must be at least 5 characters.';
         }
@@ -41,14 +49,8 @@ class UserController extends BaseController
         }
 
         if (!empty($errors)) {
-            if ($this->isAjax()) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'errors' => $errors]);
-                exit;
-            } else {
-                $this->render('register', ['errors' => $errors]);
-                return;
-            }
+            $this->jsonResponse(['success' => false, 'errors' => $errors], 400);
+            return;
         }
 
         $verificationCode = $user->register($username, $password, $email);
@@ -57,159 +59,121 @@ class UserController extends BaseController
             $this->logger->info("User registered: $username ($email)");
             $url = Config::get('app')['url'] . "/verify.php?username=" . urlencode($username) . "&code=$verificationCode";
             $mailer->sendVerificationEmail($email, $verificationCode, $url);
-            if ($this->isAjax()) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => true, 'message' => 'Registration successful. Check your email for verification.', 'redirect' => 'login.php']);
-                exit;
-            } else {
-                $this->render('register', ['message' => 'Registration successful. Check your email for verification.']);
-            }
+            // Generate JWT token for immediate login after registration
+            $userData = $user->getByUsername($username);
+            $authService = new AuthService();
+            $token = $authService->generateToken($userData);
+            $this->jsonResponse([
+                'success' => true,
+                'message' => 'Registration successful. Check your email for verification.',
+                'token' => $token,
+                'user' => [
+                    'id' => $userData['id'],
+                    'username' => $userData['username'],
+                    'email' => $userData['email']
+                ]
+            ]);
         } else {
             $this->logger->error("Registration failed for: $username ($email)");
-            $errors['general'] = 'Registration failed. Verification Code could not be obtained';
-            if ($this->isAjax()) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'errors' => $errors]);
-                exit;
-            } else {
-                $this->render('register', ['errors' => $errors]);
-            }
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Registration failed.']], 500);
         }
     }
 
-
-
+    /**
+     * API endpoint for user login.
+     */
     public function login()
     {
+        $input = json_decode(file_get_contents('php://input'), true);
         $user = new User();
         $mailer = new Mailer();
-        $errors = [];
-        $messages = [];
 
-        $username = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
+        $username = $input['username'] ?? '';
+        $password = $input['password'] ?? '';
 
         // Validation
         if (empty($username) || strlen($username) < 5) {
-            $errors['username'] = 'Username must be at least 5 characters.';
+            $this->jsonResponse(['success' => false, 'errors' => ['username' => 'Username must be at least 5 characters.']], 400);
+            return;
         }
         if (empty($password) || strlen($password) < 5) {
-            $errors['password'] = 'Password must be at least 5 characters.';
-        }
-
-        if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
-            $_SESSION['messages'] = $messages;
-            header('Location: login.php');
-            exit;
+            $this->jsonResponse(['success' => false, 'errors' => ['password' => 'Password must be at least 5 characters.']], 400);
+            return;
         }
 
         $userData = $user->getByUsername($username);
         if ($userData && $user->verifyPassword($password, $userData['password_hash'])) {
             if ($userData['is_verified']) {
-                $this->logger->info("User logged in: $username");
-                //destroy previous session
-                $this->destroySession();
-                //create new session
-                session_start();
-                $_SESSION['user'] = $userData;
-
-                if ($this->isAjax()) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => true, 'redirect' => 'messages.php?q=' . urlencode($username)]);
-                    exit;
-                } else {
-                    $this->redirect('messages.php?q=' . urlencode($username));
-                }
+                $this->logger->info("User logged in via API: $username");
+                // Generate JWT token
+                $authService = new AuthService();
+                $token = $authService->generateToken($userData);
+                $this->jsonResponse([
+                    'success' => true,
+                    'token' => $token,
+                    'user' => [
+                        'id' => $userData['id'],
+                        'username' => $userData['username'],
+                        'email' => $userData['email']
+                    ]
+                ]);
             } else {
                 // Resend verification email
                 $url = Config::get('app')['url'] . "/verify.php?username=" . urlencode($username) . "&code=" . $userData['verification_code'];
                 $mailer->sendVerificationEmail($userData['email'], $userData['verification_code'], $url);
-                $messages['info'] = 'Account not verified. Check your email for verification link.';
-                $_SESSION['errors'] = $errors;
-                $_SESSION['messages'] = $messages;
-                header('Location: login.php');
-                exit;
+                $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Account not verified. Check your email for verification link.']], 403);
             }
         } else {
-            $this->logger->warning("Failed login attempt for: $username");
-            $errors['password'] = 'Invalid credentials.';
+            $this->logger->warning("Failed API login attempt for: $username");
+            $this->jsonResponse(['success' => false, 'errors' => ['password' => 'Invalid credentials.']], 401);
         }
     }
 
-    private function destroySession()
-    {
-        if (session_status() != PHP_SESSION_NONE) {
-            session_destroy();
-
-            if (ini_get("session.use_cookies")) {
-                $params = session_get_cookie_params();
-                setcookie(
-                    session_name(),
-                    "",
-                    time() - 999999999999,
-                    $params["path"],
-                    $params["domain"],
-                    $params["secure"],
-                    $params["httponly"]
-                );
-            }
-        }
-    }
-
+    /**
+     * API endpoint for password reset request.
+     */
     public function reset()
     {
+        $input = json_decode(file_get_contents('php://input'), true);
         $user = new User();
         $encryption = new Encryption();
         $mailer = new Mailer();
-        $errors = [];
 
-        $username = $_POST['username'] ?? '';
+        $username = $input['username'] ?? '';
         $userData = $user->getByUsername($username);
 
         if ($userData) {
             $encrypted = $encryption->encrypt($username);
-            $url = \App\Config\Config::get('app')['url'] . "/reset.php?q=$encrypted";
+            $url = Config::get('app')['url'] . "/reset.php?q=$encrypted";
             $mailer->sendResetEmail($userData['email'], $encrypted, $url);
-            echo "<script>alert('Email sent');</script>";
+            $this->jsonResponse(['success' => true, 'message' => 'Reset email sent.']);
         } else {
-            $errors['username'] = 'Username not found.';
-            $this->render('reset', ['errors' => $errors]);
+            $this->jsonResponse(['success' => false, 'errors' => ['username' => 'Username not found.']], 404);
         }
     }
 
-    public function showRegister()
-    {
-        $this->render('register', []);
-    }
-
-    public function showLogin()
-    {
-        $this->render('login', []);
-    }
-
-    public function showReset()
-    {
-        $this->render('reset', []);
-    }
-
-    public function showConfirmReset()
-    {
-        $this->render('confirm_reset', []);
-    }
-
+    /**
+     * API endpoint for confirming password reset.
+     */
     public function confirmReset()
     {
+        $input = json_decode(file_get_contents('php://input'), true);
         $encryption = new Encryption();
         $user = new User();
 
-        $username = '';
-        if (isset($_GET['q'])) {
-            $username = $encryption->decrypt($_GET['q']);
+        $token = $input['token'] ?? '';
+        $newPassword = $input['password'] ?? '';
+
+        if (empty($token) || empty($newPassword)) {
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Token and password are required.']], 400);
+            return;
         }
 
-        $newPassword = $_POST['password'] ?? '';
-        $user->updatePassword($username, $newPassword);
-        $this->redirect('login.php');
+        $username = $encryption->decrypt($token);
+        if ($username && $user->updatePassword($username, $newPassword)) {
+            $this->jsonResponse(['success' => true, 'message' => 'Password updated successfully.']);
+        } else {
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Invalid token or update failed.']], 400);
+        }
     }
 }

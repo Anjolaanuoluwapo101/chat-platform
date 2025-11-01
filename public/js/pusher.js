@@ -3,7 +3,7 @@
  * Supports public channels (individuals) and private channels (groups) with authentication.
  */
 class MessagePusher {
-    constructor(pusherKey, cluster, authEndpoint = '/authenticate-pusher.php') {
+    constructor(pusherKey, cluster, authEndpoint = '/authenticate-pusher') {
         this.pusher = new Pusher(pusherKey, {
             cluster: cluster,
             authEndpoint: authEndpoint // Endpoint for private channel authentication

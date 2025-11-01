@@ -56,7 +56,7 @@ class PusherService
             throw new \Exception('User must be authenticated to join private channels.');
         }
 
-        return $this->pusher->authorizeChannel($channelName, $socketId);
+        return $this->pusher->socket_auth($channelName, $socketId);
     }
 
     /**

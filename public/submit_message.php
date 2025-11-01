@@ -1,17 +1,4 @@
 <?php
-session_start();
-if (!isset($_SESSION['user'])) {
-    header('Content-Type: application/json');
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
-
-
-//check request method
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    throw new Exception('Invalid request method');
-}
 
 
 use App\Controllers\MessageController;
@@ -19,4 +6,6 @@ use App\Controllers\MessageController;
 require_once '../vendor/autoload.php';
 
 $controller = new MessageController();
-$controller->submitMessage();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $controller->submitMessage();
+}

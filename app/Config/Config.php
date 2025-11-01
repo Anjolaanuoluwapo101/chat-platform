@@ -9,6 +9,7 @@ class Config
     public static function get($key)
     {
         $config = [
+            //for sqlite
             'database' => [
                 'path' => __DIR__ . '/../database/secretville.db',
             ],
@@ -29,6 +30,9 @@ class Config
                 'key' => '7e136cd2a9797c421ac1',
                 'secret' => '8998ff663690c6c06322',
                 'cluster' => 'eu',
+            ],
+            'jwt' => [
+                'secret' => 'mannitol-salt-agar',
             ],
         ];
 
