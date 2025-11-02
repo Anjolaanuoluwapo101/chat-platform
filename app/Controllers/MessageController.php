@@ -15,7 +15,6 @@ use App\Traits\PusherTrait;
 
 /**
  * MessageController handles message viewing, submission, and Pusher authentication.
- * submitMessage() allows anonymous users, while other methods require JWT authentication.
  */
 class MessageController extends BaseController
 {
@@ -59,15 +58,30 @@ class MessageController extends BaseController
             return;
         }
 
+        // Support either username (individual) or group_id (group messages)
+        $groupId = isset($_GET['group_id']) ? intval($_GET['group_id']) : null;
         $username = $_GET['q'] ?? '';
+
+        $messageModel = new Message();
+
+        if ($groupId) {
+            // Fetch group messages only if requesting user is member (db layer enforces this)
+            $messages = $messageModel->getGroupMessages($groupId, $this->userId);
+            $this->jsonResponse([
+                'success' => true,
+                'messages' => $messages,
+                'isOwner' => false,
+                'group_id' => $groupId
+            ]);
+            return;
+        }
+
         if (!$username) {
             $this->jsonResponse(['error' => 'Username parameter required'], 400);
             return;
         }
 
-        $messageModel = new Message();
         $messages = $messageModel->getMessages($username);
-
         $isOwner = $username === $this->user['username'];
 
         $this->jsonResponse([
@@ -103,6 +117,21 @@ class MessageController extends BaseController
 
         $messageModel = new Message();
 
+        $groupId = null;
+        if ($type === 'group') {
+            // require authentication for group messaging
+            $user = $this->authenticateUser();
+            if (!$user) {
+                $this->jsonResponse(['error' => 'Authentication required for group messages'], 401);
+                return;
+            }
+            $groupId = isset($input['group_id']) ? intval($input['group_id']) : null;
+            if (!$groupId) {
+                $this->jsonResponse(['success' => false, 'errors' => ['general' => 'group_id required for group messages']], 400);
+                return;
+            }
+        }
+
         // Handle file uploads (if any, via multipart/form-data)
         $storage = StorageFactory::create('local');
         $mediaUrls = [];
@@ -134,11 +163,12 @@ class MessageController extends BaseController
             }
         }
 
-        $messageModel->saveMessage($username, $text, $time, $mediaUrls);
+    $messageModel->saveMessage($username, $text, $time, $mediaUrls, $groupId);
 
-        // Use ChannelManager to get the appropriate channel
-        $channelManager = new ChannelManager();
-        $channelInfo = $channelManager->getChannel($type, $username);
+    // Use ChannelManager to get the appropriate channel
+    $channelManager = new ChannelManager();
+    $identifier = $type === 'group' ? $groupId : $username;
+    $channelInfo = $channelManager->getChannel($type, $identifier);
         $channel = $channelInfo['name'];
 
         // Trigger Pusher event for real-time updates

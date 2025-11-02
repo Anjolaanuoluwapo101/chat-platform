@@ -36,7 +36,25 @@ trait PusherTrait
             return;
         }
 
+        // If the private channel is a group channel, check membership before authenticating
         try {
+            if (strpos($channelName, 'private-group-') === 0) {
+                // channel format: private-group-<groupId>
+                $parts = explode('-', $channelName);
+                $groupId = end($parts);
+                // Validate numeric group id
+                if (!is_numeric($groupId)) {
+                    $this->jsonResponse(['error' => 'Invalid group id in channel'], 400);
+                    return;
+                }
+
+                $db = \App\Factory\DatabaseFactory::create('sqlite');
+                if (!$db->isUserInGroup((int)$groupId, $this->userId)) {
+                    $this->jsonResponse(['error' => 'User is not a member of this group'], 403);
+                    return;
+                }
+            }
+
             $pusherService = new PusherService();
             $authResponse = $pusherService->authenticatePrivateChannel($channelName, $socketId, $this->userId);
             echo $authResponse;

@@ -65,5 +65,8 @@ class Message
      * @param int $groupId
      * @return array
      */
-    
+    public function getGroupMessages($groupId, $requestingUserId)
+    {
+        return $this->db->getGroupMessages($groupId, $requestingUserId);
+    }
 }

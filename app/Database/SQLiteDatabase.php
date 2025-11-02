@@ -6,9 +6,11 @@ use App\Database\DatabaseInterface;
 use PDO;
 use PDOException;
 use App\Log\Logger;
+use App\Traits\DatabaseGroupTrait;
 
 class SQLiteDatabase implements DatabaseInterface
 {
+    use DatabaseGroupTrait;
     private PDO $pdo;
     private $logger;
 
@@ -70,18 +72,40 @@ class SQLiteDatabase implements DatabaseInterface
             )
         ");
 
-        $this->pdo->exec("
-            CREATE TABLE IF NOT EXISTS messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                content TEXT NOT NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                group_id INTEGER DEFAULT NULL,
-                FOREIGN KEY (user_id) REFERENCES users(id),
-                FOREIGN KEY (group_id) REFERENCES groups(id)
-            )
+        // Groups and membership tables
+        $this->pdo->exec("\
+            CREATE TABLE IF NOT EXISTS groups (\
+                id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                name TEXT UNIQUE NOT NULL,\
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\
+                updated_at DATETIME\
+            )\
+        ");
+
+        $this->pdo->exec("\
+            CREATE TABLE IF NOT EXISTS group_members (\
+                id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                group_id INTEGER NOT NULL,\
+                user_id INTEGER NOT NULL,\
+                FOREIGN KEY (group_id) REFERENCES groups(id),\
+                FOREIGN KEY (user_id) REFERENCES users(id)\
+            )\
+        ");
+
+        $this->pdo->exec("\
+            CREATE TABLE IF NOT EXISTS messages (\
+                id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                user_id INTEGER NOT NULL,\
+                content TEXT NOT NULL,\
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\
+                group_id INTEGER DEFAULT NULL,\
+                FOREIGN KEY (user_id) REFERENCES users(id),\
+                FOREIGN KEY (group_id) REFERENCES groups(id)\
+            )\
         ");
     }
+
+    
 
     public function connect(): void
     {

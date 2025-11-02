@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Login';
 import Register from './components/Register';
 import Messages from './components/Messages';
+import GroupMessages from './components/GroupMessages';
 import authService from './services/auth';
 import './App.css';
 
@@ -31,8 +32,18 @@ function App() {
           <Route
             path="/messages/:username"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <Messages />
+              // </ProtectedRoute>
+            }
+          />
+
+          {/* Group Messages */}
+          <Route
+            path="/groups/:groupId"
+            element={
+              <ProtectedRoute>
+                <GroupMessages />
               </ProtectedRoute>
             }
           />

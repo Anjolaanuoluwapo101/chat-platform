@@ -20,8 +20,8 @@ class ChannelManager
         switch ($type) {
             case 'individual':
                 return [
-                    'name' => 'messages-' . $identifier,
-                    'isPrivate' => false
+                    'name' => 'private-messages-' . $identifier,
+                    'isPrivate' => true
                 ];
             case 'group':
                 return [
