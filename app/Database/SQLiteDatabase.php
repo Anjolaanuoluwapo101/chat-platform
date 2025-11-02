@@ -81,17 +81,6 @@ class SQLiteDatabase implements DatabaseInterface
                 FOREIGN KEY (group_id) REFERENCES groups(id)
             )
         ");
-
-        $this->pdo->exec("
-            CREATE TABLE IF NOT EXISTS groups (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                creator_id INTEGER NOT NULL,
-                password_hash TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (creator_id) REFERENCES users(id)
-            )
-        ");
     }
 
     public function connect(): void
@@ -188,47 +177,6 @@ class SQLiteDatabase implements DatabaseInterface
         }
     }
 
-    public function getGroupMessages($groupId)
-    {
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT
-                    m.id,
-                    m.content,
-                    m.created_at,
-                    GROUP_CONCAT(DISTINCT p.file_path) as photos,
-                    GROUP_CONCAT(DISTINCT v.file_path) as videos,
-                    GROUP_CONCAT(DISTINCT a.file_path) as audios
-                FROM messages m
-                JOIN users u ON m.user_id = u.id
-                LEFT JOIN photos p ON m.id = p.message_id
-                LEFT JOIN videos v ON m.id = v.message_id
-                LEFT JOIN audio a ON m.id = a.message_id
-                WHERE m.group_id = ?
-                GROUP BY m.id, m.content, m.created_at
-                ORDER BY m.created_at DESC
-            ");
-            $stmt->execute([$groupId]);
-            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Convert comma-separated strings to arrays and merge into media_urls
-            foreach ($messages as &$message) {
-                $photos = $message['photos'] ? explode(',', $message['photos']) : [];
-                $videos = $message['videos'] ? explode(',', $message['videos']) : [];
-                $audios = $message['audios'] ? explode(',', $message['audios']) : [];
-
-                $message['media_urls'] = array_merge($photos, $videos, $audios);
-
-                // Remove the separate arrays
-                unset($message['photos'], $message['videos'], $message['audios']);
-            }
-
-            return $messages;
-        } catch (PDOException $e) {
-            $this->logger->log($e->getMessage());
-            return false;
-        }
-    }
 
     public function saveMessage($message)
     {
@@ -254,64 +202,6 @@ class SQLiteDatabase implements DatabaseInterface
         }
     }
 
-    public function getUserById($userId)
-    {
-        try {
-            $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = ?");
-            $stmt->execute([$userId]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $user ?: null;
-        } catch (PDOException $e) {
-            $this->logger->log($e->getMessage());
-            return false;
-        }
-    }
-
-    public function getGroup($groupId)
-    {
-        try {
-            $stmt = $this->pdo->prepare("SELECT * FROM groups WHERE id = ?");
-            $stmt->execute([$groupId]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            $this->logger->log($e->getMessage());
-            return false;
-        }
-    }
-
-    public function getAllGroups($userId)
-    {
-        try {
-            $stmt = $this->pdo->prepare("SELECT * FROM groups WHERE creator_id = ? ORDER BY created_at DESC");
-            $stmt->execute([$userId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            $this->logger->log($e->getMessage());
-            return false;
-        }
-    }
-
-    public function saveGroup($group)
-    {
-        try {
-            $stmt = $this->pdo->prepare("INSERT INTO groups (name, creator_id, password_hash) VALUES (?, ?, ?)");
-            return $stmt->execute([$group['name'], $group['creator_id'], $group['password_hash'] ?? null]);
-        } catch (PDOException $e) {
-            $this->logger->log($e->getMessage());
-            return false;
-        }
-    }
-
-    public function deleteGroup($groupId, $creatorId)
-    {
-        try {
-            $stmt = $this->pdo->prepare("DELETE FROM groups WHERE id = ? AND creator_id = ?");
-            return $stmt->execute([$groupId, $creatorId]);
-        } catch (PDOException $e) {
-            $this->logger->log($e->getMessage());
-            return false;
-        }
-    }
 
     public function savePhoto($media)
     {

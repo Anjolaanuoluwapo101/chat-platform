@@ -19,10 +19,4 @@ interface DatabaseInterface
     public function getVideos($messageId);
     public function getAudios($messageId);
 
-    // Group-related methods
-    public function getGroup($groupId);
-    public function getAllGroups($userId);
-    public function saveGroup($group);
-    public function deleteGroup($groupId, $creatorId);
-    public function getGroupMessages($groupId);
 }

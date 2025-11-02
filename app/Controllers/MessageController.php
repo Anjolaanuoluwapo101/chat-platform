@@ -11,6 +11,7 @@ use App\Models\Audio;
 use App\Services\PusherService;
 use App\Services\ChannelManager;
 use App\Log\Logger;
+use App\Traits\PusherTrait;
 
 /**
  * MessageController handles message viewing, submission, and Pusher authentication.
@@ -18,6 +19,7 @@ use App\Log\Logger;
  */
 class MessageController extends BaseController
 {
+    use PusherTrait;
     private $authService;
     private $user;
     private $userId;
@@ -162,38 +164,5 @@ class MessageController extends BaseController
         $this->jsonResponse($response);
     }
 
-    /**
-     * Authenticates users for private Pusher channels (e.g., groups).
-     */
-    public function authenticatePusher()
-    {
-        // Authenticate user for private channel access
-        $user = $this->authenticateUser();
-        if (!$user) {
-            $this->jsonResponse(['error' => 'Authentication required'], 401);
-            return;
-        }
 
-        $channelName = $_POST['channel_name'] ?? '';
-        $socketId = $_POST['socket_id'] ?? '';
-
-        if (!$channelName || !$socketId) {
-            $this->jsonResponse(['error' => 'Missing channel_name or socket_id'], 400);
-            return;
-        }
-
-        $channelManager = new ChannelManager();
-        if (!$channelManager->isPrivateChannel($channelName)) {
-            $this->jsonResponse(['error' => 'Channel is not private'], 400);
-            return;
-        }
-
-        try {
-            $pusherService = new PusherService();
-            $authResponse = $pusherService->authenticatePrivateChannel($channelName, $socketId, $this->userId);
-            echo $authResponse;
-        } catch (\Exception $e) {
-            $this->jsonResponse(['error' => $e->getMessage()], 500);
-        }
-    }
 }

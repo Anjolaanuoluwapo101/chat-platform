@@ -18,14 +18,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/messages/:username"
-            element={
-              <ProtectedRoute>
-                <Messages />
-              </ProtectedRoute>
-            }
-          />
+
+          {/* Individual Messages */}
           <Route
             path="/messages"
             element={
@@ -34,6 +28,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/messages/:username"
+            element={
+              <ProtectedRoute>
+                <Messages />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </div>
