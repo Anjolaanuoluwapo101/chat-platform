@@ -17,7 +17,7 @@ class Message
     public function __construct()
     {
         $this->logger = new Logger;
-        $this->db = DatabaseFactory::create('sqlite');
+        $this->db = DatabaseFactory::createDefault();
     }
 
     public function getMessages($username)
@@ -32,41 +32,16 @@ class Message
             'content' => htmlspecialchars($text),
             'time' => $time,
             'group_id' => $groupId,
+            'media_urls' => $mediaUrls ?? []
         ];
         try {
+            // return var_dump($message);
             $messageId = $this->db->saveMessage($message);
-
-            // Save media URLs
-            foreach ($mediaUrls as $mediaUrl) {
-                $mimeType = mime_content_type($mediaUrl);
-
-                if (strpos($mimeType, 'image') !== false) {
-                    $photo = new Photo($messageId, $mediaUrl, $mimeType);
-                    $photo->save();
-                } elseif (strpos($mimeType, 'video') !== false) {
-                    $video = new Video($messageId, $mediaUrl, $mimeType);
-                    $video->save();
-                } elseif (strpos($mimeType, 'audio') !== false) {
-                    $audio = new Audio($messageId, $mediaUrl, $mimeType);
-                    $audio->save();
-                }
-            }
 
             return $messageId;
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
             return false;
         }
-    }
-
-    /**
-     * Get messages for a group.
-     *
-     * @param int $groupId
-     * @return array
-     */
-    public function getGroupMessages($groupId, $requestingUserId)
-    {
-        return $this->db->getGroupMessages($groupId, $requestingUserId);
     }
 }

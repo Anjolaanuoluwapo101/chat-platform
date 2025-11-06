@@ -4,10 +4,18 @@ namespace App\Controllers;
 
 class BaseController
 {
+    /**
+     * Database instance according to configured driver.
+     */
+    protected $db;
+
     public function __construct()
     {
         // Enable CORS for React frontend
         $this->setCorsHeaders();
+
+        // Create configured database instance for controllers to use
+        $this->db = \App\Factory\DatabaseFactory::createDefault();
 
         if (session_status() == PHP_SESSION_NONE) {
             session_start();

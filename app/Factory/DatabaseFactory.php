@@ -5,6 +5,7 @@ namespace App\Factory;
 use App\Database\DatabaseInterface;
 use App\Database\RedisDatabase;
 use App\Database\SQLiteDatabase;
+use App\Config\Config;
 
 class DatabaseFactory
 {
@@ -18,5 +19,14 @@ class DatabaseFactory
             default:
                 throw new \InvalidArgumentException("Unsupported database type: $type");
         }
+    }
+
+    /**
+     * Create the database instance based on configured default driver.
+     */
+    public static function createDefault(): DatabaseInterface
+    {
+        $driver = Config::get('database_driver') ?? 'sqlite';
+        return self::create($driver);
     }
 }

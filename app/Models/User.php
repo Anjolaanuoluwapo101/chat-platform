@@ -12,7 +12,7 @@ class User
 
     public function __construct($data = [])
     {
-        $this->db = DatabaseFactory::create('sqlite');
+        $this->db = DatabaseFactory::createDefault();
         $this->data = $data;
     }
 

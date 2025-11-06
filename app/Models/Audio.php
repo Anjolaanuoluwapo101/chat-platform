@@ -24,7 +24,7 @@ class Audio
         $this->file_path = $file_path;
         $this->mime_type = $mime_type;
         $this->created_at = $created_at;
-        $this->db = DatabaseFactory::create('sqlite');
+    $this->db = DatabaseFactory::createDefault();
         $this->logger = new Logger;
     }
 
@@ -46,7 +46,7 @@ class Audio
     public static function getByMessageId($messageId)
     {
         try {
-            $db = DatabaseFactory::create('sqlite');
+            $db = DatabaseFactory::createDefault();
             return $db->getAudios($messageId);
         } catch (\Exception $e) {
             (new Logger)->error($e->getMessage());

@@ -58,23 +58,10 @@ class MessageController extends BaseController
             return;
         }
 
-        // Support either username (individual) or group_id (group messages)
-        $groupId = isset($_GET['group_id']) ? intval($_GET['group_id']) : null;
-        $username = $_GET['q'] ?? '';
+
+        $username = $_GET['username'] ?? '';
 
         $messageModel = new Message();
-
-        if ($groupId) {
-            // Fetch group messages only if requesting user is member (db layer enforces this)
-            $messages = $messageModel->getGroupMessages($groupId, $this->userId);
-            $this->jsonResponse([
-                'success' => true,
-                'messages' => $messages,
-                'isOwner' => false,
-                'group_id' => $groupId
-            ]);
-            return;
-        }
 
         if (!$username) {
             $this->jsonResponse(['error' => 'Username parameter required'], 400);
@@ -97,11 +84,11 @@ class MessageController extends BaseController
      */
     public function submitMessage()
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        //$input = json_decode(file_get_contents('php://input'), true);
+        $input = $_POST;
 
-        $username = $input['username'] ?? '';
-        $text = $input['message'] ?? '';
-        $type = $input['type'] ?? 'individual'; // 'individual' or 'group'
+        $username = $input['username'] ?? ''; //receiver of the message not the sender ...okayyyyy
+        $text = $input['content'] ?? '';
         $time = date('Y-m-d H:i:s');
 
         if (!$username || !$text) {
@@ -109,28 +96,7 @@ class MessageController extends BaseController
             return;
         }
 
-        // Validate type
-        if (!in_array($type, ['individual', 'group'])) {
-            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Invalid message type']], 400);
-            return;
-        }
-
         $messageModel = new Message();
-
-        $groupId = null;
-        if ($type === 'group') {
-            // require authentication for group messaging
-            $user = $this->authenticateUser();
-            if (!$user) {
-                $this->jsonResponse(['error' => 'Authentication required for group messages'], 401);
-                return;
-            }
-            $groupId = isset($input['group_id']) ? intval($input['group_id']) : null;
-            if (!$groupId) {
-                $this->jsonResponse(['success' => false, 'errors' => ['general' => 'group_id required for group messages']], 400);
-                return;
-            }
-        }
 
         // Handle file uploads (if any, via multipart/form-data)
         $storage = StorageFactory::create('local');
@@ -163,22 +129,21 @@ class MessageController extends BaseController
             }
         }
 
-    $messageModel->saveMessage($username, $text, $time, $mediaUrls, $groupId);
+        $messageModel->saveMessage($username, $text, $time, $mediaUrls);
 
-    // Use ChannelManager to get the appropriate channel
-    $channelManager = new ChannelManager();
-    $identifier = $type === 'group' ? $groupId : $username;
-    $channelInfo = $channelManager->getChannel($type, $identifier);
+        // Use ChannelManager to get the appropriate channel
+        $channelManager = new ChannelManager();
+        $identifier = $username;
+        $channelInfo = $channelManager->getChannel('individual', $identifier);
         $channel = $channelInfo['name'];
 
         // Trigger Pusher event for real-time updates
         $pusherService = new PusherService();
         $eventData = [
-            'username' => $username,
+            'username' => $username,  //the username here is the receiver of the message
             'content' => htmlspecialchars($text),
             'created_at' => $time,
-            'media_urls' => $mediaUrls,
-            'type' => $type
+            'media_urls' => $mediaUrls
         ];
         $pusherService->triggerEvent($channel, 'new-message', $eventData);
 

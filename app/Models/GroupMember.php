@@ -10,7 +10,7 @@ class GroupMember
 
     public function __construct()
     {
-        $this->db = DatabaseFactory::create('sqlite');
+        $this->db = DatabaseFactory::createDefault();
     }
 
     public function add($groupId, $userId)

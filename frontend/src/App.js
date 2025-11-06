@@ -4,6 +4,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Messages from './components/Messages';
 import GroupMessages from './components/GroupMessages';
+import GroupList from './components/GroupList';
+import CreateGroup from './components/CreateGroup';
 import authService from './services/auth';
 import './App.css';
 
@@ -39,6 +41,23 @@ function App() {
           />
 
           {/* Group Messages */}
+          {/* Groups */}
+          <Route
+            path="/groups"
+            element={
+              <ProtectedRoute>
+                <GroupList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/create"
+            element={
+              <ProtectedRoute>
+                <CreateGroup />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/groups/:groupId"
             element={

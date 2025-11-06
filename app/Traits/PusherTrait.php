@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Factory\DatabaseFactory;
 use App\Services\PusherService;
 use App\Services\ChannelManager;
 
@@ -48,7 +49,7 @@ trait PusherTrait
                     return;
                 }
 
-                $db = \App\Factory\DatabaseFactory::create('sqlite');
+                $db = DatabaseFactory::createDefault();
                 if (!$db->isUserInGroup((int)$groupId, $this->userId)) {
                     $this->jsonResponse(['error' => 'User is not a member of this group'], 403);
                     return;

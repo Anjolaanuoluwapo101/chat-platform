@@ -13,13 +13,14 @@ trait DatabaseGroupTrait
      * Create a new group.
      *
      * @param string $name
+     * @param bool $isAnonymous
      * @return int|false Group id or false on failure
      */
-    public function createGroup($name)
+    public function createGroup($name, $isAnonymous = true)
     {
         try {
-            $stmt = $this->pdo->prepare("INSERT INTO groups (name, updated_at) VALUES (?, datetime('now'))");
-            if ($stmt->execute([$name])) {
+            $stmt = $this->pdo->prepare("INSERT INTO groups (name, is_anonymous, updated_at) VALUES (?, ?, datetime('now'))");
+            if ($stmt->execute([$name, $isAnonymous ? 1 : 0])) {
                 return (int)$this->pdo->lastInsertId();
             }
             return false;
@@ -80,23 +81,23 @@ trait DatabaseGroupTrait
                 return [];
             }
 
-            $stmt = $this->pdo->prepare("\\
-                SELECT\\
-                    m.id,\\
-                    m.content,\\
-                    m.created_at,\\
-                    GROUP_CONCAT(DISTINCT p.file_path) as photos,\\
-                    GROUP_CONCAT(DISTINCT v.file_path) as videos,\\
-                    GROUP_CONCAT(DISTINCT a.file_path) as audios,\\
-                    u.username AS sender_username\\
-                FROM messages m\\
-                JOIN users u ON m.user_id = u.id\\
-                LEFT JOIN photos p ON m.id = p.message_id\\
-                LEFT JOIN videos v ON m.id = v.message_id\\
-                LEFT JOIN audio a ON m.id = a.message_id\\
-                WHERE m.group_id = ?\\
-                GROUP BY m.id, m.content, m.created_at, u.username\\
-                ORDER BY m.created_at DESC\\
+            $stmt = $this->pdo->prepare("
+                SELECT
+                    m.id,
+                    m.content,
+                    m.created_at,
+                    GROUP_CONCAT(DISTINCT p.file_path) as photos,
+                    GROUP_CONCAT(DISTINCT v.file_path) as videos,
+                    GROUP_CONCAT(DISTINCT a.file_path) as audios,
+                    u.username AS sender_username
+                FROM messages m
+                JOIN users u ON m.user_id = u.id
+                LEFT JOIN photos p ON m.id = p.message_id
+                LEFT JOIN videos v ON m.id = v.message_id
+                LEFT JOIN audio a ON m.id = a.message_id
+                WHERE m.group_id = ?
+                GROUP BY m.id, m.content, m.created_at, u.username
+                ORDER BY m.created_at DESC
             ");
             $stmt->execute([$groupId]);
             $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);

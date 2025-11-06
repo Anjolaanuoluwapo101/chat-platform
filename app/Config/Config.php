@@ -9,6 +9,13 @@ class Config
     public static function get($key)
     {
         $config = [
+            // default database driver: 'sqlite' or 'redis'
+            'database_driver' => getenv('DATABASE_DRIVER') ?: 'redis',
+            // redis / upstash config
+            'redis' => [
+                'url' => "rediss://default:AYprAAIncDE2MDYyODYwMzk3YmU0NjJlOWVjODZkZjk3NmQ0OGMzYXAxMzU0MzU@flexible-condor-35435.upstash.io:6379",
+                'password' => getenv('REDIS_PASSWORD') ?: null,
+            ],
             //for sqlite
             'database' => [
                 'path' => __DIR__ . '/../database/secretville.db',
