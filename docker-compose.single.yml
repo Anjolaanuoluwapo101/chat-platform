@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Combined frontend and backend service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: anonymous-website-app
+    ports:
+      - "8000:80"
+    volumes:
+      - ./public/uploads:/var/www/html/public/uploads
+      - ./database:/var/www/html/database
+      - ./logs:/var/www/html/logs
+    environment:
+      - DATABASE_DRIVER=redis
+      # Add other environment variables as needed
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  # Redis service
+  redis:
+    image: redis:alpine
+    container_name: anonymous-website-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+# Define volumes
+volumes:
+  redis-data:
+
+# Define networks
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,39 @@
+# Dependencies
+vendor/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+runtime/
+
+# Uploaded files (these should be in a volume)
+public/uploads/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker/
+
+# Frontend directory (has its own Docker setup)
+frontendAnony/
+
+# Composer
+composer.phar

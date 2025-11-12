@@ -1,4 +1,15 @@
+# Redirect all requests to the public directory
 RewriteEngine On
+
+# Prevent direct access to sensitive directories and files
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_URI} !^/frontendAnony/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ public/index.php?uri=$1 [QSA,L]
+
+# Redirect to public directory
+RewriteRule ^(.*)$ /public/$1 [L,QSA]
+
+# Ensure trailing slash for directories
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+?)/?$ /public/$1/ [L,QSA]

@@ -98,54 +98,17 @@ class MessageController extends BaseController
 
         $messageModel = new Message();
 
-        // Handle file uploads (if any, via multipart/form-data)
-        $storage = StorageFactory::create('local');
-        $mediaUrls = [];
-        $errors = [];
+        // Handle file uploads using the base class method
+        $fileProcessingResult = $this->processUploadedFiles();
+        $mediaUrls = $fileProcessingResult['mediaUrls'];
+        $errors = $fileProcessingResult['errors'];
 
-        if (isset($_FILES['media']) && is_array($_FILES['media']['name'])) {
-            $files = $_FILES['media'];
-            $fileCount = count($files['name']);
+        $messageId = $messageModel->saveMessage($username, $text, $time, $mediaUrls, null , null, null );
 
-            for ($i = 0; $i < $fileCount; $i++) {
-                $file = [
-                    'name' => $files['name'][$i],
-                    'type' => $files['type'][$i],
-                    'tmp_name' => $files['tmp_name'][$i],
-                    'error' => $files['error'][$i],
-                    'size' => $files['size'][$i],
-                ];
-
-                if ($file['error'] === 0) {
-                    $mediaUrl = $storage->store($file);
-                    if ($mediaUrl) {
-                        $mediaUrls[] = $mediaUrl;
-                    } else {
-                        $errors[] = 'Failed to store media file: ' . $file['name'];
-                    }
-                } else {
-                    $errors[] = 'Upload error for ' . $file['name'] . ': ' . $file['error'];
-                }
-            }
-        }
-
-        $messageModel->saveMessage($username, $text, $time, $mediaUrls);
-
-        // Use ChannelManager to get the appropriate channel
-        $channelManager = new ChannelManager();
-        $identifier = $username;
-        $channelInfo = $channelManager->getChannel('individual', $identifier);
-        $channel = $channelInfo['name'];
-
-        // Trigger Pusher event for real-time updates
-        $pusherService = new PusherService();
-        $eventData = [
-            'username' => $username,  //the username here is the receiver of the message
-            'content' => htmlspecialchars($text),
-            'created_at' => $time,
-            'media_urls' => $mediaUrls
-        ];
-        $pusherService->triggerEvent($channel, 'new-message', $eventData);
+        // Handle Pusher event
+        $pusherResult = $this->handlePusherEvent($username, $text, $time, $mediaUrls, $messageId);
+        $channel = $pusherResult['channel'];
+        $channelInfo = $pusherResult['channelInfo'];
 
         $response = [
             'success' => true,
@@ -159,5 +122,31 @@ class MessageController extends BaseController
         $this->jsonResponse($response);
     }
 
+    /**
+     * Handle Pusher event for real-time updates
+     */
+    private function handlePusherEvent($username, $text, $time, $mediaUrls, $messageId)
+    {
+        // Use ChannelManager to get the appropriate channel
+        $channelManager = new ChannelManager();
+        $identifier = $username;
+        $channelInfo = $channelManager->getChannel('individual', $identifier);
+        $channel = $channelInfo['name'];
 
+        // Trigger Pusher event for real-time updates
+        $pusherService = new PusherService();
+        $eventData = [
+            'id' => $messageId,
+            'username' => $username,  //the username here is the receiver of the message
+            'content' => htmlspecialchars($text),
+            'created_at' => $time,
+            'media_urls' => $mediaUrls
+        ];
+        $pusherService->triggerEvent($channel, 'new-message', $eventData);
+
+        return [
+            'channel' => $channel,
+            'channelInfo' => $channelInfo
+        ];
+    }
 }

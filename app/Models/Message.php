@@ -4,9 +4,7 @@ namespace App\Models;
 
 use App\Factory\DatabaseFactory;
 use App\Log\Logger;
-use App\Models\Photo;
-use App\Models\Video;
-use App\Models\Audio;
+
 
 class Message
 {
@@ -25,7 +23,7 @@ class Message
         return $this->db->getMessages($username);
     }
 
-    public function saveMessage($username, $text, $time, $mediaUrls = [], $groupId = null)
+    public function saveMessage($username, $text, $time, $mediaUrls = [], $groupId = null, $replyToMessageId = null , $parentMessageData)
     {
         $message = [
             'username' => $username,

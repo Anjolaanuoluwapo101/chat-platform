@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Factory\StorageFactory;
+use App\Factory\DatabaseFactory;
+
 class BaseController
 {
     /**
@@ -27,7 +30,7 @@ class BaseController
      */
     private function setCorsHeaders()
     {
-        header('Access-Control-Allow-Origin: http://localhost:3000'); // React dev server
+        header('Access-Control-Allow-Origin: http://localhost:5173'); // React dev server
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
         header('Access-Control-Allow-Credentials: true');
@@ -105,5 +108,83 @@ class BaseController
         $userId = $token;
         // TODO: Validate token properly
         return $userId;
+    }
+
+    /**
+     * Process uploaded files and return media URLs
+     * Shared method for all controllers that handle file uploads
+     */
+    protected function processUploadedFiles()
+    {
+        $storage = StorageFactory::create('local');
+        $mediaUrls = [];
+        $errors = [];
+
+        if (isset($_FILES['media']) && is_array($_FILES['media']['name'])) {
+            $files = $_FILES['media'];
+            $fileCount = count($files['name']);
+
+            for ($i = 0; $i < $fileCount; $i++) {
+                $file = [
+                    'name' => $files['name'][$i],
+                    'type' => $files['type'][$i],
+                    'tmp_name' => $files['tmp_name'][$i],
+                    'error' => $files['error'][$i],
+                    'size' => $files['size'][$i],
+                ];
+
+                if ($file['error'] === 0) {
+                    $mediaUrl = $storage->store($file);
+                    if ($mediaUrl) {
+                        $mediaUrls[] = $mediaUrl;
+                    } else {
+                        $errors[] = 'Failed to store media file: ' . $file['name'];
+                    }
+                } else {
+                    $errors[] = 'Upload error for ' . $file['name'] . ': ' . $file['error'];
+                }
+            }
+        }
+
+        return [
+            'mediaUrls' => $mediaUrls,
+            'errors' => $errors
+        ];
+    }
+
+    /**
+     * Save media metadata to the appropriate database table based on MIME type
+     * 
+     * @param int $messageId The ID of the message the media is associated with
+     * @param string $filePath The path to the media file
+     * @param string $mimeType The MIME type of the media file
+     * @return bool True if saved successfully, false otherwise
+     */
+    protected function saveMediaMetadata($messageId, $filePath, $mimeType)
+    {
+        // Get database instance
+        $db = DatabaseFactory::createDefault();
+        
+        // Prepare media data
+        $mediaData = [
+            'message_id' => $messageId,
+            'file_path' => $filePath,
+            'mime_type' => $mimeType
+        ];
+        
+        // Determine which table to save to based on MIME type
+        if (strpos($mimeType, 'image') === 0) {
+            // Save to photos table
+            return $db->savePhoto($mediaData);
+        } elseif (strpos($mimeType, 'video') === 0) {
+            // Save to videos table
+            return $db->saveVideo($mediaData);
+        } elseif (strpos($mimeType, 'audio') === 0) {
+            // Save to audio table
+            return $db->saveAudio($mediaData);
+        }
+        
+        // If MIME type doesn't match any category, we don't save it to a specific table
+        return true;
     }
 }
