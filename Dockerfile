@@ -69,6 +69,10 @@ RUN a2enmod rewrite
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 
+RUN find /var/www/html/public -type d -exec chmod 755 {} \;
+RUN find /var/www/html/public -type f -exec chmod 644 {} \;
+RUN chown -R www-data:www-data /var/www/html
+
 EXPOSE 80
 
 CMD ["apache2-foreground"]
