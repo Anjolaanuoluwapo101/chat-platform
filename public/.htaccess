@@ -1,4 +1,30 @@
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?uri=$1 [QSA,L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # -------------------------------------------------------
+    # RULE 1: The Backend (API)
+    # -------------------------------------------------------
+    # If the URL starts with "/api", send it to index.php
+    # [NC] means "Not Case sensitive"
+    # [L] means "Last rule" (stop processing if this matches)
+    RewriteCond %{REQUEST_URI} ^/api [NC]
+    RewriteRule ^ index.php [L]
+
+    # -------------------------------------------------------
+    # RULE 2: Static Files (Images, CSS, JS)
+    # -------------------------------------------------------
+    # If the requested filename exists as a file (-f) or directory (-d),
+    # serve it directly and don't do any rewriting.
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # -------------------------------------------------------
+    # RULE 3: The Frontend (React Router)
+    # -------------------------------------------------------
+    # If we got this far, it's not an API call and it's not a real file.
+    # It must be a React route (like /login or /profile).
+    # Send it to index.html so React can handle it.
+    RewriteRule ^ index.html [L]
+</IfModule>
