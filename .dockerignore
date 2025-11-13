@@ -33,8 +33,6 @@ node_modules/
 .gitignore
 
 # Docker
-Dockerfile*
-docker-compose*
 .docker/
 
 

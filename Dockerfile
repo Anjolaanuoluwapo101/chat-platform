@@ -53,7 +53,7 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
 # Install dependencies (This layer is now cached unless composer.json changes)
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
 
 # NOW copy the actual backend code
 # (Changing your PHP code won't trigger a re-install of composer packages)
@@ -61,7 +61,7 @@ COPY app/ ./app/
 COPY public/ ./public/
 
 # Finish composer setup
-RUN composer dump-autoload --optimize --no-scripts --ignore-platform-reqs
+RUN composer dump-autoload --optimize --no-scripts 
 
 # -------------------------------------------
 # OPTIMIZATION 2: Frontend Caching
