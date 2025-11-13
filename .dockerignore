@@ -32,8 +32,6 @@ Dockerfile*
 docker-compose*
 .docker/
 
-# Frontend directory (has its own Docker setup)
-frontendAnony/
 
 # Composer
 composer.phar
