@@ -23,6 +23,11 @@ public/uploads/
 *.swo
 *~
 
+# Ignore node_modules
+node_modules/
+**/node_modules
+/node_modules/
+
 # Git
 .git/
 .gitignore
