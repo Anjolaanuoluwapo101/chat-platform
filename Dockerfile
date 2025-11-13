@@ -61,7 +61,7 @@ COPY app/ ./app/
 COPY public/ ./public/
 
 # Finish composer setup
-RUN composer dump-autoload --optimize
+RUN composer dump-autoload --optimize --no-scripts --ignore-platform-reqs
 
 # -------------------------------------------
 # OPTIMIZATION 2: Frontend Caching
