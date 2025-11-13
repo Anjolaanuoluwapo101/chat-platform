@@ -53,7 +53,7 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
 # Install dependencies (This layer is now cached unless composer.json changes)
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # NOW copy the actual backend code
 # (Changing your PHP code won't trigger a re-install of composer packages)
