@@ -7,25 +7,15 @@ RUN docker-php-ext-install pdo pdo_mysql
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Node.js
-# 1. Install system dependencies required for Composer and PHP extensions
-# RUN apt-get update && apt-get install -y \
-#     git \
-#     unzip \
-#     libzip-dev \
-#     curl \
-#     && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-#     && apt-get install -y nodejs \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 
 RUN apt-get update && apt-get install -y \
     apt-utils \
     git \
-    curl \
     zip \
     unzip \
-    nodejs \
     npm \
     libpng-dev \
     libonig-dev \
