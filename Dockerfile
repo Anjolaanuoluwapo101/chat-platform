@@ -9,15 +9,37 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install Node.js
 # 1. Install system dependencies required for Composer and PHP extensions
+# RUN apt-get update && apt-get install -y \
+#     git \
+#     unzip \
+#     libzip-dev \
+#     curl \
+#     && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+#     && apt-get install -y nodejs \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update && apt-get install -y \
+    apt-utils \
     git \
-    unzip \
-    libzip-dev \
     curl \
-    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean \
+    zip \
+    unzip \
+    nodejs \
+    npm \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libpq-dev \
+    sqlite3 \
+    libsqlite3-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip \
     && rm -rf /var/lib/apt/lists/*
+
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
@@ -31,7 +53,7 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
 # Install dependencies (This layer is now cached unless composer.json changes)
-RUN composer install --no-scripts --no-autoloader
+RUN composer install --no-dev --optimize-autoloader
 
 # NOW copy the actual backend code
 # (Changing your PHP code won't trigger a re-install of composer packages)
