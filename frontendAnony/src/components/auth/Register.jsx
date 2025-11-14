@@ -75,10 +75,10 @@ const Register = () => {
             type="text"
             autoComplete="username"
             minLength="5"
-            value={formData.username}
+            value={formData?.username}
             onChange={handleChange}
             placeholder="Choose a username"
-            error={errors.username ?? ''}
+            error={errors?.username ?? ''}
           />
 
           <FormInput
@@ -87,26 +87,26 @@ const Register = () => {
             name="email"
             type="email"
             autoComplete="email"
-            value={formData.email}
+            value={formData?.email}
             onChange={handleChange}
             placeholder="you@example.com"
-            error={errors.email ?? '' }
+            error={errors?.email ?? '' }
           />
 
           <PasswordInput
             label="Password"
             id="password"
             name="password"
-            value={formData.password}
+            value={formData?.password}
             onChange={handleChange}
             autoComplete="new-password"
             minLength="5"
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
-            error={errors.password ?? ''}
+            error={errors?.password ?? ''}
           />
 
-          <ErrorMessage message={errors.general} />
+          <ErrorMessage message={errors?.general} />
           <SuccessMessage message={message} />
 
           <SubmitButton 

@@ -66,25 +66,25 @@ const Login = () => {
             name="username"
             type="text"
             autoComplete="username"
-            value={formData.username}
+            value={formData?.username}
             onChange={handleChange}
             placeholder="Enter your username"
-            error={errors.username ?? ''}
+            error={errors?.username ?? ''}
           />
 
           <PasswordInput
             label="Password"
             id="password"
             name="password"
-            value={formData.password}
+            value={formData?.password}
             onChange={handleChange}
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
             showForgotPassword={true}
-            error={errors.password ?? ''}
+            error={errors?.password ?? ''}
           />
 
-          <ErrorMessage message={errors.general} />
+          <ErrorMessage message={errors?.general} />
 
           <SubmitButton 
             loading={loading} 
