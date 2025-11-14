@@ -69,7 +69,7 @@ const Login = () => {
             value={formData.username}
             onChange={handleChange}
             placeholder="Enter your username"
-            error={errors.username}
+            error={errors.username ?? ''}
           />
 
           <PasswordInput
@@ -81,7 +81,7 @@ const Login = () => {
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
             showForgotPassword={true}
-            error={errors.password}
+            error={errors.password ?? ''}
           />
 
           <ErrorMessage message={errors.general} />

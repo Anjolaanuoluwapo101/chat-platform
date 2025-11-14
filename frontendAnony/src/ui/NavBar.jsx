@@ -16,38 +16,38 @@ const AnonymousIcon = (props) => (
   >
     {/* Head */}
     <ellipse cx="50" cy="35" rx="22" ry="28" fill="currentColor" />
-
+    
     {/* Neck */}
     <rect x="43" y="58" width="14" height="12" fill="currentColor" />
-
+    
     {/* Shoulders */}
     <path d="M 30 70 Q 50 75 70 70 L 75 85 Q 50 90 25 85 Z" fill="currentColor" />
-
+    
     {/* Eyes - positioned in upper half of face */}
     <ellipse cx="42" cy="28" rx="3" ry="4" fill="#1F2937" />
     <ellipse cx="58" cy="28" rx="3" ry="4" fill="#1F2937" />
-
+    
     {/* Eye highlights */}
     <ellipse cx="43" cy="27" rx="1" ry="1.5" fill="white" opacity="0.8" />
     <ellipse cx="59" cy="27" rx="1" ry="1.5" fill="white" opacity="0.8" />
-
+    
     {/* Subtle eyebrows */}
     <path d="M 38 24 Q 42 23 45 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     <path d="M 55 24 Q 58 23 62 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-
+    
     {/* Bandana - main cloth covering from midway down (nose to chin) */}
     <ellipse cx="50" cy="45" rx="24" ry="14" fill="#2563EB" />
-
+    
     {/* Bandana - top fold at nose level */}
     <ellipse cx="50" cy="40" rx="24" ry="3" fill="#1E40AF" />
-
+    
     {/* Bandana - bottom edge */}
     <ellipse cx="50" cy="50" rx="22" ry="2" fill="#1E40AF" opacity="0.6" />
-
+    
     {/* Bandana - knot on right side */}
     <circle cx="73" cy="45" r="4.5" fill="#1E40AF" />
     <circle cx="76" cy="43" r="3.5" fill="#2563EB" />
-
+    
     {/* Bandana - left side tie hint */}
     <circle cx="27" cy="45" r="2" fill="#1E40AF" opacity="0.7" />
   </svg>
@@ -89,17 +89,17 @@ const CloseIcon = (props) => (
  * Cursive Underline SVG Component
  */
 const CursiveUnderline = ({ className = "" }) => (
-  <svg
+  <svg 
     className={className}
-    viewBox="0 0 200 10"
-    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 200 10" 
+    xmlns="http://www.w3.org/2000/svg" 
     preserveAspectRatio="none"
   >
-    <path
-      d="M 0 5 Q 50 2, 100 5 T 200 5"
-      stroke="currentColor"
-      strokeWidth="2"
-      fill="none"
+    <path 
+      d="M 0 5 Q 50 2, 100 5 T 200 5" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      fill="none" 
       strokeLinecap="round"
     />
   </svg>
@@ -115,17 +115,17 @@ const NavItem = ({ item, onClick, isExpanded }) => {
   const baseClasses = "flex items-center rounded-lg cursor-pointer transition-colors duration-300";
   const expandedClasses = "px-4 py-3";
   const collapsedClasses = "p-3 justify-center";
-
+  
   const iconBaseClasses = "w-5 h-5";
   const iconExpandedClasses = "text-white";
   const iconCollapsedClasses = "text-white";
-
+  
   const textClasses = isExpanded ? "ml-3 text-sm font-medium" : "hidden";
 
   return (
-    <a
-      href={item.to || '#'}
-      onClick={onClick}
+    <a 
+      href={item.to || '#'} 
+      onClick={onClick} 
       className={`${baseClasses} ${isExpanded ? expandedClasses : collapsedClasses} hover:bg-blue-700`}
     >
       <span className={`${iconBaseClasses} ${isExpanded ? iconExpandedClasses : iconCollapsedClasses}`}>
@@ -146,26 +146,27 @@ const NavBar = ({ navItems = [], title = 'Navigation' }) => {
   return (
     <div className="flex">
       {/* Collapsible sidebar */}
-      <aside
-        className={`h-screen sticky top-0 bg-blue-600 text-white transition-all duration-300 ease-in-out ${expanded ? 'w-64' : 'w-0'
-          }`}
+      <aside 
+        className={`h-screen sticky top-0 bg-blue-600 text-white transition-all duration-300 ease-in-out ${
+          expanded ? 'w-64' : 'w-20'
+        }`}
       >
         <div className="flex flex-col h-full">
           {/* Header section */}
           <div className="mb-6 px-2 py-4">
-            <div className="flex flex-row justify-between">
+            <div className="flex items-center justify-between">
               <div className={`flex items-center ${expanded ? 'gap-3' : 'justify-center'}`}>
                 <AnonymousIcon className={`text-white ${expanded ? 'w-12 h-12' : 'w-8 h-8'}`} />
-              </div>
                 {expanded && (
-                  <div className="relative inline-block mr-auto">
+                  <div className="relative inline-block">
                     <div className="font-bold text-xl md:text-2xl italic">{title}</div>
                     <CursiveUnderline className="absolute left-0 right-0 -bottom-1 w-full h-1.5 text-white" />
                   </div>
                 )}
-              <button
-                onClick={() => setExpanded(!expanded)}
-                aria-label={expanded ? "Collapse menu" : "Expand menu"}
+              </div>
+              <button 
+                onClick={() => setExpanded(!expanded)} 
+                aria-label={expanded ? "Collapse menu" : "Expand menu"} 
                 className="p-2 rounded-full text-white hover:bg-blue-700"
               >
                 {expanded ? (
@@ -173,20 +174,20 @@ const NavBar = ({ navItems = [], title = 'Navigation' }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 ) : (
-                  <MenuIcon className="w-5 h-5 scale-150" />
+                  <MenuIcon className="w-5 h-5" />
                 )}
               </button>
             </div>
           </div>
-
+          
           {/* Navigation items */}
           <nav className="flex-1 overflow-auto px-2 space-y-1">
             {navItems.map((it, idx) => (
-              <NavItem
-                key={idx}
-                item={it}
-                onClick={it.onClick}
-                isExpanded={expanded}
+              <NavItem 
+                key={idx} 
+                item={it} 
+                onClick={it.onClick} 
+                isExpanded={expanded} 
               />
             ))}
           </nav>
@@ -194,7 +195,7 @@ const NavBar = ({ navItems = [], title = 'Navigation' }) => {
       </aside>
     </div>
   );
-};
+}; 
 
 export default NavBar;
 export { AnonymousIcon, CloseIcon };

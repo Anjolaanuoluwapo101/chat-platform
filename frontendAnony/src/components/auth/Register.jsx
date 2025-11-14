@@ -21,7 +21,12 @@ const Register = () => {
     email: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({
+    username: '',
+    email: '',
+    password: '',
+    general: ''
+  });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -73,7 +78,7 @@ const Register = () => {
             value={formData.username}
             onChange={handleChange}
             placeholder="Choose a username"
-            error={errors.username}
+            error={errors.username ?? ''}
           />
 
           <FormInput
@@ -85,7 +90,7 @@ const Register = () => {
             value={formData.email}
             onChange={handleChange}
             placeholder="you@example.com"
-            error={errors.email}
+            error={errors.email ?? '' }
           />
 
           <PasswordInput
@@ -98,7 +103,7 @@ const Register = () => {
             minLength="5"
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
-            error={errors.password}
+            error={errors.password ?? ''}
           />
 
           <ErrorMessage message={errors.general} />
