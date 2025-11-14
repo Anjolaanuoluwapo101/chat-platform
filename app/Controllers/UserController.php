@@ -125,7 +125,7 @@ class UserController extends BaseController
             }
         } else {
             $this->logger->warning("Failed API login attempt for: $username");
-            $this->jsonResponse(['success' => false, 'errors' => ['password' => 'Invalid credentials.']], 401);
+            $this->jsonResponse(['success' => false, 'errors' => ['password' => 'Invalid credentials.']], 200);
         }
     }
 

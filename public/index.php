@@ -1,8 +1,15 @@
 <?php
 
-header('Access-Control-Allow-Origin: http://localhost:5173'); // React dev server
+// Save request link for redirect
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+
+header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Access-Control-Allow-Origin');
 header('Access-Control-Allow-Credentials: true');
 
 // Handle preflight OPTIONS request
@@ -32,21 +39,21 @@ $routes = new RouteCollection();
 
 // Authentication routes
 $routes->add('login', new Route('/api/login', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         $controller = new UserController();
         return $controller->login();
     }
 ], [], [], '', [], ['POST']));
 
 $routes->add('register', new Route('/api/register', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         $controller = new UserController();
         return $controller->register();
     }
 ], [], [], '', [], ['POST']));
 
 $routes->add('verify', new Route('/api/verify', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         $controller = new VerificationController();
         return $controller->verify();
     }
@@ -54,14 +61,14 @@ $routes->add('verify', new Route('/api/verify', [
 
 // Message routes
 $routes->add('view_messages', new Route('/api/messages', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         $controller = new MessageController();
         return $controller->viewMessages();
     }
 ], [], [], '', [], ['GET']));
 
 $routes->add('send_individual_message', new Route('/api/messages', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         $controller = new MessageController();
         return $controller->submitMessage();
     }
@@ -69,21 +76,21 @@ $routes->add('send_individual_message', new Route('/api/messages', [
 
 // Group routes
 $routes->add('get_user_groups', new Route('/api/groups', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         $controller = new GroupController();
         return $controller->getUserGroups();
     }
 ], [], [], '', [], ['GET']));
 
 $routes->add('create_group', new Route('/api/groups', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         $controller = new GroupController();
         return $controller->createGroup();
     }
 ], [], [], '', [], ['POST']));
 
 $routes->add('get_group_messages', new Route('/api/groups/{id}', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_GET['group_id'] = $id;
         return $controller->viewMessages();
@@ -91,7 +98,7 @@ $routes->add('get_group_messages', new Route('/api/groups/{id}', [
 ], ['id' => '\d+'], [], '', [], ['GET']));
 
 $routes->add('get_group_info', new Route('/api/groups/{id}/info', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_GET['group_id'] = $id;
         return $controller->getGroupInfo();
@@ -99,15 +106,15 @@ $routes->add('get_group_info', new Route('/api/groups/{id}/info', [
 ], ['id' => '\d+'], [], '', [], ['GET']));
 
 $routes->add('get_group_members', new Route('/api/groups/{id}/members', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_GET['group_id'] = $id;
         return $controller->getGroupMembers();
     }
-],  ['id' => '\d+'], [], '', [], ['GET']));
+], ['id' => '\d+'], [], '', [], ['GET']));
 
 $routes->add('join_group', new Route('/api/groups/{id}/join', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->joinGroup();
@@ -115,7 +122,7 @@ $routes->add('join_group', new Route('/api/groups/{id}/join', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('submit_group_message', new Route('/api/groups/{id}/messages', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->submitMessage();
@@ -123,7 +130,7 @@ $routes->add('submit_group_message', new Route('/api/groups/{id}/messages', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('mark_read', new Route('/api/groups/{id}/markread', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->markRead();
@@ -132,7 +139,7 @@ $routes->add('mark_read', new Route('/api/groups/{id}/markread', [
 
 // Admin routes
 $routes->add('remove_admin', new Route('/api/groups/{id}/remove-admin', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->removeAdmin();
@@ -140,7 +147,7 @@ $routes->add('remove_admin', new Route('/api/groups/{id}/remove-admin', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('is_admin', new Route('/api/groups/{id}/is-admin', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_GET['group_id'] = $id;
         return $controller->isAdmin();
@@ -148,7 +155,7 @@ $routes->add('is_admin', new Route('/api/groups/{id}/is-admin', [
 ], ['id' => '\d+'], [], '', [], ['GET']));
 
 $routes->add('get_group_admins', new Route('/api/groups/{id}/admins', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_GET['group_id'] = $id;
         return $controller->getGroupAdmins();
@@ -156,7 +163,7 @@ $routes->add('get_group_admins', new Route('/api/groups/{id}/admins', [
 ], ['id' => '\d+'], [], '', [], ['GET']));
 
 $routes->add('update_group_settings', new Route('/api/groups/{id}/update-settings', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->updateGroupSettings();
@@ -164,7 +171,7 @@ $routes->add('update_group_settings', new Route('/api/groups/{id}/update-setting
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('delete_group', new Route('/api/groups/{id}/delete', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->deleteGroup();
@@ -172,7 +179,7 @@ $routes->add('delete_group', new Route('/api/groups/{id}/delete', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('ban_user', new Route('/api/groups/{id}/ban-user', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->banUser();
@@ -180,7 +187,7 @@ $routes->add('ban_user', new Route('/api/groups/{id}/ban-user', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('unban_user', new Route('/api/groups/{id}/unban-user', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->unbanUser();
@@ -188,7 +195,7 @@ $routes->add('unban_user', new Route('/api/groups/{id}/unban-user', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('promote_admin', new Route('/api/groups/{id}/promote-admin', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->promoteToAdmin();
@@ -196,7 +203,7 @@ $routes->add('promote_admin', new Route('/api/groups/{id}/promote-admin', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('demote_admin', new Route('/api/groups/{id}/demote-admin', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_POST['group_id'] = $id;
         return $controller->demoteAdmin();
@@ -204,7 +211,7 @@ $routes->add('demote_admin', new Route('/api/groups/{id}/demote-admin', [
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
 $routes->add('get_banned_users', new Route('/api/groups/{id}/banned-users', [
-    '_controller' => function(Request $request, $id) {
+    '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
         $_GET['group_id'] = $id;
         return $controller->getBannedUsers();
@@ -212,7 +219,7 @@ $routes->add('get_banned_users', new Route('/api/groups/{id}/banned-users', [
 ], ['id' => '\d+'], [], '', [], ['GET']));
 
 $routes->add('pusher_auth', new Route('/api/pusher/auth', [
-    '_controller' => function(Request $request) {
+    '_controller' => function (Request $request) {
         require __DIR__ . '/authenticate-pusher.php';
     }
 ], [], [], '', [], ['POST']));
@@ -228,18 +235,18 @@ $matcher = new UrlMatcher($routes, $context);
 try {
     // Match the route
     $parameters = $matcher->match($request->getPathInfo());
-    
+
     // Set route parameters to the request
     $request->attributes->add($parameters);
-    
+
     // Get the controller
     $controller = $parameters['_controller'];
-    
+
     // Execute the controller
-    $response = $controller($request, ...array_filter($parameters, function($key) {
+    $response = $controller($request, ...array_filter($parameters, function ($key) {
         return $key !== '_controller' && $key !== '_route';
     }, ARRAY_FILTER_USE_KEY));
-    
+
     // If the response is already a Response object, use it, otherwise create one
     if (!$response instanceof Response) {
         $response = new Response(
@@ -248,10 +255,10 @@ try {
             ['Content-Type' => 'application/json']
         );
     }
-    
+
     // Send the response
     $response->send();
-    
+
 } catch (\Symfony\Component\Routing\Exception\ResourceNotFoundException $e) {
     // 404 Not Found
     $response = new Response(

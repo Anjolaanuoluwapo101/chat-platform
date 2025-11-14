@@ -54,7 +54,7 @@ class User
                 'password_hash' => $this->hashPassword($password),
                 'email' => $email,
                 'verification_code' => $verificationCode,
-                'is_verified' => 0,
+                'is_verified' => 1, // Automatically verify for now
             ];
 
             $this->db->saveUser($user);

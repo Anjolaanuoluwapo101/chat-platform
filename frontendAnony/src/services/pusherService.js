@@ -1,11 +1,10 @@
 import Pusher from 'pusher-js';
-import { baseURL } from './config';
 
 // Pusher configuration
 const pusher = new Pusher('7e136cd2a9797c421ac1', {
   cluster: 'eu',
   encrypted: true,
-  authEndpoint: baseURL + 'pusher/auth',
+  authEndpoint:import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
   auth: {
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`

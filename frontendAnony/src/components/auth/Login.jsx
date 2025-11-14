@@ -20,7 +20,11 @@ const Login = () => {
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+    general: ''
+  });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 

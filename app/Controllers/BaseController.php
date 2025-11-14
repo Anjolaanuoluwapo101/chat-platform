@@ -14,33 +14,29 @@ class BaseController
 
     public function __construct()
     {
-        // Enable CORS for React frontend
-        $this->setCorsHeaders();
 
         // Create configured database instance for controllers to use
         $this->db = \App\Factory\DatabaseFactory::createDefault();
 
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        
     }
 
     /**
      * Set CORS headers to allow requests from React frontend.
      */
-    private function setCorsHeaders()
-    {
-        header('Access-Control-Allow-Origin: http://localhost:5173'); // React dev server
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-        header('Access-Control-Allow-Credentials: true');
+    // private function setCorsHeaders()
+    // {
+    //     header('Access-Control-Allow-Origin: *'); // React dev server
+    //     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    //     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+    //     header('Access-Control-Allow-Credentials: true');
 
-        // Handle preflight OPTIONS request
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            http_response_code(200);
-            exit;
-        }
-    }
+    //     // Handle preflight OPTIONS request
+    //     if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    //         http_response_code(200);
+    //         exit;
+    //     }
+    // }
 
     /**
      * Render a view (for backward compatibility, but we'll phase this out).
