@@ -89,8 +89,11 @@
 
 
 
-# Use PHP 8.2 (Required for modern Composer dependencies)
-FROM php:8.2-apache
+# Use PHP 8.2-FPM (FastCGI Process Manager)
+FROM php:8.2-fpm
+
+# Install Nginx
+RUN apt-get update && apt-get install -y nginx
 
 # Install required extensions
 RUN docker-php-ext-install pdo pdo_mysql
@@ -124,32 +127,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN pecl install redis && docker-php-ext-enable redis
 
-# --- START: Apache Configuration Fix ---
-# This is a much cleaner way than using sed.
-# We create our own config file that does exactly what we want.
-
-# 1. Enable mod_rewrite
-RUN a2enmod rewrite
-
-# 2. Disable the default site
-RUN a2dissite 000-default.conf
-
-# 3. Create a new, custom config file
-RUN echo '<VirtualHost *:80>\n' \
-    '    ServerName localhost\n' \
-    '    DocumentRoot /var/www/html/public\n\n' \
-    '    <Directory /var/www/html/public>\n' \
-    '        DirectoryIndex index.php\n' \
-    '        AllowOverride All\n' \
-    '        Require all granted\n' \
-    '    </Directory>\n\n' \
-    '    ErrorLog ${APACHE_LOG_DIR}/error.log\n' \
-    '    CustomLog ${APACHE_LOG_DIR}/access.log combined\n' \
-    '</VirtualHost>' > /etc/apache2/sites-available/my-app.conf
-
-# 4. Enable our new site
-RUN a2ensite my-app.conf
-# --- END: Apache Configuration Fix ---
+# --- Nginx Configuration ---
+# Copy our custom Nginx config file, overwriting the default
+COPY nginx.conf /etc/nginx/sites-available/default
+# --- End Nginx Configuration ---
 
 WORKDIR /var/www/html
 
@@ -159,8 +140,8 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platfo
 
 COPY app/ ./app/
 COPY public/ ./public/
-# Explicitly copy .htaccess just in case
-COPY public/.htaccess ./public/.htaccess
+# We don't need .htaccess anymore, but it doesn't hurt to copy
+COPY public/.htaccess ./public/.htaccess 
 
 RUN composer dump-autoload --optimize --no-scripts 
 
@@ -175,16 +156,15 @@ RUN cp -r dist/* ../public/
 # Final Config
 WORKDIR /var/www/html
 
-# Permissions (Note: `public` permissions are set *before* files are moved in)
-# We run chown/chmod again on the final structure.
+# Permissions
 RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
 
-# Re-apply specific permissions to public after frontend build
 RUN find /var/www/html/public -type d -exec chmod 755 {} \;
 RUN find /var/www/html/public -type f -exec chmod 644 {} \;
-RUN chown -R www-data:www-data /var/www/html/public
+RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+# This command starts BOTH PHP-FPM and Nginx
+CMD sh -c "php-fpm & nginx -g 'daemon off;'"
