@@ -284,8 +284,19 @@ try {
     $response->send();
 } catch (\Exception $e) {
     // 500 Internal Server Error
+    // $response = new Response(
+    //     json_encode(['error' => 'Internal Server Error']),
+    //     Response::HTTP_INTERNAL_SERVER_ERROR,
+    //     ['Content-Type' => 'application/json']
+    // );
+    // $response->send();
     $response = new Response(
-        json_encode(['error' => 'Internal Server Error']),
+        json_encode([
+            'error' => 'Internal Server Error',
+            'message' => $e->getMessage(), // The actual error message
+            'file' => $e->getFile(),       // The file that broke
+            'line' => $e->getLine()        // The line number
+        ]),
         Response::HTTP_INTERNAL_SERVER_ERROR,
         ['Content-Type' => 'application/json']
     );
