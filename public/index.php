@@ -6,6 +6,20 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 
+// Get the path from the request URI, without query parameters
+$requestUriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+// Check if the path starts with /api
+if ((strpos($requestUriPath, '/api') !== 0) || (strpos($requestUriPath, 'api') !== 0)) {
+    // NOT an API request.
+    // This is a route for the React app (e.g., "/", "/dashboard", "/profile").
+    // Serve the main index.html file and let React Router take over.
+    // We use @readfile to suppress errors if the file isn't found, though it should be.
+    @readfile('index.html');
+    // Stop the PHP script from running any further.
+    exit;
+}
+
 
 header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
