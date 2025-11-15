@@ -21,15 +21,15 @@ class Config
     public static function get($key)
     {
         // Load environment variables
-        self::loadEnv();
+        // self::loadEnv();
         
         $config = [
             // default database driver: 'sqlite', 'mysql' or 'redis'
-            'database_driver' => $_ENV['DATABASE_DRIVER'] ?? 'redis',
+            'database_driver' => getenv('DATABASE_DRIVER') ?: 'redis',
             // redis / upstash config
             'redis' => [
                 'url' => "rediss://default:AYprAAIncDE2MDYyODYwMzk3YmU0NjJlOWVjODZkZjk3NmQ0OGMzYXAxMzU0MzU@flexible-condor-35435.upstash.io:6379",
-                'password' => $_ENV['REDIS_PASSWORD'] ?? null,
+                'password' => getenv('REDIS_PASSWORD') ?: null,
             ],
             // for sqlite
             'database' => [
@@ -37,32 +37,32 @@ class Config
             ],
             // for mysql
             'mysql' => [
-                'host' => $_ENV['MYSQL_HOST'] ?? 'localhost',
-                'dbname' => $_ENV['MYSQL_DBNAME'] ?? 'secretville',
-                'username' => $_ENV['MYSQL_USERNAME'] ?? 'root',
-                'password' => $_ENV['MYSQL_PASSWORD'] ?? '',
-                'port' => $_ENV['MYSQL_PORT'] ?? 3306,
+                'host' => getenv('MYSQL_HOST') ?: 'localhost',
+                'dbname' => getenv('MYSQL_DBNAME') ?: 'secretville',
+                'username' => getenv('MYSQL_USERNAME') ?: 'root',
+                'password' => getenv('MYSQL_PASSWORD') ?: '',
+                'port' => getenv('MYSQL_PORT') ?: 3306,
             ],
             'app' => [
-                'name' => $_ENV['APP_NAME'] ?? 'Secret Ville',
-                'url' => $_ENV['APP_URL'] ?? 'http://localhost/anonymous-website',
+                'name' => getenv('APP_NAME') ?: 'Secret Ville',
+                'url' => getenv('APP_URL') ?: 'http://localhost/anonymous-website',
             ],
             'mail' => [
-                'from' => $_ENV['MAIL_FROM'] ?? 'noreply@secretville.com',
-                'smtp_host' => $_ENV['MAIL_SMTP_HOST'] ?? 'smtp.gmail.com',
-                'smtp_username' => $_ENV['MAIL_SMTP_USERNAME'] ?? 'anjolaakinsoyinu@gmail.com',
-                'smtp_password' => $_ENV['MAIL_SMTP_PASSWORD'] ?? 'lmsyoeseknskcmdi',
-                'smtp_secure' => $_ENV['MAIL_SMTP_SECURE'] ?? PHPMailer::ENCRYPTION_SMTPS,
-                'smtp_port' => $_ENV['MAIL_SMTP_PORT'] ?? 465,
+                'from' => getenv('MAIL_FROM') ?: 'noreply@secretville.com',
+                'smtp_host' => getenv('MAIL_SMTP_HOST') ?: 'smtp.gmail.com',
+                'smtp_username' => getenv('MAIL_SMTP_USERNAME') ?: 'anjolaakinsoyinu@gmail.com',
+                'smtp_password' => getenv('MAIL_SMTP_PASSWORD') ?: 'lmsyoeseknskcmdi',
+                'smtp_secure' => getenv('MAIL_SMTP_SECURE') ?: PHPMailer::ENCRYPTION_SMTPS,
+                'smtp_port' => getenv('MAIL_SMTP_PORT') ?: 465,
             ],
             'pusher' => [
-                'app_id' => $_ENV['PUSHER_APP_ID'] ?? '1678820',
-                'key' => $_ENV['PUSHER_APP_KEY'] ?? '7e136cd2a9797c421ac1',
-                'secret' => $_ENV['PUSHER_APP_SECRET'] ?? '8998ff663690c6c06322',
-                'cluster' => $_ENV['PUSHER_APP_CLUSTER'] ?? 'eu',
+                'app_id' => getenv('PUSHER_APP_ID') ?: '1678820',
+                'key' => getenv('PUSHER_APP_KEY') ?: '7e136cd2a9797c421ac1',
+                'secret' => getenv('PUSHER_APP_SECRET') ?: '8998ff663690c6c06322',
+                'cluster' => getenv('PUSHER_APP_CLUSTER') ?: 'eu',
             ],
             'jwt' => [
-                'secret' => $_ENV['JWT_SECRET'] ?? 'mannitol-salt-agar',
+                'secret' => getenv('JWT_SECRET') ?: 'mannitol-salt-agar',
             ],
         ];
 
