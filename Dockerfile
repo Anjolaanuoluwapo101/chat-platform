@@ -38,11 +38,16 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# ADD THIS LINE:
+# This finds "AllowOverride None" in the site config (which now points to your public dir)
+# and changes it to "AllowOverride All", enabling your .htaccess file.
+RUN sed -ri -e 's!AllowOverride None!AllowOverride All!g' /etc/apache2/sites-available/*.conf
 # --- FIX END ---
 
-RUN echo "<Directory /var/www/html/public>" >> /etc/apache2/apache2.conf && \
-    echo "    AllowOverride All" >> /etc/apache2/apache2.conf && \
-    echo "</Directory>" >> /etc/apache2/apache2.conf
+# RUN echo "<Directory /var/www/html/public>" >> /etc/apache2/apache2.conf && \
+#     echo "    AllowOverride All" >> /etc/apache2/apache2.conf && \
+#     echo "</Directory>" >> /etc/apache2/apache2.conf
 
 WORKDIR /var/www/html
 
