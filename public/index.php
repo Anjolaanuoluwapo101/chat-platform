@@ -6,16 +6,16 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 
-// Get the path from the request URI, without query parameters
+// Get the path from the request URI, without query parameters supporting 
 $requestUriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Check if the path starts with /api
-if ((strpos($requestUriPath, '/api') !== 0) || (strpos($requestUriPath, 'api') !== 0)) {
+if (strpos($requestUriPath, '/api') !== 0) {
+    echo $_SERVER['REQUEST_URI'];
     // NOT an API request.
     // This is a route for the React app (e.g., "/", "/dashboard", "/profile").
     // Serve the main index.html file and let React Router take over.
-    // We use @readfile to suppress errors if the file isn't found, though it should be.
-    echo "jfgjjfjfjf";
+    // @readfile to suppress errors if the file isn't found, though it should be.
     @readfile('index.html');
     // Stop the PHP script from running any further.
     exit;
