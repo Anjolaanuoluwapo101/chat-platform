@@ -57,6 +57,7 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platfo
 
 COPY app/ ./app/
 COPY public/ ./public/
+COPY public/.htaccess ./public/.htaccess
 
 RUN composer dump-autoload --optimize --no-scripts 
 
