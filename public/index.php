@@ -15,6 +15,7 @@ if ((strpos($requestUriPath, '/api') !== 0) || (strpos($requestUriPath, 'api') !
     // This is a route for the React app (e.g., "/", "/dashboard", "/profile").
     // Serve the main index.html file and let React Router take over.
     // We use @readfile to suppress errors if the file isn't found, though it should be.
+    echo "jfgjjfjfjf";
     @readfile('index.html');
     // Stop the PHP script from running any further.
     exit;
