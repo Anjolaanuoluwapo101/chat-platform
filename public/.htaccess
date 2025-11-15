@@ -8,10 +8,12 @@
     # If the URL starts with "/api", send it to index.php
     # [NC] means "Not Case sensitive"
     # [L] means "Last rule" (stop processing if this matches)
-    RewriteRule ^assets/ - [L]
-
+    
     RewriteCond %{REQUEST_URI} ^/api [NC]
     RewriteRule ^ index.php [L]
+
+    RewriteRule ^assets/ - [L]
+
 
     # -------------------------------------------------------
     # RULE 2: Static Files (Images, CSS, JS)
