@@ -52,10 +52,10 @@ COPY public/ ./public/
 RUN composer dump-autoload --optimize --no-scripts 
 
 # Frontend Build
-WORKDIR /var/www/html/frontendAnony
-COPY frontendAnony/package*.json ./
+WORKDIR /var/www/html/frontendModified
+COPY frontendModified/package*.json ./
 RUN npm install
-COPY frontendAnony/ .
+COPY frontendModified/ .
 RUN npm run build
 RUN cp -r dist/* ../public/
 
