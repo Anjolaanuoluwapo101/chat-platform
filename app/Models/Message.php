@@ -23,7 +23,7 @@ class Message
         return $this->db->getMessages($username);
     }
 
-    public function saveMessage($username, $text, $time, $mediaUrls = [], $groupId = null, $replyToMessageId = null , $parentMessageData)
+    public function saveMessage($username, $text, $time, $mediaUrls = [],  $parentMessageData,  $groupId = null, $replyToMessageId = null )
     {
         $message = [
             'username' => $username,

@@ -4,7 +4,7 @@ import Pusher from 'pusher-js';
 const pusher = new Pusher('7e136cd2a9797c421ac1', {
   cluster: 'eu',
   encrypted: true,
-  authEndpoint:import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
+  authEndpoint: import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
   auth: {
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
@@ -18,7 +18,7 @@ class PusherService {
   }
 
   // Subscribe to individual messages channel
-subscribeToIndividualMessages(username, onNewMessage) {
+  async subscribeToIndividualMessages(username, onNewMessage) {
     const channelName = `private-messages-${username}`;
     const channel = pusher.subscribe(channelName);
 

@@ -55,7 +55,7 @@ const Messages = () => {
         });
       };
 
-      pusherService.subscribeToIndividualMessages(username, handleNewMessage);
+      setTimeout(async() => await pusherService.subscribeToIndividualMessages(username, handleNewMessage), 500);
 
       return () => {
         pusherService.unsubscribe(`messages-${username}`);
