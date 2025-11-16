@@ -139,6 +139,7 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
 
 COPY app/ ./app/
+COPY database/ ./database/
 COPY public/ ./public/
 # We don't need .htaccess anymore, but it doesn't hurt to copy
 COPY public/.htaccess ./public/.htaccess 
