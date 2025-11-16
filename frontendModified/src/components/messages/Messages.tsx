@@ -7,7 +7,7 @@ import MessageList from './MessageList';
 import MessageForm from './MessageForm';
 import messageService from '../../services/messageService';
 import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
-import { DoorOpen, LogOutIcon } from 'lucide-react';
+import { DoorOpen } from 'lucide-react';
 import auth from '../../services/auth';
 
 interface Message {
