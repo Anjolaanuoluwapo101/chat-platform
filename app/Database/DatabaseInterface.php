@@ -48,7 +48,7 @@ interface DatabaseInterface
     public function getBannedUsers($groupId);
 
     // Group messaging
-    public function getGroupMessagesPaginated($groupId, $limit = 50, $beforeMessageId = null, $direction);
+    public function getGroupMessagesPaginated($groupId, $limit, $beforeMessageId, $direction);
     public function markMessagesRead($groupId, $userId, $lastMessageId);
     public function getLastReadMessageId($groupId, $userId);
 

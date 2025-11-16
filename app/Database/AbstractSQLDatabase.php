@@ -144,7 +144,7 @@ abstract class AbstractSQLDatabase implements DatabaseInterface
     abstract public function unbanUser($groupId, $userId);
     abstract public function getBannedUsers($groupId);
     abstract public function updateGroupSettings($groupId, $settings);
-    abstract public function getGroupMessagesPaginated($groupId, $limit = 50, $beforeMessageId = null, $direction);
+    abstract public function getGroupMessagesPaginated($groupId, $limit, $beforeMessageId, $direction);
     abstract public function markMessagesRead($groupId, $userId, $lastMessageId);
     abstract public function getLastReadMessageId($groupId, $userId);
     abstract public function getUserGroups($userId);

@@ -12,6 +12,10 @@ class SQLiteDatabase extends AbstractSQLDatabase
 {
     use DatabaseGroupTrait;
 
+    public function __construct(){
+        parent::__construct();
+    }
+
     protected function getDatabaseConfig()
     {
         return Config::get('database') ?? [
