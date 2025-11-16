@@ -21,7 +21,7 @@ class Config
     public static function get($key)
     {
         // Load environment variables
-        @self::loadEnv();
+        // @self::loadEnv();
         
         $config = [
             // default database driver: 'sqlite', 'mysql' or 'redis'

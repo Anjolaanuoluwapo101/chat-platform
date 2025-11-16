@@ -11,7 +11,6 @@ $requestUriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Check if the path starts with /api
 if (strpos($requestUriPath, '/api') !== 0) {
-    echo $_SERVER['REQUEST_URI'];
     // NOT an API request.
     // This is a route for the React app (e.g., "/", "/dashboard", "/profile").
     // Serve the main index.html file and let React Router take over.
