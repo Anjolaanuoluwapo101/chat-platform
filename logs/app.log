@@ -1177,3 +1177,8 @@
 [2025-11-16 18:01:21] [WARNING] Failed API login attempt for: anjola101
 [2025-11-16 18:01:58] [INFO] User registered: anjola101 (anjolaakinsoyinu@gmail.com)
 [2025-11-16 18:02:20] [ERROR] Failed to send verification email to anjolaakinsoyinu@gmail.com: SMTP Error: Could not connect to SMTP host. Failed to connect to server
+[2025-11-16 18:51:18] [INFO] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[2025-11-16 18:51:18] [INFO] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[2025-11-16 18:51:23] [INFO] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[2025-11-16 18:53:56] [INFO] User registered: anjola202 (anjolaforbusiness@gmail.com)
+[2025-11-16 18:54:17] [ERROR] Failed to send verification email to anjolaforbusiness@gmail.com: SMTP Error: Could not connect to SMTP host. Failed to connect to server
