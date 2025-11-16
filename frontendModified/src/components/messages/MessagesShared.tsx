@@ -17,7 +17,7 @@ interface RepliedMessage {
  * Main container for chat interfaces with iPhone-like styling
  */
 export const ChatScreen = ({ children }: { children: ReactNode }) => (
-  <div className="max-w mx-auto h-[90vh] border border-gray-300 rounded-xl bg-gray-100 flex flex-col overflow-hidden shadow-lg">
+  <div className=" h-[90vh] border border-gray-300 rounded-xl bg-gray-100 flex flex-col overflow-hidden shadow-lg">
     {children}
   </div>
 );

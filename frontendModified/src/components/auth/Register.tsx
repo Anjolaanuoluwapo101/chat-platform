@@ -63,7 +63,7 @@ const Register = () => {
       setMessage(result.message || '');
       // If token was provided, user is logged in immediately
       if (authService.isAuthenticated()) {
-        setTimeout(() => navigate('/login'), 2000);
+        setTimeout(() => navigate('/login'), 3000);
       }
     } else {
       setErrors(result.errors);

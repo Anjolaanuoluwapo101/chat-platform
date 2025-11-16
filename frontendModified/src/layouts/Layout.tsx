@@ -21,15 +21,13 @@ interface LayoutProps {
  */
 const Layout = ({ navItems = [], title = 'TYT!', children }: LayoutProps) => {
   return (
-    <div className="min-h-screen flex midnight-theme">
-      {/* NavBar is now a collapsible sidebar across all screen sizes */}
+    <div className="min-h-screen flex">
+    
       <NavBar navItems={navItems} title={title} />
 
       {/* Main content area */}
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
-        <div className="max-w-7xl mx-auto">
-          {children}
-        </div>
+      <main className="flex-1 overflow-auto w-full">
+        {children}
         <Footer />
       </main>
     </div>

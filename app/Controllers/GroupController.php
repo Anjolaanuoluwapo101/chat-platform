@@ -617,8 +617,8 @@ class GroupController extends BaseController
             }
         }
         
-        $messageId = $messageModel->saveMessage($user['username'], $content, $time, $mediaUrls,$parentMessageData, $groupId, $replyToMessageId);
-
+        $messageId = $messageModel->saveMessage($user['username'], $content, $time, $mediaUrls,$groupId, $replyToMessageId, $parentMessageData );
+ 
         // Handle Pusher event
         $pusherResult = $this->handlePusherEvent($user, $content, $time, $mediaUrls, $messageId, $groupId, $replyToMessageId, $parentMessageData);
         $channel = $pusherResult['channel'];

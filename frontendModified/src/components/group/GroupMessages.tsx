@@ -293,7 +293,7 @@ const GroupMessages = () => {
                         {showMembers && (
                             <MembersList members={members} />
                         )}
-                        <div className="flex-grow overflow-y-auto p-4">
+                        <div className="grow overflow-y-auto p-4">
                             <LoadMoreButton
                                 onClick={handleLoadMore}
                                 loading={loadingMore}

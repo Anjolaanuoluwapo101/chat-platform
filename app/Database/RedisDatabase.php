@@ -36,7 +36,7 @@ class RedisDatabase implements DatabaseInterface
         }
 
         // fallback durable store
-        $this->persistent = DatabaseFactory::create('sqlite');
+        $this->persistent = DatabaseFactory::create('mysql');
 
     }
 
@@ -103,10 +103,6 @@ class RedisDatabase implements DatabaseInterface
             }
         }
         ;
-
-        // Generate a random message ID of numbers
-        // $messageId = rand(100000, 999999);
-
 
         $groupId = $message['group_id'] ?? null;
 
@@ -231,7 +227,6 @@ class RedisDatabase implements DatabaseInterface
             //get the stream id from the message id
             $keyMapping = "group:{$groupId}:msg_to_stream";
             $streamId = $this->client->hget($keyMapping, $messageId);
-            echo "here";
             if ($streamId) {
                 //get the message data from the stream id
                 $keyMessages = "group:{$groupId}:messages";

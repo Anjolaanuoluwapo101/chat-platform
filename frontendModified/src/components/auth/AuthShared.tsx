@@ -30,38 +30,38 @@ export const AnonymousIcon = (props: SVGProps<SVGSVGElement>) => (
   >
     {/* Head */}
     <ellipse cx="50" cy="35" rx="22" ry="28" fill="#4A5568" />
-    
+
     {/* Neck */}
     <rect x="43" y="58" width="14" height="12" fill="#4A5568" />
-    
+
     {/* Shoulders */}
     <path d="M 30 70 Q 50 75 70 70 L 75 85 Q 50 90 25 85 Z" fill="#4A5568" />
-    
+
     {/* Eyes - positioned in upper half of face */}
     <ellipse cx="42" cy="28" rx="3" ry="4" fill="#1F2937" />
     <ellipse cx="58" cy="28" rx="3" ry="4" fill="#1F2937" />
-    
+
     {/* Eye highlights */}
     <ellipse cx="43" cy="27" rx="1" ry="1.5" fill="white" opacity="0.8" />
     <ellipse cx="59" cy="27" rx="1" ry="1.5" fill="white" opacity="0.8" />
-    
+
     {/* Subtle eyebrows */}
     <path d="M 38 24 Q 42 23 45 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     <path d="M 55 24 Q 58 23 62 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-    
+
     {/* Bandana - main cloth covering from midway down (nose to chin) */}
     <ellipse cx="50" cy="45" rx="24" ry="14" fill="#2563EB" />
-    
+
     {/* Bandana - top fold at nose level */}
     <ellipse cx="50" cy="40" rx="24" ry="3" fill="#1E40AF" />
-    
+
     {/* Bandana - bottom edge */}
     <ellipse cx="50" cy="50" rx="22" ry="2" fill="#1E40AF" opacity="0.6" />
-    
+
     {/* Bandana - knot on right side */}
     <circle cx="73" cy="45" r="4.5" fill="#1E40AF" />
     <circle cx="76" cy="43" r="3.5" fill="#2563EB" />
-    
+
     {/* Bandana - left side tie hint */}
     <circle cx="27" cy="45" r="2" fill="#1E40AF" opacity="0.7" />
   </svg>
@@ -166,14 +166,14 @@ export const AuthHeader = ({ title, subtitle }: { title: string; subtitle: strin
 /**
  * Form Input Component
  */
-export const FormInput = ({ 
-  label, 
-  id, 
-  name, 
-  type = "text", 
-  value, 
-  onChange, 
-  placeholder, 
+export const FormInput = ({
+  label,
+  id,
+  name,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
   required = true,
   autoComplete,
   minLength,
@@ -192,7 +192,7 @@ export const FormInput = ({
   error?: string;
 }) => (
   <div>
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+    <label htmlFor={id} className="block text-sm font-medium text-gray-700 float-left">
       {label}
     </label>
     <div className="mt-1">
@@ -216,13 +216,13 @@ export const FormInput = ({
 /**
  * Password Input Component with Toggle Visibility
  */
-export const PasswordInput = ({ 
-  label, 
-  id, 
-  name, 
-  value, 
-  onChange, 
-  placeholder = "••••••••", 
+export const PasswordInput = ({
+  label,
+  id,
+  name,
+  value,
+  onChange,
+  placeholder = "••••••••",
   required = true,
   autoComplete = "current-password",
   minLength,

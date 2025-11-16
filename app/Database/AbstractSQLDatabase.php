@@ -20,6 +20,22 @@ abstract class AbstractSQLDatabase implements DatabaseInterface
     }
     
     /**
+     * Close database connection
+     */
+    public function closeConnection(): void
+    {
+        $this->pdo = null;
+    }
+    
+    /**
+     * Destructor to ensure connection is closed
+     */
+    public function __destruct()
+    {
+        $this->closeConnection();
+    }
+    
+    /**
      * Get database configuration
      */
     abstract protected function getDatabaseConfig();
@@ -43,7 +59,6 @@ abstract class AbstractSQLDatabase implements DatabaseInterface
             $config = $this->getDatabaseConfig();
             $dsn = $this->getDSN($config);
             $options = $this->getOptions($config);
-            
             $this->pdo = new PDO($dsn, $config['username'] ?? null, $config['password'] ?? null, $options);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {

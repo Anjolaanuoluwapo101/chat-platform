@@ -7,6 +7,8 @@ import MessageList from './MessageList';
 import MessageForm from './MessageForm';
 import messageService from '../../services/messageService';
 import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
+import { DoorOpen, LogOutIcon } from 'lucide-react';
+import auth from '../../services/auth';
 
 interface Message {
   id: number;
@@ -75,7 +77,7 @@ const Messages = () => {
         });
       };
 
-      pusherService.subscribeToIndividualMessages(username!, handleNewMessage);
+      setTimeout(() => pusherService.subscribeToIndividualMessages(username!, handleNewMessage), 1500);
 
       return () => {
         pusherService.unsubscribe(`messages-${username}`);
@@ -102,7 +104,16 @@ const Messages = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <Layout navItems={
+        [
+          {
+            title: 'Logout',
+            icon: <DoorOpen className='w-5 h-5' />,
+            to: '#',
+            onClick: () => {auth.logout()}
+          }
+        ]
+      }>
         <ChatScreen>
           <ChatHeader 
             title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}

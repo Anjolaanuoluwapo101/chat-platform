@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../services/auth';
-import  Layout  from '../../layouts/Layout';
+import Layout from '../../layouts/Layout';
+
 import {
   NavBarData,
   AuthCard,
@@ -24,6 +25,8 @@ interface Errors {
   general?: string;
 }
 
+
+
 const Login = () => {
   const [formData, setFormData] = useState<FormData>({
     username: '',
@@ -33,6 +36,11 @@ const Login = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
+  //check if user is already logged in
+  if (authService.isAuthenticated()) {
+    navigate('/dashboard'); // Redirect to dashboard if already authenticated
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -49,7 +57,8 @@ const Login = () => {
     const result = await authService.login(formData);
 
     if (result.success) {
-      navigate(`/messages/${formData.username}`);
+      // navigate(`/messages/${formData.username}`);
+      navigate('/dashboard');
     } else {
       setErrors(result.errors);
     }
@@ -60,9 +69,9 @@ const Login = () => {
   return (
     <Layout navItems={NavBarData}>
       <AuthCard>
-        <AuthHeader 
-          title="Welcome Back" 
-          subtitle="Log in to continue to your chat." 
+        <AuthHeader
+          title="Welcome Back"
+          subtitle="Log in to continue to your chat."
         />
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -92,16 +101,16 @@ const Login = () => {
 
           <ErrorMessage message={errors?.general} />
 
-          <SubmitButton 
-            loading={loading} 
-            loadingText="Logging in..." 
-            text="Log In" 
+          <SubmitButton
+            loading={loading}
+            loadingText="Logging in..."
+            text="Log In"
           />
 
-          <AuthLink 
-            text="Don't have an account?" 
-            linkText="Register here" 
-            href="/register" 
+          <AuthLink
+            text="Don't have an account?"
+            linkText="Register here"
+            href="/register"
           />
         </form>
       </AuthCard>

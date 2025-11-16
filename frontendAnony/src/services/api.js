@@ -32,6 +32,8 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
+      // Before clearing everything, save the current page link
+      sessionStorage.setItem('redirectLink', window.location.pathname);
       // Token expired or invalid, clear local storage and redirect to login
       localStorage.removeItem('jwt_token');
       localStorage.removeItem('user');

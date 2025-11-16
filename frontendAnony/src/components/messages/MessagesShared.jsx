@@ -40,7 +40,7 @@ export const ChatHeader = ({ title, isAnonymous, membersCount, onToggleMembers, 
  * Consistent loading indicator with auth styling
  */
 export const LoadingSpinner = () => (
-  <div className="flex items-center justify-center flex-grow">
+  <div className="flex items-center justify-center grow">
     <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
   </div>
 );
@@ -50,7 +50,7 @@ export const LoadingSpinner = () => (
  * Consistent styling for group joining interface
  */
 export const JoinGroupView = ({ onJoin }) => (
-  <div className="flex flex-col items-center justify-center flex-grow p-5 text-center">
+  <div className="flex flex-col items-center justify-center grow p-5 text-center">
     <div className="mb-4 p-3 bg-blue-100 rounded-full">
       <AnonymousIcon className="w-12 h-12 text-blue-600" />
     </div>
@@ -174,7 +174,7 @@ export const MessageBubble = ({ isSent, sender, content, mediaUrls, timestamp, r
  * Empty state for message lists
  */
 export const NoMessages = () => (
-  <div className="flex items-center justify-center flex-grow">
+  <div className="flex items-center justify-center grow">
     <div className="text-center p-8">
       <div className="mb-4 p-3 bg-gray-100 rounded-full inline-block">
         <AnonymousIcon className="w-10 h-10 text-gray-400" />
@@ -249,7 +249,7 @@ export const MessageTextarea = ({ value, onChange, placeholder, rows = 1, disabl
     placeholder={placeholder}
     rows={rows}
     disabled={disabled}
-    className="flex-grow px-4 py-2 text-sm border border-gray-300 rounded-2xl resize-none max-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+    className="grow px-4 py-2 text-sm border border-gray-300 rounded-2xl resize-none max-h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
   />
 );
 

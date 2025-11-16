@@ -91,7 +91,7 @@ const Messages = () => {
             title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}
             onToggleMembers={handleLogout}
           />
-          <div className="flex items-center justify-center flex-grow">
+          <div className="flex items-center justify-center grow">
             <div className="text-center">
               <div className="inline-block w-8 h-8 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
               <p className="mt-2 text-gray-600">Loading messages...</p>
@@ -110,7 +110,7 @@ const Messages = () => {
           onToggleMembers={handleLogout}
         />
         {/* Fill available space and hide ugly overscroll while maintaining scrolling */}
-        <div className="flex-grow overflow-y-auto p-4 scrollbar-hide">
+        <div className="grow overflow-y-auto p-4 scrollbar-hide">
           <MessageList messages={messages} currentUser={currentUser} groupType={false}/>
         </div>
         

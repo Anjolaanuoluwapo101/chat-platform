@@ -18,7 +18,7 @@ class SQLiteDatabase extends AbstractSQLDatabase
 
     protected function getDatabaseConfig()
     {
-        return Config::get('database') ?? [
+        return  [
             'path' => __DIR__ . '/../../database/secretville.db',
         ];
     }

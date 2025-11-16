@@ -156,45 +156,31 @@ interface NavBarProps {
 
 /**
  * Collapsible Navigation Bar Component
- * Renders a collapsible sidebar that works consistently across all screen sizes.
+ * - Completely collapsed on sm/md screens with fixed floating hamburger button
+ * - Always open on lg+ screens
  */
 const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="flex">
-      {/* Collapsible sidebar */}
+      {/* Sidebar - Hidden on sm/md, always visible and open on lg+ */}
       <aside 
-        className={`h-screen sticky top-0 bg-blue-600 text-white transition-all duration-300 ease-in-out ${
-          expanded ? 'w-64' : 'w-20'
+        className={`h-screen sticky top-0 bg-blue-600 text-white transition-all duration-300 ease-in-out hidden lg:flex lg:w-64 flex-col border rounded-lg ${
+          expanded ? 'w-64' : ''
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header section */}
-          <div className="mb-6 px-2 py-4">
+          <div className="px-2 py-4">
             <div className="flex items-center justify-between">
-              <div className={`flex items-center ${expanded ? 'gap-3' : 'justify-center'}`}>
-                <AnonymousIcon className={`text-white ${expanded ? 'w-12 h-12' : 'w-8 h-8'}`} />
-                {expanded && (
-                  <div className="relative inline-block">
-                    <div className="font-bold text-xl md:text-2xl italic">{title}</div>
-                    <CursiveUnderline className="absolute left-0 right-0 -bottom-1 w-full h-1.5 text-white" />
-                  </div>
-                )}
+              <div className="flex items-center gap-3">
+                <AnonymousIcon className="text-white w-12 h-12" />
+                <div className="relative inline-block">
+                  <div className="font-bold text-xl md:text-2xl italic">{title}</div>
+                  <CursiveUnderline className="absolute left-0 right-0 -bottom-1 w-full h-1.5 text-white" />
+                </div>
               </div>
-              <button 
-                onClick={() => setExpanded(!expanded)} 
-                aria-label={expanded ? "Collapse menu" : "Expand menu"} 
-                className="p-2 rounded-full text-white hover:bg-blue-700"
-              >
-                {expanded ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                ) : (
-                  <MenuIcon className="w-5 h-5" />
-                )}
-              </button>
             </div>
           </div>
           
@@ -205,12 +191,79 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
                 key={idx} 
                 item={it} 
                 onClick={it.onClick} 
-                isExpanded={expanded} 
+                isExpanded={true} 
               />
             ))}
           </nav>
         </div>
       </aside>
+
+      {/* Mobile sidebar overlay - Hidden on lg+, shown on sm/md when expanded */}
+      {expanded && (
+        <div 
+          className="fixed inset-0 bg-black opacity-20 lg:hidden z-40"
+          onClick={() => setExpanded(false)}
+        />
+      )}
+
+      {/* Mobile sidebar - Hidden on lg+, visible on sm/md when expanded */}
+      <aside 
+        className={`fixed top-0 left-0 h-screen bg-blue-600 text-white transition-all duration-300 ease-in-out lg:hidden z-50 ${
+          expanded ? 'w-64' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header section with close button */}
+          <div className="px-2 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <AnonymousIcon className="text-white w-12 h-12" />
+                <div className="relative inline-block">
+                  <div className="font-bold text-xl md:text-2xl italic">{title}</div>
+                  <CursiveUnderline className="absolute left-0 right-0 -bottom-1 w-full h-1.5 text-white" />
+                </div>
+              </div>
+              <button 
+                onClick={() => setExpanded(false)} 
+                aria-label="Close menu" 
+                className="p-2 rounded-full text-white hover:bg-blue-700"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          {/* Navigation items */}
+          <nav className="flex-1 overflow-auto px-2 space-y-1">
+            {navItems.map((it, idx) => (
+              <NavItem 
+                key={idx} 
+                item={it} 
+                onClick={() => {
+                  it.onClick?.();
+                  setExpanded(false);
+                }} 
+                isExpanded={true} 
+              />
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-label={expanded ? "Close menu" : "Open menu"}
+        className="fixed top-6 left-6 p-4 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors duration-300 lg:hidden z-40"
+      >
+        {/* {expanded ? (
+          <CloseIcon className="w-6 h-6" />
+        ) : (
+          <MenuIcon className="w-6 h-6" />
+        )} */}
+        <AnonymousIcon className="w-6 h-6" />
+      </button>
     </div>
   );
 }; 

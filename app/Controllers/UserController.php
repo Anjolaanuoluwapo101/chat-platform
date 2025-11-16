@@ -65,7 +65,7 @@ class UserController extends BaseController
             $token = $authService->generateToken($userData);
             $this->jsonResponse([
                 'success' => true,
-                'message' => 'Registration successful. Check your email for verification.',
+                'message' => 'Registration successful. Check your email for verification.    You will be redirected to  login page in 3 seconds',
                 'token' => $token,
                 'user' => [
                     'id' => $userData['id'],
