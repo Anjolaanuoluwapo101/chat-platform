@@ -16,6 +16,7 @@ class PushNotificationService {
     private instanceId: string;
 
     constructor(instanceId: string) {
+        console.log(this.deviceId);
         this.instanceId = instanceId;
     }
 

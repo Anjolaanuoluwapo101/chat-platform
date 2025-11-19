@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode} from 'react';
 import { MessageBubble, NoMessages } from './MessagesShared';
 import { useCallback } from 'react';
 
