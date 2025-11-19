@@ -59,7 +59,7 @@ class UserController extends BaseController
             if ($verificationCode) {
                 $this->logger->info("User registered: $username ($email)");
                 $url = Config::get('app')['url'] . "/verify.php?username=" . urlencode($username) . "&code=$verificationCode";
-                $mailer->sendVerificationEmail($email, $verificationCode, $url);
+                // /$mailer->sendVerificationEmail($email, $verificationCode, $url); //render free tier does not support email verification
                 // Generate JWT token for immediate login after registration
                 $userData = $user->getByUsername($username);
                 $authService = new AuthService();
@@ -75,8 +75,7 @@ class UserController extends BaseController
                     ]
                 ]);
             } else {
-                $this->logger->error("Registration failed for: $username ($email)");
-                $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Registration failed.']], 500);
+                throw new \Exception("Registration failed for: $username ($email), verification code not sent");
             }
         } catch (\Exception $e) {
             $this->logger->error("Registration error: " . $e->getMessage());
@@ -108,9 +107,9 @@ class UserController extends BaseController
             }
 
             $userData = $user->getByUsername($username);
-            if ($userData && $user->verifyPassword($password, $userData['password_hash'])) {
-                if ($userData['is_verified']) {
-                    $this->logger->info("User logged in via API: $username");
+            if ($userData && $user->verifyPassword($password, $userData['password_hash'])) { //check for correct password
+                if ($userData['is_verified']) {//check if user is verified
+                    $this->logger->info("User logged in via API: $username"); //log successful login
                     // Generate JWT token
                     $authService = new AuthService();
                     $token = $authService->generateToken($userData);

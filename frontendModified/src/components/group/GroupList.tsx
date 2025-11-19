@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import auth from '../../services/auth';
 import groupService from '../../services/groupService';
-import { MembersIcon } from './AdminIcons'; // Import MembersIcon for header
+import { ChatScreen, ChatHeader, LoadingSpinner } from '../messages/MessagesShared';
+import Layout from '../../layouts/Layout';
+import { DoorOpen } from 'lucide-react';
+import CreateGroupModal from './CreateGroupModal';
+import { GroupsIcon } from './AdminIcons';
+
 
 interface Group {
   id: number;
@@ -16,6 +22,7 @@ const GroupList = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   useEffect(() => {
     loadGroups();
@@ -52,112 +59,106 @@ const GroupList = () => {
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
   };
 
-  // Loading animation component - reused for consistency
-  const LoadingSkeleton = () => (
-    <div className="animate-pulse">
-      {[...Array(5)].map((_, index) => (
-        <div key={index} className="px-6 py-4 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-            </div>
-            <div className="h-4 bg-gray-200 rounded w-12"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  const navItems = [
+    {
+      title: 'Create Group',
+      icon: <GroupsIcon className='w-5 h-5' />,
+      to: '',
+      onClick: () => {setShowCreateModal(true)}
+    },
+    {
+      title: 'Logout',
+      icon: <DoorOpen className='w-5 h-5' />,
+      to: '',
+      onClick: () => {auth.logout()}
+    }
+  ]
 
   if (loading) return (
-    <div className="w-full bg-white min-h-screen">
-      {/* Header with MembersIcon */}
-      <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center">
-          <MembersIcon className="w-5 h-5 text-gray-600 mr-2" />
-          <h2 className="text-xl font-semibold text-gray-800">Your Groups</h2>
-        </div>
-      </div>
-      {/* Loading animation */}
-      <div className="bg-white">
-        <LoadingSkeleton />
-      </div>
-    </div>
+    <Layout>
+      <ChatScreen>
+        <ChatHeader title="Your Groups" />
+        <LoadingSpinner />
+      </ChatScreen>
+    </Layout>
   );
 
   if (error) return (
-    <div className="w-full bg-white min-h-screen">
-      <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center">
-          <MembersIcon className="w-5 h-5 text-gray-600 mr-2" />
-          <h2 className="text-xl font-semibold text-gray-800">Your Groups</h2>
+    <Layout>
+      <ChatScreen>
+        <ChatHeader title="Your Groups" />
+        <div className="p-8 text-center text-red-500 font-medium">
+          {error}
         </div>
-      </div>
-      <div className="p-8 text-center">
-        <div className="text-red-500">{error}</div>
-      </div>
-    </div>
+      </ChatScreen>
+    </Layout>
   );
 
+  const handleCreateSuccess = async () => {
+    setShowCreateModal(false);
+    await loadGroups();
+  };
+
   return (
-    // Full screen container with no side margins
-    <div className="w-full bg-white min-h-screen border-2 border-gray-400 rounded-md">
-      {/* Enhanced header with MembersIcon */}
-      <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center">
-          <MembersIcon className="w-5 h-5 text-gray-600 mr-2" />
-          <h2 className="text-xl font-semibold text-gray-800">Your Groups</h2>
-        </div>
-      </div>
-      
-      {groups.length === 0 ? (
-        <div className="p-8 text-center">
-          <div className="text-lg text-gray-500">No groups yet</div>
-          <div className="mt-2 text-sm text-gray-400">Join or create a group to get started</div>
-        </div>
-      ) : (
-        // Improved group list with better hover effects
-        <div className="bg-white">
-          {groups.map((group) => (
-            // Enhanced hover effect with smooth transition and shadow
-            <div 
-              key={group.id} 
-              className="border-b border-gray-100 hover:bg-gray-50 transition-all duration-200 ease-in-out hover:shadow-sm"
+    <Layout navItems={navItems}>
+      <ChatScreen>
+        <ChatHeader title="Your Groups" />
+        {groups.length === 0 ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-8">
+            <div className="text-lg text-gray-500 font-medium">No groups yet</div>
+            <div className="mt-2 text-sm text-gray-400">Join or create a group to get started</div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="mt-6 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded transition-colors duration-150"
             >
-              <Link to={`/groups/${group.id}`} className="block px-6 py-4">
+              Create Group
+            </button>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto">
+            {groups.map((group) => (
+              <Link
+                key={group.id}
+                to={`/groups/${group.id}`}
+                className="block border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 px-6 py-4"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center">
-                      <div className="text-base font-medium text-gray-900 truncate">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-medium text-gray-900 truncate">
                         {group.name}
-                      </div>
+                      </h3>
                       {group.is_anonymous && (
-                        <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 flex-shrink-0">
                           Anonymous
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-sm text-gray-500 truncate text-left">
+                    <p className="mt-1 text-sm text-gray-500 truncate float-left">
                       {group.last_message_summary || 'No messages yet'}
-                    </div>
+                    </p>
                   </div>
-                  <div className="ml-4 shrink-0 text-right">
-                    <div className="text-sm text-gray-500">
-                      {group.last_message_ts ? formatTimestamp(group.last_message_ts) : ''}
-                    </div>
-                    {group.unread_count && group.unread_count > 0 && (
-                      <div className="mt-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-medium">
+                  <div className="ml-4 flex flex-col items-end shrink-0">
+                    {(group.last_message_ts && group.last_message_ts > 0) && (
+                      <p className="text-xs text-gray-400">
+                        {formatTimestamp(group.last_message_ts)}
+                      </p>
+                    )}
+                    {(group.unread_count && group.unread_count > 0) && (
+                      <div className="mt-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-semibold">
                         {group.unread_count}
                       </div>
                     )}
                   </div>
                 </div>
               </Link>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </ChatScreen>
+      
+      {showCreateModal && <CreateGroupModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} onSuccess={handleCreateSuccess} />}
+    </Layout>
   );
 };
 

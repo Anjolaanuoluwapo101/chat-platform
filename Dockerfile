@@ -141,7 +141,7 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platfo
 COPY app/ ./app/
 COPY database/ ./database/
 COPY public/ ./public/
-# We don't need .htaccess anymore, but it doesn't hurt to copy
+# not needed btw
 COPY public/.htaccess ./public/.htaccess 
 
 RUN composer dump-autoload --optimize --no-scripts 

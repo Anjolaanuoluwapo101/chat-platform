@@ -36,11 +36,6 @@ const Login = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
-  //check if user is already logged in
-  if (authService.isAuthenticated()) {
-    navigate('/dashboard'); // Redirect to dashboard if already authenticated
-  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({

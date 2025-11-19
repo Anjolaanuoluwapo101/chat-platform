@@ -1,10 +1,13 @@
 <?php
 
+// =============================================================================
+// Frontend/Backend Router
+// =============================================================================
+
 // Save request link for redirect
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-
 
 // Get the path from the request URI, without query parameters supporting 
 $requestUriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -21,8 +24,12 @@ if (strpos($requestUriPath, '/api') !== 0) {
 }
 
 
-header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
-// header('Access-Control-Allow-Origin: http://localhost:5173');
+// =============================================================================
+// CORS Headers
+// =============================================================================
+
+// header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
+header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Access-Control-Allow-Origin');
 header('Access-Control-Allow-Credentials: true');
@@ -32,6 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit;
 }
+
+
+// =============================================================================
+// Dependencies
+// =============================================================================
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -46,13 +58,27 @@ use App\Controllers\GroupController;
 use App\Controllers\UserController;
 use App\Controllers\VerificationController;
 
+
+// =============================================================================
+// Request Setup
+// =============================================================================
+
 // Create Request from globals
 $request = Request::createFromGlobals();
+
+
+// =============================================================================
+// Route Collection
+// =============================================================================
 
 // Create RouteCollection
 $routes = new RouteCollection();
 
-// Authentication routes
+
+// =============================================================================
+// Authentication Routes
+// =============================================================================
+
 $routes->add('login', new Route('/api/login', [
     '_controller' => function (Request $request) {
         $controller = new UserController();
@@ -74,7 +100,11 @@ $routes->add('verify', new Route('/api/verify', [
     }
 ], [], [], '', [], ['GET']));
 
-// Message routes
+
+// =============================================================================
+// Message Routes
+// =============================================================================
+
 $routes->add('view_messages', new Route('/api/messages', [
     '_controller' => function (Request $request) {
         $controller = new MessageController();
@@ -89,7 +119,11 @@ $routes->add('send_individual_message', new Route('/api/messages', [
     }
 ], [], [], '', [], ['POST']));
 
-// Group routes
+
+// =============================================================================
+// Group Routes
+// =============================================================================
+
 $routes->add('get_user_groups', new Route('/api/groups', [
     '_controller' => function (Request $request) {
         $controller = new GroupController();
@@ -136,6 +170,14 @@ $routes->add('join_group', new Route('/api/groups/{id}/join', [
     }
 ], ['id' => '\d+'], [], '', [], ['POST']));
 
+$routes->add('leave_group', new Route('/api/groups/{id}/leave', [
+    '_controller' => function (Request $request, $id) {
+        $controller = new GroupController();
+        $_POST['group_id'] = $id;
+        return $controller->leaveGroup();
+    }
+], ['id' => '\d+'], [], '', [], ['POST']));
+
 $routes->add('submit_group_message', new Route('/api/groups/{id}/messages', [
     '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
@@ -152,7 +194,11 @@ $routes->add('mark_read', new Route('/api/groups/{id}/markread', [
     }
 ], [], [], '', [], ['POST']));
 
-// Admin routes
+
+// =============================================================================
+// Group Admin Routes
+// =============================================================================
+
 $routes->add('remove_admin', new Route('/api/groups/{id}/remove-admin', [
     '_controller' => function (Request $request, $id) {
         $controller = new GroupController();
@@ -233,12 +279,44 @@ $routes->add('get_banned_users', new Route('/api/groups/{id}/banned-users', [
     }
 ], ['id' => '\d+'], [], '', [], ['GET']));
 
+$routes->add('add_member', new Route('/api/groups/{id}/members', [
+    '_controller' => function (Request $request, $id) {
+        $controller = new GroupController();
+        $_POST['group_id'] = $id;
+        return $controller->addMember();
+    }
+], ['id' => '\d+'], [], '', [], ['POST']));
+
+$routes->add('remove_member', new Route('/api/groups/{id}/members/remove', [
+    '_controller' => function (Request $request, $id) {
+        $controller = new GroupController();
+        $_POST['group_id'] = $id;
+        return $controller->removeMember();
+    }
+], ['id' => '\d+'], [], '', [], ['POST']));
+
+
+// =============================================================================
+// Pusher Routes
+// =============================================================================
+
 $routes->add('pusher_auth', new Route('/api/pusher/auth', [
     '_controller' => function (Request $request) {
         require __DIR__ . '/authenticate-pusher.php';
     }
 ], [], [], '', [], ['POST']));
 
+//add route for beam authentication
+$routes->add('pusher_beam_auth', new Route('/api/pusher/beam-auth', [
+    '_controller' => function (Request $request) {
+        require __DIR__ . '/authenticate-pusher-beam.php';
+    }
+], [], [], '', [], ['GET']));
+
+
+// =============================================================================
+// Route Matching and Execution
+// =============================================================================
 
 // Create RequestContext
 $context = new RequestContext();

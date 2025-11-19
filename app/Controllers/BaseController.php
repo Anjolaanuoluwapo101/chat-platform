@@ -112,7 +112,7 @@ class BaseController
      */
     protected function processUploadedFiles()
     {
-        $storage = StorageFactory::create('local');
+        $storage = StorageFactory::create('r2');
         $mediaUrls = [];
         $errors = [];
 

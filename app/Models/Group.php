@@ -39,6 +39,11 @@ class Group
     {
         return $this->db->addGroupMember($groupId, $userId);
     }
+    
+    public function removeMember($groupId, $userId)
+    {
+        return $this->db->removeGroupMember($groupId, $userId);
+    }
 
     public function isMember($groupId, $userId)
     {
@@ -130,5 +135,13 @@ class Group
     public function getLastReadMessageId($groupId, $userId)
     {
         return $this->db->getLastReadMessageId($groupId, $userId);
+    }
+
+    /**
+     * Get user by username
+     */
+    public function getUser($username)
+    {
+        return $this->db->getUser($username);
     }
 }

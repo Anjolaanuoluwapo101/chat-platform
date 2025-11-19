@@ -275,7 +275,7 @@ class MySqlDatabaseTest extends TestCase
     public function testAddGroupMember()
     {
         echo "\n--- Testing Add Group Member (addGroupMember) ---\n";
-        $result = $this->mysqlDatabase->addGroupMember(1, 1);
+        $result = $this->mysqlDatabase->addGroupMember(7, 1);
         echo "Result: " . ($result ? 'true' : 'false') . "\n";
         echo "Added user ID 1 to group ID 1\n";
         $this->assertTrue(is_bool($result));

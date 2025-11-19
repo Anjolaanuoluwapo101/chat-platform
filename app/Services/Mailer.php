@@ -31,14 +31,15 @@ class Mailer
         $this->mailer->SMTPSecure = $mailConfig['smtp_secure'];
         $this->mailer->Port = $mailConfig['smtp_port'];
 
-        $this->mailer->setFrom($mailConfig['from'], 'Secret Ville');
+        $this->mailer->setFrom($mailConfig['from'], Config::get('app')['name']);
     }
 
     public function sendResetEmail($to, $encryptedUsername, $url)
     {
         try {
             $this->mailer->addAddress($to);
-            $this->mailer->Subject = 'Secret Ville Password Reset';
+            // get the app name 
+            $this->mailer->Subject = Config::get('app')['name'] . ' Password Reset';
             $this->mailer->Body = "Click the link to reset your password: $url";
             $this->mailer->isHTML(false);
 
@@ -53,7 +54,7 @@ class Mailer
     {
         try {
             $this->mailer->addAddress($to);
-            $this->mailer->Subject = 'Secret Ville Email Verification';
+            $this->mailer->Subject = Config::get('app')['name'] . ' Email Verification';
             $this->mailer->Body = "Your verification code is: $verificationCode\n\nOr click the link to verify: $url";
             $this->mailer->isHTML(false);
 

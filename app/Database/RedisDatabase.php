@@ -82,13 +82,12 @@ class RedisDatabase implements DatabaseInterface
 
     /**
      * Save message durable in sqlite then publish/update redis structures for fast reads.
-     * Analogy: SQLite is the "chat history archive" (permanent storage), Redis is the "live chat board" (instant display for active users)
      */
     public function saveMessage($message)
     {
-        // Step 1: Store message permanently in the "chat history archive"
+        // Step 1: Store message permanently in the "chat history archive" including the username
         $messageId = $this->persistent->saveMessage($message);
-
+        // Step 2: Save media files permanently in the "chat history archive, persistent storage"
         if (!empty($message['media_urls'])) {
             foreach ($message['media_urls'] as $mediaUrl) {
                 //obtain the extension 
@@ -110,6 +109,16 @@ class RedisDatabase implements DatabaseInterface
         if ($this->client && $groupId) {
             try {
 
+                //check if group is anonymous
+                $groupId = $message['group_id'] ?? null;
+                if ($groupId) {
+                    $groupMeta = $this->client->hgetall("group:{$groupId}:meta");
+                    if (!empty($groupMeta) && !empty($groupMeta['is_anonymous'])) {
+                        $message['username'] = 'Anonymous';
+                    }
+                }
+
+
                 // Step 2: Prepare the message for display on the "live chat board" (Redis) - create a lightweight version for fast access
                 $payload = [
                     'id' => $messageId,
@@ -124,15 +133,14 @@ class RedisDatabase implements DatabaseInterface
                 // If this is a reply, include the parent message data for performance
                 if (!empty($message['reply_to_message_id'])) {
                     // Check if parent message data is already provided in the message array
-                    // if (!empty($message['replied_message_username']) && !empty($message['replied_message_content'])) {
-                    $payload['replied_message_username'] = $message['replied_message_username'];
-                    $payload['replied_message_content'] = $message['replied_message_content'];
-                    $payload['replied_message_created_at'] = $message['replied_message_created_at'] ?? date('c');
+                    $payload['replied_message_username'] = $message['parent_message_data']['username'];
+                    $payload['replied_message_content'] = $message['parent_message_data']['content'];
+                    $payload['replied_message_created_at'] = $message['parent_message_data']['created_at'] ?? date('Y-m-d H:i:s');
+                    ;
                     // Include media URLs if available
-                    if (!empty($message['replied_message_media_urls'])) {
-                        $payload['replied_message_media_urls'] = $message['replied_message_media_urls'];
+                    if (!empty($message['parent_message_data']['media_urls'])) {
+                        $payload['replied_message_media_urls'] = $message['parent_message_data']['media_urls'];
                     }
-                    // }
                 }
 
                 if (!empty($message['media_urls'])) {
@@ -295,7 +303,7 @@ class RedisDatabase implements DatabaseInterface
 
             return $groupId;
         } catch (\Exception $e) {
-            $this->logger->log('createGroup failed: ' . $e->getMessage());
+            $this->logger->log("createGroup of $groupId failed: " . $e->getMessage());
             return false;
         }
     }
@@ -441,9 +449,11 @@ class RedisDatabase implements DatabaseInterface
                 $this->client->zrem($userGroupsKey, $groupId);
             } catch (\Exception $e) {
                 $this->logger->log('Redis removeGroupMember failed: ' . $e->getMessage());
+                
             }
         }
     }
+
     /*
      * Remove all group members from a group
      */
@@ -758,8 +768,8 @@ class RedisDatabase implements DatabaseInterface
             foreach ($streamMessages as $entry) {
                 if (isset($entry['data'])) {
                     $messages[] = json_decode($entry['data'], true);
-                }else{
-                    $messages[] = [];  
+                } else {
+                    $messages[] = [];
                 }
             }
 

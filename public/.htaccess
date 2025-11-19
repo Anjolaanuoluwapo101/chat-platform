@@ -20,7 +20,7 @@
     # -------------------------------------------------------
     # If the requested filename exists as a file (-f) or directory (-d),
     # serve it directly and don't do any rewriting.
-    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 

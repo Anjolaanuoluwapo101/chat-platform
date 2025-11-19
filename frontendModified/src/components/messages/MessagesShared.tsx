@@ -156,7 +156,7 @@ export const MessageBubble = ({
     <div className={`max-w-[85%] ${alignmentClass}`}>
       {/* Sender name for received messages in group chats */}
       {!isSent && sender && (
-        <div className="text-xs text-gray-500 mb-1 ml-4">
+        <div className="text-xs text-gray-500 mb-1 ml-2 text-left">
           {sender}
         </div>
       )}

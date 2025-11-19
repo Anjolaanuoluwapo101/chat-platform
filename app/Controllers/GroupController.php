@@ -9,6 +9,7 @@ use App\Factory\DatabaseFactory;
 use App\Services\AuthService;
 use App\Services\PusherService;
 use App\Services\ChannelManager;
+use App\Services\Beams;
 use App\Log\Logger;
 use App\Traits\PusherTrait;
 
@@ -79,6 +80,7 @@ class GroupController extends BaseController
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
+        
         $groupId = isset($input['group_id']) ? intval($input['group_id']) : 0;
         if (!$groupId) {
             $this->jsonResponse(['success' => false, 'error' => 'group_id required'], 400);
@@ -90,6 +92,27 @@ class GroupController extends BaseController
             $this->jsonResponse(['success' => true], 200);
         } else {
             $this->jsonResponse(['success' => false, 'error' => 'Failed to join group'], 500);
+        }
+    }
+
+    public function leaveGroup()
+    {
+        $user = $this->authenticateUser();
+        if (!$user) {
+            $this->jsonResponse(['error' => 'Authentication required'], 401);
+            return;
+        }
+        $groupId = isset($_GET['group_id']) ? intval($_GET['group_id']) : 0;
+        if (!$groupId) {
+            $this->jsonResponse(['success' => false, 'error' => 'group_id required'], 400);
+            return;
+        }
+
+        $removed = $this->groupModel->removeMember($groupId, $user['id']);
+        if ($removed) {
+            $this->jsonResponse(['success' => true], 200);
+        } else {
+            $this->jsonResponse(['success' => false, 'error' => 'Failed to leave group'], 500);
         }
     }
 
@@ -205,7 +228,7 @@ class GroupController extends BaseController
 
             if (!$lastReadId) {
                 // Scenario 1: No last_read_id → latest messages
-                $messages = $this->groupModel->getMessagesPaginated($groupId, $$limit, null, 'before');
+                $messages = $this->groupModel->getMessagesPaginated($groupId, $limit, null, 'before');
                 $this->jsonResponse(['success' => true, 'messages' => $messages]);
                 return;
             }
@@ -558,7 +581,6 @@ class GroupController extends BaseController
 
     /**
      * Submit a new message to a group
-     * Current implementation, messages are not saved to the RDBMS just redis
      */
     public function submitMessage()
     {
@@ -568,11 +590,13 @@ class GroupController extends BaseController
             return;
         }
 
+        
+
         $input = $_POST;
         $content = $input['content'] ?? '';
         $groupId = $input['group_id'] ?? null;
-        $replyToMessageId = $input['reply_to_message_id'] ?? null;
-        $time = date('c'); // ISO 8601 format
+        $replyToMessageId = $input['reply_to_message_id'] ?? null; //ideally this should be check if it exists
+        $time = date('Y-m-d H:i:s');
 
         if (!$content || !$groupId) {
             $this->jsonResponse(['success' => false, 'error' => 'Content and group_id are required'], 400);
@@ -585,14 +609,7 @@ class GroupController extends BaseController
             return;
         }
 
-        // Validate reply_to_message_id if provided
-        // Skip checks
-        // if ($replyToMessageId) {
-        //     if (!$this->groupModel->isMessageInGroup($replyToMessageId, $groupId)) {
-        //         $this->jsonResponse(['success' => false, 'error' => 'Invalid reply_to_message_id'], 400);
-        //         return;
-        //     }
-        // }
+        
 
         $messageModel = new Message();
 
@@ -604,9 +621,7 @@ class GroupController extends BaseController
         // If this is a reply, fetch the parent message data
         $parentMessageData = null;
         if ($replyToMessageId) {
-            $db = DatabaseFactory::createDefault();
-            $parentMessage = $db->getMessageById($replyToMessageId, $groupId);
-            var_dump($parentMessage);
+            $parentMessage = $this->groupModel->getMessageById($replyToMessageId, $groupId);
             if ($parentMessage) {
                 $parentMessageData = [
                     'username' => $parentMessage['username'] ?? 'Anonymous',
@@ -618,11 +633,14 @@ class GroupController extends BaseController
         }
         
         $messageId = $messageModel->saveMessage($user['username'], $content, $time, $mediaUrls,$groupId, $replyToMessageId, $parentMessageData );
- 
+        
         // Handle Pusher event
         $pusherResult = $this->handlePusherEvent($user, $content, $time, $mediaUrls, $messageId, $groupId, $replyToMessageId, $parentMessageData);
         $channel = $pusherResult['channel'];
         $channelInfo = $pusherResult['channelInfo'];
+
+        //Handle Beams event
+        $this->handleBeamsEvent($channel, $content, $time, null);
 
         $response = [
             'success' => true,
@@ -675,6 +693,96 @@ class GroupController extends BaseController
             'channel' => $channel,
             'channelInfo' => $channelInfo
         ];
+    }
+
+    // Handle Beams event
+    public function handleBeamsEvent($channel, $text, $time, $url)
+    {
+        $beams = new Beams();
+        $beams->sendToAll($channel, "New Message!", $text." at ".$time, null);
+    }
+
+    /**
+     * Add a member to a group (admin only)
+     */
+    public function addMember()
+    {
+        $user = $this->authenticateUser();
+        if (!$user) {
+            $this->jsonResponse(['error' => 'Authentication required'], 401);
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $groupId = isset($input['group_id']) ? intval($input['group_id']) : 0;
+        $username = isset($input['username']) ? $input['username'] : '';
+
+        if (!$groupId || !$username) {
+            $this->jsonResponse(['success' => false, 'error' => 'group_id and username required'], 400);
+            return;
+        }
+
+        // Check if current user is an admin
+        if (!$this->groupModel->isAdmin($groupId, $user['id'])) {
+            $this->jsonResponse(['error' => 'Admin privileges required'], 403);
+            return;
+        }
+
+        // Get user by username
+        $targetUser = $this->groupModel->getUser($username);
+        if (!$targetUser) {
+            $this->jsonResponse(['success' => false, 'error' => 'User not found'], 404);
+            return;
+        }
+
+        // Add member to group
+        $added = $this->groupModel->addMember($groupId, $targetUser['id']);
+        if ($added) {
+            $this->jsonResponse(['success' => true]);
+        } else {
+            $this->jsonResponse(['success' => false, 'error' => 'Failed to add member to group'], 500);
+        }
+    }
+
+    /**
+     * Remove a member from a group (admin only)
+     */
+    public function removeMember()
+    {
+        $user = $this->authenticateUser();
+        if (!$user) {
+            $this->jsonResponse(['error' => 'Authentication required'], 401);
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $groupId = isset($input['group_id']) ? intval($input['group_id']) : 0;
+        $userId = isset($input['user_id']) ? intval($input['user_id']) : 0;
+
+        if (!$groupId || !$userId) {
+            $this->jsonResponse(['success' => false, 'error' => 'group_id and user_id required'], 400);
+            return;
+        }
+
+        // Check if current user is an admin
+        if (!$this->groupModel->isAdmin($groupId, $user['id'])) {
+            $this->jsonResponse(['error' => 'Admin privileges required'], 403);
+            return;
+        }
+
+        // Cannot remove yourself
+        if ($user['id'] == $userId) {
+            $this->jsonResponse(['success' => false, 'error' => 'Cannot remove yourself from group'], 400);
+            return;
+        }
+
+        // Remove member from group
+        $removed = $this->groupModel->removeMember($groupId, $userId);
+        if ($removed) {
+            $this->jsonResponse(['success' => true]);
+        } else {
+            $this->jsonResponse(['success' => false, 'error' => 'Failed to remove member from group'], 500);
+        }
     }
 
 }

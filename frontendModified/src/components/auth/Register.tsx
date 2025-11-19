@@ -42,6 +42,10 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+
+  // Remove existing token manually
+  authService.removeToken();
+  
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +65,7 @@ const Register = () => {
 
     if (result.success) {
       setMessage(result.message || '');
-      // If token was provided, user is logged in immediately
+      // If token was provided
       if (authService.isAuthenticated()) {
         setTimeout(() => navigate('/login'), 3000);
       }

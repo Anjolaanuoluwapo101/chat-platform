@@ -14,7 +14,8 @@ interface Group {
   created_at: string;
   admins?: User[];
   banned_users?: User[];
-   members?: GroupMember[];
+  members?: GroupMember[];
+  last_message_id?: number;
 }
 
 interface Message {
@@ -42,6 +43,7 @@ interface GroupInfo {
 interface GroupResponse {
   success: boolean;
   group?: Group;
+  group_id?: number;
   is_member?: boolean;
   groups?: Group[];
   info?: GroupInfo;
@@ -75,6 +77,8 @@ const groupService = {
       return { success: false, errors: error };
     }
   },
+
+
 
   getGroupInfo: async (groupId: number): Promise<GroupResponse> => {
     try {
@@ -145,6 +149,15 @@ const groupService = {
     }
   },
 
+  leaveGroup: async (groupId: number): Promise<GroupResponse> => {
+    try {
+      const response = await api.post(`/groups/${groupId}/leave`, { group_id: groupId });
+      return response.data;
+    } catch (error) {
+      return { success: false, errors: error };
+    }
+  },
+
   sendGroupMessage: async (groupId: number, message: string, files: File[] = [], replyToMessageId: number | null = null): Promise<SendMessageResponse> => {
     try {
       const formData = new FormData();
@@ -160,7 +173,7 @@ const groupService = {
       const response = await api.post(`/groups/${groupId}/messages`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      
+
       return response.data;
     } catch (error) {
       return { success: false, errors: error };

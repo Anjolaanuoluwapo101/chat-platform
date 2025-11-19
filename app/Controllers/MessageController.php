@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Message;
+use App\Models\User;
 use App\Factory\StorageFactory;
 use App\Services\AuthService;
 use App\Models\Photo;
@@ -10,6 +11,7 @@ use App\Models\Video;
 use App\Models\Audio;
 use App\Services\PusherService;
 use App\Services\ChannelManager;
+use App\Services\Beams;
 use App\Log\Logger;
 use App\Traits\PusherTrait;
 
@@ -84,42 +86,56 @@ class MessageController extends BaseController
      */
     public function submitMessage()
     {
-        //$input = json_decode(file_get_contents('php://input'), true);
-        $input = $_POST;
+        try {
+            //$input = json_decode(file_get_contents('php://input'), true);
+            $input = $_POST;
 
-        $username = $input['username'] ?? ''; //receiver of the message not the sender ...okayyyyy
-        $text = $input['content'] ?? '';
-        $time = date('Y-m-d H:i:s');
+            $username = $input['username'] ?? ''; //receiver of the message not the sender ...okayyyyy
+            
+            $text = $input['content'] ?? '';
+            $time = date('Y-m-d H:i:s');
 
-        if (!$username || !$text) {
-            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Username and message are required']], 400);
-            return;
+            if (!$username || !$text) {
+                $this->jsonResponse(['success' => false, 'errors' => ['general' => 'Username and message are required']], 400);
+                return;
+            }
+
+            $messageModel = new Message();
+
+            // Handle file uploads using the base class method
+            $fileProcessingResult = $this->processUploadedFiles();
+            $mediaUrls = $fileProcessingResult['mediaUrls'];
+            $errors = $fileProcessingResult['errors'];
+
+            $messageId = $messageModel->saveMessage($username, $text, $time, $mediaUrls, null , null, null );
+
+            // Handle Pusher event
+            $pusherResult = $this->handlePusherEvent($username, $text, $time, $mediaUrls, $messageId);
+            $channel = $pusherResult['channel'];
+            $channelInfo = $pusherResult['channelInfo'];
+
+            //Handle Beam 
+            //get the user id of the username
+            $user = (new User)->getByUsername($username) ;
+            if(is_array($user)){
+                $userId = $user['id'];
+                $this->handleBeamsEvent($userId, $text, $time, null);
+            }
+
+            $response = [
+                'success' => true,
+                'message' => 'Message sent',
+                'channel' => $channel,
+                'is_private' => $channelInfo['isPrivate']
+            ];
+            if (!empty($errors)) {
+                $response['errors'] = $errors;
+            }
+            $this->jsonResponse($response);
+        } catch (\Exception $e) {
+            $this->logger->error("Message submission error: " . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'An error occurred while sending the message.']], 500);
         }
-
-        $messageModel = new Message();
-
-        // Handle file uploads using the base class method
-        $fileProcessingResult = $this->processUploadedFiles();
-        $mediaUrls = $fileProcessingResult['mediaUrls'];
-        $errors = $fileProcessingResult['errors'];
-
-        $messageId = $messageModel->saveMessage($username, $text, $time, $mediaUrls, null , null, null );
-
-        // Handle Pusher event
-        $pusherResult = $this->handlePusherEvent($username, $text, $time, $mediaUrls, $messageId);
-        $channel = $pusherResult['channel'];
-        $channelInfo = $pusherResult['channelInfo'];
-
-        $response = [
-            'success' => true,
-            'message' => 'Message sent',
-            'channel' => $channel,
-            'is_private' => $channelInfo['isPrivate']
-        ];
-        if (!empty($errors)) {
-            $response['errors'] = $errors;
-        }
-        $this->jsonResponse($response);
     }
 
     /**
@@ -148,5 +164,11 @@ class MessageController extends BaseController
             'channel' => $channel,
             'channelInfo' => $channelInfo
         ];
+    }
+
+    private function handleBeamsEvent($userId, $text, $time, $url){
+        //call sendToUser method from Beams class
+        $beams = new Beams();
+        $beams->sendToUser($userId, "New Message!", $text." at ".$time, null);
     }
 }

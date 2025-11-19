@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '../../layouts/Layout';
 import pusherService from '../../services/pusherService';
@@ -9,6 +9,8 @@ import messageService from '../../services/messageService';
 import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
 import { DoorOpen } from 'lucide-react';
 import auth from '../../services/auth';
+import PushNotificationService from '../../services/notifications';
+
 
 interface Message {
   id: number;
@@ -34,7 +36,7 @@ const Messages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const currentUser : User = authService.getCurrentUser() || { id: 0, username: '', email: '' };
+  const currentUser: User = authService.getCurrentUser() || { id: 0, username: '', email: '' };
 
   // Load messages and subscribe to real-time updates
   useEffect(() => {
@@ -54,6 +56,9 @@ const Messages = () => {
       };
 
       loadMessages();
+
+
+
 
       const handleNewMessage = (data: Message) => {
         setMessages(prev => {
@@ -88,6 +93,22 @@ const Messages = () => {
     }
   }, [username]);
 
+  //Subscribe to notifications
+  useEffect(() => {
+    (async () => {
+      if (currentUser?.id) {
+        await PushNotificationService.login(String(currentUser.id),
+          {
+            url: import.meta.env.VITE_API_BASE_URL + 'pusher/beam-auth',
+            headers: {
+              'Authorization': `Bearer ${auth.getToken()}`
+            }
+          })
+      }
+    })();
+
+  }, [currentUser])
+
   const handleSend = async (message: string, files: File[]): Promise<void> => {
     try {
       await messageService.sendIndividualMessage(username!, message, files);
@@ -110,12 +131,12 @@ const Messages = () => {
             title: 'Logout',
             icon: <DoorOpen className='w-5 h-5' />,
             to: '#',
-            onClick: () => {auth.logout()}
+            onClick: () => { auth.logout() }
           }
         ]
       }>
         <ChatScreen>
-          <ChatHeader 
+          <ChatHeader
             title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}
             onToggleMembers={handleLogout}
           />
@@ -126,17 +147,26 @@ const Messages = () => {
   }
 
   return (
-    <Layout>
+    <Layout navItems={
+      [
+        {
+          title: 'Logout',
+          icon: <DoorOpen className='w-5 h-5' />,
+          to: '#',
+          onClick: () => { auth.logout() }
+        }
+      ]
+    }>
       <ChatScreen>
-        <ChatHeader 
+        <ChatHeader
           title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}
           onToggleMembers={handleLogout}
         />
         {/* Fill available space and hide ugly overscroll while maintaining scrolling */}
         <div className="grow overflow-y-auto p-4 scrollbar-hide">
-          <MessageList messages={messages} currentUser={currentUser} groupType={false}/>
+          <MessageList messages={messages} currentUser={currentUser} groupType={false} />
         </div>
-        
+
         {!isOwnMessages && (
           <div className="p-4 border-t border-gray-200">
             <MessageForm onMessageSent={handleSend} />

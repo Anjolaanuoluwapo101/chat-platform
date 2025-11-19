@@ -67,11 +67,23 @@ class AuthService {
     }
   }
 
-  // Logout user
-  logout(): void {
+  //Get JWT Token
+  getToken(): string | null {
+    return localStorage.getItem('jwt_token');
+  }
+
+  // Remove JWT token and user data from local storage
+  removeToken(): void {
     localStorage.removeItem('jwt_token');
     localStorage.removeItem('user');
-    window.location.href = '/login';
+  }
+
+  // Logout user
+  logout(): void {
+    // localStorage.removeItem('jwt_token');
+    // localStorage.removeItem('user');
+    // PushNotificationService.logout();
+    // window.location.href = '/login';
   }
 
   // Get current user
@@ -85,10 +97,6 @@ class AuthService {
     return !!localStorage.getItem('jwt_token');
   }
 
-  // Get JWT token
-  getToken(): string | null {
-    return localStorage.getItem('jwt_token');
-  }
 }
 
 export default new AuthService();

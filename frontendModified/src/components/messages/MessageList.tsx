@@ -1,7 +1,7 @@
-import  { type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { MessageBubble, NoMessages } from './MessagesShared';
-// import { baseURL } from '../services/config'; // Assumed path
-const baseURL = "http://localhost:8000/"; // Mock base URL
+import { useCallback } from 'react';
+
 
 interface Message {
   id: number;
@@ -27,31 +27,42 @@ interface RepliedMessage {
   mediaUrls?: string[];
 }
 
-const MessageList = ({ messages, currentUser, groupType, onReply = () => {} }: { messages: Message[]; currentUser: User | null; groupType?: boolean; onReply?: (message: Message) => void }) => {
-  // The scroll-to-bottom logic is now in the parent
-  // We just render the list
+const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: { messages: Message[]; currentUser: User | null; groupType?: boolean; onReply?: (message: Message) => void }) => {
 
-  const renderMedia = (url: string, idx: number): ReactNode => {
+  // const baseURL= useState("https://talkyourtalk.onrender.com/");
+  const baseURL= "http://localhost:80/";
+
+  // setBaseURL("https://talkyourtalk.onrender.com/");
+
+  // //check if production
+  // if (import.meta.env.PROD) {
+  //   setBaseURL("https://talkyourtalk.onrender.com/");
+  // } else {
+  //   setBaseURL("http://localhost:8000/");
+  // }
+
+
+  const renderMedia = useCallback((url: string, idx: number): ReactNode => {
     const fileExtension = url.split('.').pop()?.toLowerCase() || '';
     const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
     const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
     const isAudio = ['mp3', 'wav', 'ogg'].includes(fileExtension);
 
-    const fullUrl = baseURL + url;
+    const fullUrl = baseURL + url; //ignore
 
-    if (isImage) {
-      return <img key={idx} src={fullUrl} alt="Media" className="max-w-full rounded-lg mt-2" />;
+    if (isImage) { 
+      return <img key={idx} src={url} alt="Media" className="max-w-full rounded-lg mt-2" />;
     } else if (isVideo) {
       return (
         <video key={idx} controls className="max-w-full rounded-lg mt-2">
-          <source src={fullUrl} type={`video/${fileExtension}`} />
+          <source src={url} type={`video/${fileExtension}`} />
           Your browser does not support the video tag.
         </video>
       );
     } else if (isAudio) {
       return (
         <audio key={idx} controls className="w-full mt-2">
-          <source src={fullUrl} type={`audio/${fileExtension}`} />
+          <source src={url} type={`audio/${fileExtension}`} />
           Your browser does not support the audio element.
         </audio>
       );
@@ -62,7 +73,7 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => {} }: {
         </a>
       );
     }
-  };
+  }, [baseURL]);
 
   const getDisplayUsername = (message: Message): string => {
     if (groupType && message.username) {
@@ -78,7 +89,7 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => {} }: {
       ) : (
         <div className="space-y-3">
           {/* include unique id for each message */}
-          
+
           {messages.map((message) => {
             let isSent = false;
             let sender = '';
@@ -108,7 +119,7 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => {} }: {
                   repliedMessage={repliedMessage || undefined}
                 />
                 {/* Reply button that appears on hover */}
-                <button 
+                <button
                   onClick={() => onReply(message)}
                   className="absolute bottom-0 right-0 mb-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                   aria-label="Reply to message"

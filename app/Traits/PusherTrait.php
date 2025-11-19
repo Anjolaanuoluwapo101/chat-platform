@@ -2,9 +2,11 @@
 
 namespace App\Traits;
 
+use App\Config\Config;
 use App\Factory\DatabaseFactory;
 use App\Services\PusherService;
 use App\Services\ChannelManager;
+use Pusher\PushNotifications\PushNotifications;
 
 /**
  * PusherTrait provides Pusher authentication functionality for controllers.
@@ -50,7 +52,7 @@ trait PusherTrait
                 }
 
                 $db = DatabaseFactory::createDefault();
-                if (!$db->isUserInGroup((int)$groupId, $this->userId)) {
+                if (!$db->isUserInGroup((int) $groupId, $this->userId)) {
                     $this->jsonResponse(['error' => 'User is not a member of this group'], 403);
                     return;
                 }
@@ -59,6 +61,40 @@ trait PusherTrait
             $pusherService = new PusherService();
             $authResponse = $pusherService->authenticatePrivateChannel($channelName, $socketId, $this->userId);
             echo $authResponse;
+        } catch (\Exception $e) {
+            $this->jsonResponse(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function authenticatePusherBeams()
+    {
+        try {
+
+            // Extract user ID from request parameters
+            $userId = $_GET['user_id'];
+            if (!$userId)
+                return $this->jsonResponse(['error' => 'User ID is required'], 400);
+
+            // Check if user is authenticated from tokens
+            $user = $this->authenticateUser();
+            if (!$user) {
+                $this->jsonResponse(['error' => 'Authentication required'], 401);
+                return;
+            }
+
+            // Compare user ID from request with authenticated user
+            if ($user['id'] != $userId)
+                return $this->jsonResponse(['error' => 'User ID mismatch'], 403);
+
+
+            $beamsClient = new PushNotifications([
+                'instanceId' => Config::get('pusher')['beam_instance_id'],
+                'secretKey' => Config::get('pusher')['beam_secret_key'],
+            ]);
+
+            $tokenData = $beamsClient->generateToken($userId);
+
+            return $this->jsonResponse($tokenData);
         } catch (\Exception $e) {
             $this->jsonResponse(['error' => $e->getMessage()], 500);
         }

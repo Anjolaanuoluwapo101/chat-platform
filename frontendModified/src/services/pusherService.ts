@@ -1,4 +1,6 @@
 import Pusher from 'pusher-js';
+import auth from '../services/auth';
+
 
 interface Message {
   id: number;
@@ -14,12 +16,12 @@ interface Message {
 }
 
 // Pusher configuration
-const pusher = new Pusher('7e136cd2a9797c421ac1', {
+const pusher = new Pusher(import.meta.env.VITE_PUSHER_CHANNEL_ID, {
   cluster: 'eu',
   authEndpoint: import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
   auth: {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+      'Authorization': `Bearer ${auth.getToken()}`
     }
   }
 });

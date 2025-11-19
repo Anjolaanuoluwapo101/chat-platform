@@ -28,11 +28,58 @@ const AdminPanel = ({
 }: AdminPanelProps) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [loading, setLoading] = useState(false);
+  const [newMemberUsername, setNewMemberUsername] = useState('');
 
   // Update active tab when initialTab changes
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
+
+  const handleAddMember = async () => {
+    if (!newMemberUsername.trim()) {
+      alert('Please enter a username');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const response = await groupService.addMember(groupId, newMemberUsername);
+      if (response.success) {
+        setNewMemberUsername('');
+        await onAdminDataRefresh();
+        alert("Member added successfully!");
+      } else {
+        alert(response.errors || "Failed to add member.");
+      }
+    } catch (err) {
+      console.error('Failed to add member', err);
+      alert("Error adding member");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveMember = async (userId: number) => {
+    if (!window.confirm('Are you sure you want to remove this member from the group?')) {
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const response = await groupService.removeMember(groupId, userId);
+      if (response.success) {
+        await onAdminDataRefresh();
+        alert("Member removed successfully!");
+      } else {
+        alert("Failed to remove member.");
+      }
+    } catch (err) {
+      console.error('Failed to remove member', err);
+      alert("Error removing member");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePromoteToAdmin = async (userId: number) => {
     if (!window.confirm('Are you sure you want to promote this user to admin?')) {
@@ -148,6 +195,27 @@ const AdminPanel = ({
   const renderMembersTab = () => (
     <div className="space-y-4">
       <div>
+        <h3 className="text-lg font-semibold mb-2">Add Member</h3>
+        <div className="flex space-x-2 mb-4">
+          <input
+            type="text"
+            placeholder="Enter username"
+            value={newMemberUsername}
+            onChange={(e) => setNewMemberUsername(e.target.value)}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
+          />
+          <button 
+            onClick={handleAddMember}
+            disabled={loading || !newMemberUsername.trim()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+          >
+            Add
+          </button>
+        </div>
+      </div>
+
+      <div>
         <h3 className="text-lg font-semibold mb-2">Admins</h3>
         {admins.length > 0 ? (
           <ul className="space-y-2">
@@ -194,6 +262,13 @@ const AdminPanel = ({
                       className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
                     >
                       Promote
+                    </button>
+                    <button 
+                      onClick={() => handleRemoveMember(member.id)}
+                      disabled={loading}
+                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+                    >
+                      Remove
                     </button>
                     <button 
                       onClick={() => handleBanUser(member.id)}
