@@ -5,7 +5,7 @@ import CardStackContainer from './CardStackContainer';
 import { DASHBOARD_CARDS } from './dashboardConstants';
 import { GroupIcon, LayoutDashboardIcon, MessageCircleIcon, SettingsIcon } from 'lucide-react';
 import ChannelsSection from './ChannelsSection';
-import PushNotificationService from '../../services/notifications';
+// import PushNotificationService from '../../services/notifications';
 
 interface NavItem {
   title: string;
@@ -34,11 +34,11 @@ function Dashboard() {
     setActiveIndex((prevIndex) => (prevIndex + 1) % DASHBOARD_CARDS.length);
   };
 
-  PushNotificationService.initialize().then(() => {
-    console.log("Push Notification Service initialized.");
-    //add interest
-    PushNotificationService.addInterest("general");
-  });
+  // PushNotificationService.initialize().then(() => {
+  //   console.log("Push Notification Service initialized.");
+  //   //add interest
+  //   PushNotificationService.addInterest("general");
+  // });
 
   return (
     <Layout navItems={navItems} title="TYT!">

@@ -114,7 +114,7 @@ class Group
     /**
      * Get paginated messages for a group
      */
-    public function getMessagesPaginated($groupId, $limit = 50, $beforeMessageId = null, $direction )
+    public function getMessagesPaginated($groupId, $limit = 50, $beforeMessageId = null, $direction = 'before' )
     {
         return $this->db->getGroupMessagesPaginated($groupId, $limit, $beforeMessageId, $direction);
     }

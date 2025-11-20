@@ -1,4 +1,5 @@
 import api from './api';
+import PushNotificationService from './notifications';
 
 interface LoginCredentials {
   username: string;
@@ -80,10 +81,10 @@ class AuthService {
 
   // Logout user
   logout(): void {
-    // localStorage.removeItem('jwt_token');
-    // localStorage.removeItem('user');
-    // PushNotificationService.logout();
-    // window.location.href = '/login';
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('user');
+    PushNotificationService.logout();
+    window.location.href = '/login';
   }
 
   // Get current user
