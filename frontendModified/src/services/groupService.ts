@@ -78,8 +78,6 @@ const groupService = {
     }
   },
 
-
-
   getGroupInfo: async (groupId: number): Promise<GroupResponse> => {
     try {
       const response = await api.get(`/groups/${groupId}/info`);
@@ -92,7 +90,10 @@ const groupService = {
   // Get all groups for the current user
   getUserGroups: async (): Promise<GroupResponse> => {
     try {
-      const response = await api.get('/groups');
+      const response = await api.get('/groups', {
+        cache: true,
+        cacheExpiry: 300000 // 5 minutes
+      } as any);
       return response.data;
     } catch (error) {
       return { success: false, errors: error };
@@ -101,12 +102,16 @@ const groupService = {
 
   getGroupMessages: async (groupId: number, referenceId: number | null = null, direction: string = 'before', limit: number = 50): Promise<GroupResponse> => {
     try {
-      const params = new URLSearchParams({ limit: limit.toString() });
+      const params: any = { limit };
       if (referenceId) {
-        params.append('reference_id', referenceId.toString());
-        params.append('direction', direction);
+        params.reference_id = referenceId;
+        params.direction = direction;
       }
-      const response = await api.get(`/groups/${groupId}?${params}`);
+      const response = await api.get(`/groups/${groupId}`, {
+        params,
+        cache: true,
+        cacheExpiry: 120000 // 2 minutes
+      } as any);
       return response.data;
     } catch (error) {
       return { success: false, errors: error };
@@ -124,7 +129,10 @@ const groupService = {
 
   getGroupMembers: async (groupId: number): Promise<GroupResponse> => {
     try {
-      const response = await api.get(`/groups/${groupId}/members`);
+      const response = await api.get(`/groups/${groupId}/members`, {
+        cache: true,
+        cacheExpiry: 300000 // 5 minutes
+      } as any);
       return response.data;
     } catch (error) {
       return { success: false, errors: error };
@@ -201,7 +209,10 @@ const groupService = {
 
   getGroupAdmins: async (groupId: number): Promise<GroupResponse> => {
     try {
-      const response = await api.get(`/groups/${groupId}/admins`);
+      const response = await api.get(`/groups/${groupId}/admins`, {
+        cache: true,
+        cacheExpiry: 300000 // 5 minutes
+      } as any);
       return response.data;
     } catch (error) {
       return { success: false, errors: error };
@@ -264,7 +275,10 @@ const groupService = {
 
   getBannedUsers: async (groupId: number): Promise<GroupResponse> => {
     try {
-      const response = await api.get(`/groups/${groupId}/banned-users`);
+      const response = await api.get(`/groups/${groupId}/banned-users`, {
+        cache: true,
+        cacheExpiry: 300000 // 5 minutes
+      } as any);
       return response.data;
     } catch (error) {
       return { success: false, errors: error };

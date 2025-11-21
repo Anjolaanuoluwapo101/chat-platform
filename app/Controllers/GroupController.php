@@ -125,7 +125,7 @@ class GroupController extends BaseController
         //     return;
         // }
 
-        
+
         // Remove user from group
         $removed = $this->groupModel->removeMember($groupId, $user['id']);
         if ($removed) {
@@ -262,6 +262,10 @@ class GroupController extends BaseController
                 $need = $limit - $countAfter;
                 $before = $this->groupModel->getMessagesPaginated($groupId, $need, $lastReadId, 'before');
                 $combined = array_merge($before ?: [], $after ?: []);
+                //remove the last element of combined if it is the same as anchorMessageId
+                if ($combined && end($combined)['id'] === $anchorMessageId) {
+                    array_pop($combined);
+                }
                 $this->jsonResponse(['success' => true, 'messages' => $combined, 'anchor_message_id' => $anchorMessageId, "scrollTo" => $anchorMessageId]);
                 return;
             } else {

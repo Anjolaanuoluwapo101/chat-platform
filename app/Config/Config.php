@@ -21,7 +21,7 @@ class Config
     public static function get($key)
     {
         // Load environment variables
-        @self::loadEnv();
+        // @self::loadEnv();
         
         $config = [
             'name' => getenv('APP_NAME') ?: $_ENV['APP_NAME'],

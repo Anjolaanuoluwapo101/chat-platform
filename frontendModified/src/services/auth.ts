@@ -1,5 +1,6 @@
 import api from './api';
 import PushNotificationService from './notifications';
+import cacheManager from './cacheManager';
 
 interface LoginCredentials {
   username: string;
@@ -94,6 +95,8 @@ class AuthService {
       this.csrfToken = null;
       sessionStorage.removeItem('user');
       PushNotificationService.logout();
+      // Clear all cache on logout
+      cacheManager.clear();
       window.location.href = '/login';
     }
   }
