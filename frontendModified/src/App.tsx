@@ -4,6 +4,7 @@ import GroupList from './components/group/GroupList';
 import CreateGroup from './components/group/CreateGroup';
 import GroupMessages from './components/group/GroupMessages';
 import Dashboard from './components/others/Dashboard';
+import Privacy from './components/others/Privacy';
 import authService from './services/auth';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -76,6 +77,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/privacy" element={<Privacy />} />
 
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>

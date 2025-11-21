@@ -36,13 +36,19 @@ class MessageController extends BaseController
     /**
      * Authenticate user and set user properties.
      * Call this in methods that require authentication.
+     * Returns user array on success, sends 401 response and returns null on failure.
      */
     protected function authenticateUser()
     {
         if (!$this->user) {
             $this->user = $this->authService->authenticateFromToken();
+            // var_dump($this->user);
             if ($this->user) {
                 $this->userId = $this->user['id'];
+            } else {
+                // Authentication failed - return 401
+                $this->jsonResponse(['error' => 'Authentication required'], 401);
+                return null;
             }
         }
         return $this->user;

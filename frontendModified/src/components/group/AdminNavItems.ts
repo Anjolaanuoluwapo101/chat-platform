@@ -8,17 +8,17 @@ interface AdminNavItem {
 const AdminNavItems: AdminNavItem[] = [
   { 
     title: 'Manage Members', 
-    to: '#', 
+    to: '', 
     tab: 'members' 
   },
   { 
     title: 'Banned Users', 
-    to: '#', 
+    to: '', 
     tab: 'banned' 
   },
   { 
     title: 'Group Settings', 
-    to: '#', 
+    to: '', 
     tab: 'settings' 
   }
 ];

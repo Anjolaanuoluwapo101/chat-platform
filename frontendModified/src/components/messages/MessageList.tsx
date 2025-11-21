@@ -30,16 +30,7 @@ interface RepliedMessage {
 const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: { messages: Message[]; currentUser: User | null; groupType?: boolean; onReply?: (message: Message) => void }) => {
 
   // const baseURL= useState("https://talkyourtalk.onrender.com/");
-  const baseURL= "http://localhost:80/";
-
-  // setBaseURL("https://talkyourtalk.onrender.com/");
-
-  // //check if production
-  // if (import.meta.env.PROD) {
-  //   setBaseURL("https://talkyourtalk.onrender.com/");
-  // } else {
-  //   setBaseURL("http://localhost:8000/");
-  // }
+  const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:80/";
 
 
   const renderMedia = useCallback((url: string, idx: number): ReactNode => {
@@ -118,16 +109,18 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
                   renderMedia={renderMedia}
                   repliedMessage={repliedMessage || undefined}
                 />
-                {/* Reply button that appears on hover */}
-                <button
-                  onClick={() => onReply(message)}
-                  className="absolute bottom-0 right-0 mb-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
-                  aria-label="Reply to message"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                  </svg>
-                </button>
+                {/* Reply button that appears on hover - only in group chats */}
+                {groupType && (
+                  <button
+                    onClick={() => onReply(message)}
+                    className="absolute bottom-0 right-0 mb-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+                    aria-label="Reply to message"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                    </svg>
+                  </button>
+                )}
               </div>
             );
           })}

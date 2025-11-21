@@ -7,7 +7,7 @@ import MessageList from './MessageList';
 import MessageForm from './MessageForm';
 import messageService from '../../services/messageService';
 import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
-import { DoorOpen } from 'lucide-react';
+import { DoorOpen, HomeIcon, SettingsIcon } from 'lucide-react';
 import auth from '../../services/auth';
 import PushNotificationService from '../../services/notifications';
 
@@ -35,21 +35,27 @@ const Messages = () => {
   const { username } = useParams<{ username: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sendingMessage, setSendingMessage] = useState(false); // Track if we're sending a message
+  const [messageSentSuccess, setMessageSentSuccess] = useState(false); // Show "Sent!" confirmation
+  const [networkError, setNetworkError] = useState(false); // Track if we're offline
 
   const currentUser: User = authService.getCurrentUser() || { id: 0, username: '', email: '' };
 
   // Load messages and subscribe to real-time updates
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
+    let pusherUnsubscribed = false; // Track if we already cleaned up
 
     // If viewing own messages, load and subscribe to messages
     if (currentUser && currentUser.username === username) {
       const loadMessages = async () => {
         try {
+          setNetworkError(false); // Clear any previous network errors
           const response = await messageService.getMessages(username!);
           setMessages(response.messages || []);
         } catch (error) {
           console.error('Failed to load messages', error);
+          setNetworkError(true); // Show network error state
         } finally {
           setLoading(false);
         }
@@ -57,16 +63,10 @@ const Messages = () => {
 
       loadMessages();
 
-
-
-
       const handleNewMessage = (data: Message) => {
         setMessages(prev => {
-          // Check if message already exists to prevent duplicates
-          const messageExists = prev.some(msg =>
-            msg.created_at === data.created_at &&
-            msg.content === data.content
-          );
+          // Check if message already exists to prevent duplicates using unique ID
+          const messageExists = prev.some(msg => msg.id === data.id);
 
           if (messageExists) {
             return prev; // Return unchanged state if duplicate
@@ -82,9 +82,17 @@ const Messages = () => {
         });
       };
 
-      setTimeout(() => pusherService.subscribeToIndividualMessages(username!, handleNewMessage), 1500);
+      // Subscribe to Pusher after a short delay to ensure connection is ready
+      const subscribeTimeout = setTimeout(() => {
+        if (!pusherUnsubscribed) {
+          pusherService.subscribeToIndividualMessages(username!, handleNewMessage);
+        }
+      }, 1500);
 
+      // Cleanup: unsubscribe when component unmounts or username changes
       return () => {
+        pusherUnsubscribed = true;
+        clearTimeout(subscribeTimeout);
         pusherService.unsubscribe(`messages-${username}`);
       };
     } else {
@@ -100,9 +108,8 @@ const Messages = () => {
         await PushNotificationService.login(String(currentUser.id),
           {
             url: import.meta.env.VITE_API_BASE_URL + 'pusher/beam-auth',
-            headers: {
-              'Authorization': `Bearer ${auth.getToken()}`
-            }
+            // No Authorization header needed - backend reads JWT from session cookie
+            headers: {}
           })
       }
     })();
@@ -111,9 +118,36 @@ const Messages = () => {
 
   const handleSend = async (message: string, files: File[]): Promise<void> => {
     try {
+      // Show "Sending..." status
+      setSendingMessage(true);
+      setMessageSentSuccess(false);
+      setNetworkError(false);
+      
       await messageService.sendIndividualMessage(username!, message, files);
+      
+      // Show "Sent!" confirmation for 2 seconds
+      setMessageSentSuccess(true);
+      setTimeout(() => setMessageSentSuccess(false), 2000);
     } catch (err) {
       console.error('Failed to send message', err);
+      setNetworkError(true); // Show network error
+    } finally {
+      setSendingMessage(false);
+    }
+  };
+
+  // Retry loading messages if there was a network error
+  const retryLoadMessages = async () => {
+    setLoading(true);
+    setNetworkError(false);
+    try {
+      const response = await messageService.getMessages(username!);
+      setMessages(response.messages || []);
+    } catch (error) {
+      console.error('Failed to load messages', error);
+      setNetworkError(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -123,18 +157,38 @@ const Messages = () => {
 
   const isOwnMessages = currentUser && currentUser.username === username;
 
+  // Define navigation items
+  const navItems = [
+    {
+      title: 'Dashboard',
+      icon: <HomeIcon className='w-5 h-5' />,
+      to: '/dashboard',
+      onClick: () => { }
+    },
+    {
+      title: 'Groups',
+      icon: <DoorOpen className='w-5 h-5' />,
+      to: '/groups',
+      onClick: () => { }
+    },
+    {
+      title: 'Settings',
+      icon: <SettingsIcon className='w-5 h-5' />,
+      to: '',
+      onClick: () => {alert('Settings')}
+    },
+    {
+      title: 'Logout',
+      icon: <DoorOpen className='w-5 h-5' />,
+      to: '#',
+      onClick: () => { auth.logout() }
+    },
+  ];
+
+
   if (loading) {
     return (
-      <Layout navItems={
-        [
-          {
-            title: 'Logout',
-            icon: <DoorOpen className='w-5 h-5' />,
-            to: '#',
-            onClick: () => { auth.logout() }
-          }
-        ]
-      }>
+      <Layout navItems={navItems}>
         <ChatScreen>
           <ChatHeader
             title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}
@@ -147,28 +201,39 @@ const Messages = () => {
   }
 
   return (
-    <Layout navItems={
-      [
-        {
-          title: 'Logout',
-          icon: <DoorOpen className='w-5 h-5' />,
-          to: '#',
-          onClick: () => { auth.logout() }
-        }
-      ]
-    }>
+    <Layout navItems={navItems}>
       <ChatScreen>
         <ChatHeader
           title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}
           onToggleMembers={handleLogout}
         />
-        {/* Fill available space and hide ugly overscroll while maintaining scrolling */}
-        <div className="grow overflow-y-auto p-4 scrollbar-hide">
+        {/* Message list with consistent padding */}
+        <div className="grow overflow-y-auto p-6 scrollbar-hide">
+          {/* Show network error with retry button */}
+          {networkError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6 text-center">
+              <p className="text-red-600 mb-3">Connection problem. Please check your internet.</p>
+              <button
+                onClick={retryLoadMessages}
+                className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+          
           <MessageList messages={messages} currentUser={currentUser} groupType={false} />
         </div>
 
         {!isOwnMessages && (
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-6 border-t border-gray-200">
+            {/* Show status message above the form */}
+            {sendingMessage && (
+              <div className="text-sm text-gray-600 mb-3 text-center">Sending...</div>
+            )}
+            {messageSentSuccess && (
+              <div className="text-sm text-green-600 mb-3 text-center">✓ Sent!</div>
+            )}
             <MessageForm onMessageSent={handleSend} />
           </div>
         )}

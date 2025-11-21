@@ -107,6 +107,34 @@ class BaseController
     }
 
     /**
+     * Validate CSRF token for state-changing requests.
+     */
+    protected function validateCsrfToken()
+    {
+        $authService = new \App\Services\AuthService();
+        $csrfToken = $authService->getCsrfTokenFromHeader();
+        
+        if (!$csrfToken || !$authService->validateCsrfToken($csrfToken)) {
+            $this->jsonResponse(['success' => false, 'error' => 'csrf_invalid', 'message' => 'Invalid or missing CSRF token'], 403);
+        }
+    }
+
+    /**
+     * Require authentication via session.
+     */
+    protected function requireAuth()
+    {
+        $authService = new \App\Services\AuthService();
+        $user = $authService->authenticateFromToken();
+        
+        if (!$user) {
+            $this->jsonResponse(['success' => false, 'error' => 'unauthorized', 'message' => 'Authentication required'], 401);
+        }
+        
+        return $user;
+    }
+
+    /**
      * Process uploaded files and return media URLs
      * Shared method for all controllers that handle file uploads
      */

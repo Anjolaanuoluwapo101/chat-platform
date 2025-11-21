@@ -4,8 +4,22 @@
 // Frontend/Backend Router
 // =============================================================================
 
-// Save request link for redirect
+// Configure secure session settings
 if (session_status() == PHP_SESSION_NONE) {
+    // Determine if running on HTTPS
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+        || ($_SERVER['SERVER_PORT'] ?? 80) == 443
+        || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    
+    session_set_cookie_params([
+        'lifetime' => 3600, // 1 hour
+        'path' => '/',
+        'domain' => '', // Set to your domain in production
+        'secure' => $isHttps, // HTTPS only in production
+        'httponly' => true, // No JavaScript access
+        'samesite' => 'Lax' // CSRF protection (use 'Strict' for same-domain only)
+    ]);
+    
     session_start();
 }
 
@@ -28,10 +42,10 @@ if (strpos($requestUriPath, '/api') !== 0) {
 // CORS Headers
 // =============================================================================
 
-// header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
-header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
+// header('Access-Control-Allow-Origin: http://localhost:5173');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Access-Control-Allow-Origin');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Access-Control-Allow-Origin, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
 
 // Handle preflight OPTIONS request
@@ -99,6 +113,13 @@ $routes->add('verify', new Route('/api/verify', [
         return $controller->verify();
     }
 ], [], [], '', [], ['GET']));
+
+$routes->add('logout', new Route('/api/logout', [
+    '_controller' => function (Request $request) {
+        $controller = new UserController();
+        return $controller->logout();
+    }
+], [], [], '', [], ['POST']));
 
 
 // =============================================================================

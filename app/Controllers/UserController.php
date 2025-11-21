@@ -60,14 +60,31 @@ class UserController extends BaseController
                 $this->logger->info("User registered: $username ($email)");
                 $url = Config::get('app')['url'] . "/verify.php?username=" . urlencode($username) . "&code=$verificationCode";
                 // /$mailer->sendVerificationEmail($email, $verificationCode, $url); //render free tier does not support email verification
-                // Generate JWT token for immediate login after registration
+
+                // Start session and store JWT token
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+
                 $userData = $user->getByUsername($username);
                 $authService = new AuthService();
                 $token = $authService->generateToken($userData);
+
+                // Store JWT in session (not returned to client)
+                $_SESSION['jwt_token'] = $token;
+                $_SESSION['user'] = [
+                    'id' => $userData['id'],
+                    'username' => $userData['username'],
+                    'email' => $userData['email']
+                ];
+
+                // Generate and return CSRF token
+                $csrfToken = $authService->generateCsrfToken();
+
                 $this->jsonResponse([
                     'success' => true,
                     'message' => 'Registration successful. Check your email for verification.    You will be redirected to  login page in 3 seconds',
-                    'token' => $token,
+                    'csrf_token' => $csrfToken,
                     'user' => [
                         'id' => $userData['id'],
                         'username' => $userData['username'],
@@ -110,12 +127,29 @@ class UserController extends BaseController
             if ($userData && $user->verifyPassword($password, $userData['password_hash'])) { //check for correct password
                 if ($userData['is_verified']) {//check if user is verified
                     $this->logger->info("User logged in via API: $username"); //log successful login
-                    // Generate JWT token
+
+                    // Start session and store JWT token
+                    if (session_status() === PHP_SESSION_NONE) {
+                        session_start();
+                    }
+
                     $authService = new AuthService();
                     $token = $authService->generateToken($userData);
+
+                    // Store JWT in session (not returned to client)
+                    $_SESSION['jwt_token'] = $token;
+                    $_SESSION['user'] = [
+                        'id' => $userData['id'],
+                        'username' => $userData['username'],
+                        'email' => $userData['email']
+                    ];
+
+                    // Generate and return CSRF token
+                    $csrfToken = $authService->generateCsrfToken();
+
                     $this->jsonResponse([
                         'success' => true,
-                        'token' => $token,
+                        'csrf_token' => $csrfToken,
                         'user' => [
                             'id' => $userData['id'],
                             'username' => $userData['username'],
@@ -193,6 +227,43 @@ class UserController extends BaseController
         } catch (\Exception $e) {
             $this->logger->error("Confirm password reset error: " . $e->getMessage());
             $this->jsonResponse(['success' => false, 'errors' => ['general' => 'An error occurred during password reset confirmation.', 'details' => $e->getMessage()]], 500);
+        }
+    }
+
+    /**
+     * API endpoint for logout.
+     */
+    public function logout()
+    {
+        try {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
+            // Clear session data
+            $_SESSION = [];
+
+            // Destroy session cookie
+            if (ini_get("session.use_cookies")) {
+                $params = session_get_cookie_params();
+                setcookie(
+                    session_name(),
+                    '',
+                    time() - 42000,
+                    $params["path"],
+                    $params["domain"],
+                    $params["secure"],
+                    $params["httponly"]
+                );
+            }
+
+            // Destroy session
+            session_destroy();
+
+            $this->jsonResponse(['success' => true, 'message' => 'Logged out successfully.']);
+        } catch (\Exception $e) {
+            $this->logger->error("Logout error: " . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'errors' => ['general' => 'An error occurred during logout.']], 500);
         }
     }
 }

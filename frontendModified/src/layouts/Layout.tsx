@@ -16,8 +16,8 @@ interface LayoutProps {
 }
 
 /**
- * Layout component that composes NavBar (collapsible sidebar) and Footer.
- * Pass `navItems` as an array of { label, to, icon }.
+ * Layout component with optimized spacing
+ * Wraps content with NavBar and Footer - symmetrical padding
  */
 const Layout = ({ navItems = [], title = 'TYT!', children }: LayoutProps) => {
   return (
@@ -25,8 +25,8 @@ const Layout = ({ navItems = [], title = 'TYT!', children }: LayoutProps) => {
     
       <NavBar navItems={navItems} title={title} />
 
-      {/* Main content area */}
-      <main className="flex-1 overflow-auto w-full">
+      {/* Main content area with consistent padding */}
+      <main className="flex-1 overflow-auto w-full ">
         {children}
         <Footer />
       </main>

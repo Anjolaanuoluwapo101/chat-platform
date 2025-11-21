@@ -7,6 +7,8 @@ import Layout from '../../layouts/Layout';
 import { DoorOpen } from 'lucide-react';
 import CreateGroupModal from './CreateGroupModal';
 import { GroupsIcon } from './AdminIcons';
+import { HomeIcon, SettingsIcon } from 'lucide-react';
+
 
 
 interface Group {
@@ -64,13 +66,31 @@ const GroupList = () => {
       title: 'Create Group',
       icon: <GroupsIcon className='w-5 h-5' />,
       to: '',
-      onClick: () => {setShowCreateModal(true)}
+      onClick: () => { setShowCreateModal(true) }
+    },
+    {
+      title: 'Dashboard',
+      icon: <HomeIcon className='w-5 h-5' />,
+      to: '/dashboard',
+      onClick: () => { }
+    },
+    {
+      title: 'Groups',
+      icon: <DoorOpen className='w-5 h-5' />,
+      to: '/groups',
+      onClick: () => { }
+    },
+    {
+      title: 'Settings',
+      icon: <SettingsIcon className='w-5 h-5' />,
+      to: '',
+      onClick: () => { alert('Settings') }
     },
     {
       title: 'Logout',
       icon: <DoorOpen className='w-5 h-5' />,
       to: '',
-      onClick: () => {auth.logout()}
+      onClick: () => { auth.logout() }
     }
   ]
 
@@ -156,7 +176,7 @@ const GroupList = () => {
           </div>
         )}
       </ChatScreen>
-      
+
       {showCreateModal && <CreateGroupModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} onSuccess={handleCreateSuccess} />}
     </Layout>
   );

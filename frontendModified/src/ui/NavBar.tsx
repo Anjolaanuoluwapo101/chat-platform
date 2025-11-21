@@ -120,20 +120,19 @@ interface NavItemProps {
 
 /**
  * Navigation Item Component
- * Renders a single link for the nav bar.
- * Uses <a> tags instead of <Link> for previewing without react-router.
+ * Symmetrical padding and spacing
  */
 const NavItem = ({ item, onClick, isExpanded }: NavItemProps) => {
-  // Define styles based on whether the sidebar is expanded or collapsed
+  // Consistent padding for both expanded and collapsed states
   const baseClasses = "flex items-center rounded-lg cursor-pointer transition-colors duration-300";
-  const expandedClasses = "px-4 py-3";
+  const expandedClasses = "px-5 py-3";
   const collapsedClasses = "p-3 justify-center";
   
   const iconBaseClasses = "w-5 h-5";
   const iconExpandedClasses = "text-white";
   const iconCollapsedClasses = "text-white";
   
-  const textClasses = isExpanded ? "ml-3 text-sm font-medium" : "hidden";
+  const textClasses = isExpanded ? "ml-4 text-sm font-medium" : "hidden";
 
   return (
     <a 
@@ -171,8 +170,8 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
         }`}
       >
         <div className="flex flex-col h-full">
-          {/* Header section */}
-          <div className="px-2 py-4">
+          {/* Header section with symmetrical padding */}
+          <div className="px-5 py-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <AnonymousIcon className="text-white w-12 h-12" />
@@ -184,8 +183,8 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
             </div>
           </div>
           
-          {/* Navigation items */}
-          <nav className="flex-1 overflow-auto px-2 space-y-1">
+          {/* Navigation items with consistent spacing */}
+          <nav className="flex-1 overflow-auto px-3 space-y-2">
             {navItems.map((it, idx) => (
               <NavItem 
                 key={idx} 

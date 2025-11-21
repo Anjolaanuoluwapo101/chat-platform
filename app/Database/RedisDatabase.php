@@ -447,6 +447,13 @@ class RedisDatabase implements DatabaseInterface
                 // remove from user's group zset
                 $userGroupsKey = "user:{$userId}:groups";
                 $this->client->zrem($userGroupsKey, $groupId);
+
+                //remove from admins 
+                // $keyAdmins = "group:{$groupId}:admins";
+                // $this->client->hdel($keyAdmins, [$userId]);
+
+                //confirm removal
+                return true;
             } catch (\Exception $e) {
                 $this->logger->log('Redis removeGroupMember failed: ' . $e->getMessage());
                 
@@ -469,6 +476,7 @@ class RedisDatabase implements DatabaseInterface
                 $userGroupsKey = "user:{$userId}:groups";
                 $this->client->zrem($userGroupsKey, $groupId);
             }
+            return true;
         } catch (\Exception $e) {
             $this->logger->log('Redis removeGroupFromUserLists failed: ' . $e->getMessage());
         }

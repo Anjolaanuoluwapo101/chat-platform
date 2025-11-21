@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { AnonymousIcon } from '../../ui/NavBar';
 import Layout from '../../layouts/Layout';
 import CardStackContainer from './CardStackContainer';
 import { DASHBOARD_CARDS } from './dashboardConstants';
-import { GroupIcon, LayoutDashboardIcon, MessageCircleIcon, SettingsIcon } from 'lucide-react';
+import { GroupIcon, LayoutDashboardIcon, MessageCircleIcon, SettingsIcon, Shield } from 'lucide-react';
 import ChannelsSection from './ChannelsSection';
 // import PushNotificationService from '../../services/notifications';
 
@@ -42,10 +43,15 @@ function Dashboard() {
 
   return (
     <Layout navItems={navItems} title="TYT!">
-      <div className="flex flex-col items-center justify-start min-h-screen py-8 bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="flex flex-col items-center justify-start min-h-screen py-8 bg-linear-to-br from-gray-50 to-blue-50">
         <div className="w-full px-4 max-w-6xl">
           {/* Enhanced Header Section */}
-          <div className="text-center mb-16 mt-6 relative">
+          <motion.div 
+            className="text-center mb-16 mt-6 relative"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-blue-100 rounded-full opacity-20 blur-3xl"></div>
             <div className="relative z-10">
               <div className="inline-flex items-center justify-center mb-6">
@@ -82,32 +88,75 @@ function Dashboard() {
                 </div>
               </div>
               
-              <div className="flex justify-center gap-4 mb-12">
-                <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 w-32">
+              <motion.div 
+                className="flex justify-center gap-4 mb-12"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.2
+                    }
+                  }
+                }}
+              >
+                <motion.div 
+                  className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 w-32"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
                   <div className="text-2xl font-bold text-blue-600">10K+</div>
                   <div className="text-gray-600 text-sm">Messages Sent</div>
-                </div>
-                <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 w-32">
+                </motion.div>
+                <motion.div 
+                  className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 w-32"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
                   <div className="text-2xl font-bold text-blue-600">500+</div>
                   <div className="text-gray-600 text-sm">Groups Created</div>
-                </div>
-                <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 w-32">
+                </motion.div>
+                <motion.div 
+                  className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 w-32"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
                   <div className="text-2xl font-bold text-blue-600">24/7</div>
                   <div className="text-gray-600 text-sm">Availability</div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Features Section */}
-          <div className="mb-20">
-            <div className="text-center mb-16">
+          <motion.div 
+            className="mb-20"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.div 
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Key Features</h2>
               <div className="w-24 h-1 bg-blue-600 mx-auto rounded-full"></div>
               <p className="text-gray-600 max-w-2xl mx-auto mt-6 text-xl">
                 Discover what makes our anonymous communication platform unique
               </p>
-            </div>
+            </motion.div>
             
             {/* Using the modularized CardStackContainer component */}
             <CardStackContainer
@@ -115,41 +164,56 @@ function Dashboard() {
               onCardClick={handleCardClick}
               activeIndex={activeIndex}
             />
-          </div>
+          </motion.div>
 
           {/* Channels Section */}
-          <div className="mb-16">
-            <div className="text-center mb-12">
+          <motion.div 
+            className="mb-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.div 
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <h2 className="text-4xl font-bold text-gray-900 mb-4">Communication Channels</h2>
               <div className="w-24 h-1 bg-blue-600 mx-auto rounded-full"></div>
               <p className="text-gray-600 max-w-2xl mx-auto mt-6 text-xl">
                 Choose how you want to receive anonymous messages
               </p>
-            </div>
+            </motion.div>
             <ChannelsSection />
-          </div>
+          </motion.div>
 
-          {/* Call to Action Section */}
-          <div className="bg-linear-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-12 mb-16 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
-            <p className="text-blue-100 max-w-2xl mx-auto mb-8 text-lg">
-              Join thousands of users who have already discovered the power of anonymous communication
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a 
-                href="/register" 
-                className="bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
-              >
-                Create Account
-              </a>
-              <a 
-                href="/login" 
-                className="bg-transparent border-2 border-white text-white hover:bg-white/10 font-bold py-3 px-8 rounded-lg transition-all duration-300"
-              >
-                Sign In
-              </a>
+          {/* Privacy Section */}
+          <motion.div 
+            className="bg-blue-600 rounded-2xl p-8 md:p-12 mb-16 text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center justify-center mb-6">
+              <div className="bg-blue-700 p-4 rounded-full">
+                <Shield className="w-12 h-12 text-white" />
+              </div>
             </div>
-          </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Your Privacy Matters</h2>
+            <p className="text-blue-100 max-w-2xl mx-auto mb-8 text-lg">
+              Learn how we protect your identity with multiple anonymous communication modes and industry-leading security
+            </p>
+            <a 
+              href="/privacy" 
+              className="inline-block bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              View Privacy Details
+            </a>
+          </motion.div>
         </div>
       </div>
     </Layout>

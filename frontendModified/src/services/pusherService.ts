@@ -1,5 +1,4 @@
 import Pusher from 'pusher-js';
-import auth from '../services/auth';
 
 
 interface Message {
@@ -16,12 +15,47 @@ interface Message {
 }
 
 // Pusher configuration
+// const pusher = new Pusher(import.meta.env.VITE_PUSHER_CHANNEL_ID, {
+//   cluster: 'eu',
+//   authEndpoint: import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
+//   auth: {
+//     // No Authorization header needed - backend reads JWT from session cookie
+//     headers: {
+//       //utilize backward compatibility
+//       'Authorization': 'Bearer ' + authService.getCsrfToken(),
+//       'X-CSRF-Token': authService.getCsrfToken()
+//     }
+//   }
+// });
+
 const pusher = new Pusher(import.meta.env.VITE_PUSHER_CHANNEL_ID, {
   cluster: 'eu',
-  authEndpoint: import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
-  auth: {
-    headers: {
-      'Authorization': `Bearer ${auth.getToken()}`
+  
+  // Define exactly how the auth request happens
+  channelAuthorization: {
+    endpoint: import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
+    transport: "ajax",
+    customHandler: (payload, callback) => {
+      const body = {
+        socket_id: payload.socketId,
+        channel_name: payload.channelName
+      };
+      console.log('Body:', body)
+      fetch(import.meta.env.VITE_API_BASE_URL + 'pusher/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Accept': 'application/json'
+        },
+        body: JSON.stringify(body),
+        credentials: 'include' 
+      })
+      .then(response => {
+        if (!response.ok) throw new Error("Auth failed");
+        return response.json();
+      })
+      .then(data => callback(null, data))
+      .catch(err => callback(err, null));
     }
   }
 });
@@ -35,6 +69,7 @@ class PusherService {
 
   // Subscribe to individual messages channel
   subscribeToIndividualMessages(username: string, onNewMessage: (data: Message) => void) {
+    console.log(`Subscribing to individual messages channel for ${username}...`);
     const channelName = `private-messages-${username}`;
     const channel = pusher.subscribe(channelName);
 

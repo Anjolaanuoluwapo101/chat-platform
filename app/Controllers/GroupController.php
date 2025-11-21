@@ -39,6 +39,10 @@ class GroupController extends BaseController
         if ($user) {
             $this->user = $user;
             $this->userId = $user['id'];
+        } else {
+            // Authentication failed - return 401
+            $this->jsonResponse(['error' => 'Authentication required'], 401);
+            return null;
         }
         return $user;
     }
@@ -80,7 +84,7 @@ class GroupController extends BaseController
         }
 
         $input = json_decode(file_get_contents('php://input'), true);
-        
+
         $groupId = isset($input['group_id']) ? intval($input['group_id']) : 0;
         if (!$groupId) {
             $this->jsonResponse(['success' => false, 'error' => 'group_id required'], 400);
@@ -102,12 +106,27 @@ class GroupController extends BaseController
             $this->jsonResponse(['error' => 'Authentication required'], 401);
             return;
         }
-        $groupId = isset($_GET['group_id']) ? intval($_GET['group_id']) : 0;
+        $groupId = isset($_POST['group_id']) ? intval($_POST['group_id']) : 0;
         if (!$groupId) {
             $this->jsonResponse(['success' => false, 'error' => 'group_id required'], 400);
             return;
         }
 
+        // //check if more than one admin exists using getGroupAdmins
+        // $admins = $this->groupModel->getGroupAdmins($groupId);
+        // if (count($admins) <= 1) {
+        //     $this->jsonResponse(['success' => false, 'error' => 'Cannot remove last admin'], 400);
+        //     return;
+        // }
+
+        // //Check if user is an admin
+        // if ($this->groupModel->isAdmin($groupId, $user['id'])) {
+        //     $this->jsonResponse(['success' => false, 'error' => 'Admin cannot leave group'], 400);
+        //     return;
+        // }
+
+        
+        // Remove user from group
         $removed = $this->groupModel->removeMember($groupId, $user['id']);
         if ($removed) {
             $this->jsonResponse(['success' => true], 200);
@@ -131,8 +150,8 @@ class GroupController extends BaseController
         }
 
         $isMember = $this->groupModel->isMember($groupId, $user['id']);
-        if(!$isMember){
-            return $this->jsonResponse(['success' => false,'is_member' => false]);
+        if (!$isMember) {
+            return $this->jsonResponse(['success' => false, 'is_member' => false]);
         }
         $group = $this->groupModel->getGroupInfo($groupId);
 
@@ -148,7 +167,7 @@ class GroupController extends BaseController
             $group['members'] = $this->groupModel->getGroupMembers($groupId);
         }
 
-        $this->jsonResponse(['success' => true, 'group' => $group, 'is_member' => (bool)$isMember]);
+        $this->jsonResponse(['success' => true, 'group' => $group, 'is_member' => (bool) $isMember]);
     }
 
     /**
@@ -181,18 +200,18 @@ class GroupController extends BaseController
             $this->jsonResponse(['error' => 'group_id required'], 400);
             return;
         }
-        
+
         // Check if user is a member of the group
         if (!$this->groupModel->isMember($groupId, $user['id'])) {
             $this->jsonResponse(['error' => 'Not a member of this group'], 403);
             return;
         }
-        
+
         $members = $this->groupModel->getGroupMembers($groupId);
         $this->jsonResponse(['success' => true, 'members' => $members]);
     }
 
-        
+
     /**
      * Get paginated messages for a group
      */
@@ -234,16 +253,16 @@ class GroupController extends BaseController
             }
 
             // Scenario 2: With last_read_id → load after-first then fill before if needed
-            $anchorMessageId = (int)$lastReadId;
+            $anchorMessageId = (int) $lastReadId;
 
-            $after = $this->groupModel->getMessagesPaginated($groupId,  $limit, $lastReadId, 'after');
+            $after = $this->groupModel->getMessagesPaginated($groupId, $limit, $lastReadId, 'after');
             $countAfter = is_array($after) ? count($after) : 0;
 
             if ($countAfter < $limit) {
                 $need = $limit - $countAfter;
-                $before = $this->groupModel->getMessagesPaginated($groupId,  $need, $lastReadId, 'before');
+                $before = $this->groupModel->getMessagesPaginated($groupId, $need, $lastReadId, 'before');
                 $combined = array_merge($before ?: [], $after ?: []);
-                $this->jsonResponse(['success' => true, 'messages' => $combined, 'anchor_message_id' => $anchorMessageId, "scrollTo" => $anchorMessageId ]);
+                $this->jsonResponse(['success' => true, 'messages' => $combined, 'anchor_message_id' => $anchorMessageId, "scrollTo" => $anchorMessageId]);
                 return;
             } else {
                 $this->jsonResponse(['success' => true, 'messages' => $after, 'anchor_message_id' => $anchorMessageId, "scrollTo" => $anchorMessageId]);
@@ -252,7 +271,7 @@ class GroupController extends BaseController
         }
 
         // Scenario 3: Explicit pagination upwards from oldest visible
-        $messages = $this->groupModel->getMessagesPaginated($groupId,  $limit, $referenceId, 'before');
+        $messages = $this->groupModel->getMessagesPaginated($groupId, $limit, $referenceId, 'before');
         $this->jsonResponse(['success' => true, 'messages' => $messages, "scrollTo" => $referenceId]);
     }
 
@@ -590,13 +609,15 @@ class GroupController extends BaseController
             return;
         }
 
-        
+
 
         $input = $_POST;
         $content = $input['content'] ?? '';
         $groupId = $input['group_id'] ?? null;
         $replyToMessageId = $input['reply_to_message_id'] ?? null; //ideally this should be check if it exists
         $time = date('Y-m-d H:i:s');
+        // Well-formatted time without T and milliseconds
+        $time = \DateTime::createFromFormat('Y-m-d H:i:s', $time)->format('Y-m-d H:i:s');
 
         if (!$content || !$groupId) {
             $this->jsonResponse(['success' => false, 'error' => 'Content and group_id are required'], 400);
@@ -609,7 +630,7 @@ class GroupController extends BaseController
             return;
         }
 
-        
+
 
         $messageModel = new Message();
 
@@ -631,9 +652,9 @@ class GroupController extends BaseController
                 ];
             }
         }
-        
-        $messageId = $messageModel->saveMessage($user['username'], $content, $time, $mediaUrls,$groupId, $replyToMessageId, $parentMessageData );
-        
+
+        $messageId = $messageModel->saveMessage($user['username'], $content, $time, $mediaUrls, $groupId, $replyToMessageId, $parentMessageData);
+
         // Handle Pusher event
         $pusherResult = $this->handlePusherEvent($user, $content, $time, $mediaUrls, $messageId, $groupId, $replyToMessageId, $parentMessageData);
         $channel = $pusherResult['channel'];
@@ -675,7 +696,7 @@ class GroupController extends BaseController
             'id' => $messageId,
             'reply_to_message_id' => $replyToMessageId
         ];
-        
+
         // If this is a reply, include the parent message data
         if ($replyToMessageId && $parentMessageData) {
             $eventData['replied_message_username'] = $parentMessageData['username'];
@@ -686,7 +707,7 @@ class GroupController extends BaseController
                 $eventData['replied_message_media_urls'] = $parentMessageData['media_urls'];
             }
         }
-        
+
         $pusherService->triggerEvent($channel, 'new-message', $eventData);
 
         return [
@@ -699,7 +720,7 @@ class GroupController extends BaseController
     public function handleBeamsEvent($channel, $text, $time, $url)
     {
         $beams = new Beams();
-        $beams->sendToAll($channel, "New Message!", $text." at ".$time, null);
+        $beams->sendToAll($channel, "New Message!", $text . " at " . $time, null);
     }
 
     /**

@@ -21,12 +21,14 @@ trait PusherTrait
         // Authenticate user for private channel access
         $user = $this->authenticateUser();
         if (!$user) {
+            
             $this->jsonResponse(['error' => 'Authentication required'], 401);
             return;
         }
-
-        $channelName = $_POST['channel_name'] ?? '';
-        $socketId = $_POST['socket_id'] ?? '';
+        // Use php://input for raw POST data
+        $input = json_decode(file_get_contents('php://input'), true);
+        $channelName = $input['channel_name'] ?? '';
+        $socketId = $input['socket_id'] ?? '';
 
         if (!$channelName || !$socketId) {
             $this->jsonResponse(['error' => 'Missing channel_name or socket_id'], 400);
@@ -60,7 +62,7 @@ trait PusherTrait
 
             $pusherService = new PusherService();
             $authResponse = $pusherService->authenticatePrivateChannel($channelName, $socketId, $this->userId);
-            echo $authResponse;
+            return $this->jsonResponse($authResponse);
         } catch (\Exception $e) {
             $this->jsonResponse(['error' => $e->getMessage()], 500);
         }

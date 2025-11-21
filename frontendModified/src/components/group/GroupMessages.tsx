@@ -16,7 +16,9 @@ import {
     LoadingSpinner,
     JoinGroupView,
     MembersList,
-    LoadMoreButton
+    LoadMoreButton,
+    ErrorMessage,
+    SuccessMessage
 } from '../messages/MessagesShared';
 import Layout from '../../layouts/Layout';
 
@@ -69,6 +71,13 @@ const GroupMessages = () => {
     const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
     const [members, setMembers] = useState<Member[]>([]);
     const [isAnonymous, setIsAnonymous] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+    const [isJoining, setIsJoining] = useState(false);
+    const [isLeaving, setIsLeaving] = useState(false);
+    const [showScrollButton, setShowScrollButton] = useState(false); // Show "New Messages" button when scrolled up
+    const [sendingMessage, setSendingMessage] = useState(false); // Track message sending status
+    const [networkError, setNetworkError] = useState(false); // Track network connection issues
 
     // Admin states
     const [isAdmin, setIsAdmin] = useState(false);
@@ -78,11 +87,12 @@ const GroupMessages = () => {
 
     const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        setShowScrollButton(false); // Hide the scroll button after scrolling
     }, []);
 
     // 2. Optimize loadMessages to check isMountedRef
     const loadMessages = useCallback(async (referenceId: number | null = null, direction: string = 'before') => {
-        if (!isMountedRef.current) return;
+        if (!isMountedRef.current) return; // Prevent updates on unmounted components
 
         try {
             if (referenceId) setLoadingMore(true);
@@ -120,6 +130,7 @@ const GroupMessages = () => {
         const initGroupData = async () => {
             try {
                 setLoading(true);
+                setNetworkError(false); // Clear any previous errors
 
                 // 1. Fetch Group Info
                 const info = await groupService.getGroupInfo(parseInt(groupId!));
@@ -180,6 +191,7 @@ const GroupMessages = () => {
 
             } catch (err) {
                 console.error('Failed to load group info', err);
+                setNetworkError(true); // Show network error state
             } finally {
                 if (isMountedRef.current) setLoading(false);
             }
@@ -196,7 +208,6 @@ const GroupMessages = () => {
     }, [groupId]);
 
     const handleNewMessage = useCallback((data: Message) => {
-        console.log('New message received:', data)
         // Add new message but ensure it is unique
         setMessages(prev => {
             const isDuplicate = prev.some(msg => msg.id === data.id);
@@ -204,8 +215,18 @@ const GroupMessages = () => {
         });
         // Mark new message as read
         groupService.markMessagesRead(parseInt(groupId!), data.id).catch(console.error);
-        scrollToBottom();
-    }, [groupId]);
+        
+        // Only auto-scroll if user is already at bottom, otherwise show "New Messages" button
+        const messagesContainer = messagesEndRef.current?.parentElement;
+        if (messagesContainer) {
+            const isAtBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop <= messagesContainer.clientHeight + 100;
+            if (isAtBottom) {
+                scrollToBottom();
+            } else {
+                setShowScrollButton(true); // User is reading old messages, don't interrupt
+            }
+        }
+    }, [groupId, scrollToBottom]);
 
     // Refresh admin data
     const refreshAdminData = useCallback(async () => {
@@ -222,12 +243,49 @@ const GroupMessages = () => {
         }
     }, [groupId]);
 
-    const handleJoin = useCallback(async () => {
+    // Retry loading group data if there was a network error
+    const retryLoadGroup = useCallback(async () => {
+        setLoading(true);
+        setNetworkError(false);
+        
         try {
+            const info = await groupService.getGroupInfo(parseInt(groupId!));
+            
+            if (info.group) {
+                setGroupName(info.group.name || 'Group');
+                setIsAnonymous(Number(info.group.is_anonymous) === 1);
+                if (Number(info.group.is_anonymous) === 0) {
+                    setMembers(info.group.members || []);
+                }
+                setAdmins(info.group.admins || []);
+                setBannedUsers(info.group.banned_users || []);
+            }
+            
+            setIsMember(!!info.is_member);
+            const userIsAdmin = info.group?.admins?.some(admin => admin.id === currentUser?.id);
+            setIsAdmin(!!userIsAdmin);
+            
+            if (info.is_member) {
+                const msgRes = await groupService.getGroupMessages(parseInt(groupId!), null, 'before');
+                setMessages(msgRes.messages || []);
+            }
+        } catch (err) {
+            console.error('Failed to reload group', err);
+            setNetworkError(true);
+        } finally {
+            setLoading(false);
+        }
+    }, [groupId]);
+
+    const handleJoin = useCallback(async () => {
+        if (isJoining) return; // Prevent multi-tap
+        
+        try {
+            setIsJoining(true);
+            setError(null);
             const response = await groupService.joinGroup(parseInt(groupId!));
             if (!response.success) {
-                alert("Could not join group!"); // Replace with modal
-                // navigate('/groups');
+                setError("Could not join group. Please try again.");
                 return;
             }
             // Refresh group info after joining
@@ -251,41 +309,56 @@ const GroupMessages = () => {
             if (data.group?.admins) setAdmins(data.group.admins);
             if (data.group?.banned_users) setBannedUsers(data.group.banned_users);
 
-            await Promise.all([loadMessages()]);
+            await loadMessages();
             data.group?.last_message_id ? await groupService.markMessagesRead(parseInt(groupId!), data.group.last_message_id || 0) : null;
-            // pusherService.subscribeToGroupMessages(parseInt(groupId!), handleNewMessage);
+            setSuccess("Successfully joined the group!");
+            setTimeout(() => setSuccess(null), 3000);
         } catch (err) {
             console.error('Failed to join group', err);
-            alert("Error joining group"); // Replace with modal
+            setError("Error joining group. Please try again.");
+        } finally {
+            setIsJoining(false);
         }
-    }, [groupId, loadMessages, handleNewMessage]);
+    }, [groupId, loadMessages, isJoining]);
 
     const handleLeaveGroup = useCallback(async () => {
+        if (isLeaving) return; // Prevent multi-tap
+        
         if (!window.confirm('Are you sure you want to leave this group?')) {
             return;
         }
 
         try {
+            setIsLeaving(true);
+            setError(null);
             const response = await groupService.leaveGroup(parseInt(groupId!));
             if (response.success) {
                 // Redirect to groups list
                 window.location.href = '/groups';
             } else {
-                alert("Failed to leave group");
+                setError("Failed to leave group. Please try again.");
             }
         } catch (err) {
             console.error('Failed to leave group', err);
-            alert("Error leaving group");
+            setError("Error leaving group. Please try again.");
+        } finally {
+            setIsLeaving(false);
         }
-    }, [groupId]);
+    }, [groupId, isLeaving]);
 
     const handleSend = useCallback(async (message: string, files: File[], replyToMessageId: number | null = null) => {
         try {
+            setError(null);
+            setSendingMessage(true); // Show "Sending..." status
+            
             await groupService.sendGroupMessage(parseInt(groupId!), message, files, replyToMessageId);
+            
+            // Message sent successfully - will appear via Pusher
+            setSendingMessage(false);
         } catch (err) {
             console.error('Failed to send group message', err);
-            alert("Error sending message"); // Replace with modal
-            // Revert optimistic update on error if needed
+            setError("Error sending message. Please try again.");
+            setSendingMessage(false);
             throw err;
         }
     }, [groupId]);
@@ -327,15 +400,15 @@ const GroupMessages = () => {
     // Prepare navigation items for the layout
     const navItems = useMemo(() => {
         const baseItems: NavItem[] = [
-            { title: 'Home', to: '/', icon: <HomeIcon className="w-5 h-5" /> },
+            { title: 'Dashboard', to: '/', icon: <HomeIcon className="w-5 h-5" /> },
             { title: 'Groups', to: '/groups', icon: <GroupsIcon className="w-5 h-5" /> }
         ];
 
         // Add leave group item for all members
         if (isMember) {
             baseItems.push({
-                title: 'Leave Group',
-                to: '#',
+                title: isLeaving ? 'Leaving...' : 'Leave Group',
+                to: '',
                 icon: <SettingsIcon className="w-5 h-5" />,
                 onClick: handleLeaveGroup
             });
@@ -356,7 +429,7 @@ const GroupMessages = () => {
         }
 
         return baseItems;
-    }, [isAdmin, isAnonymous, toggleAdminPanel, isMember, handleLeaveGroup]);
+    }, [isAdmin, isAnonymous, toggleAdminPanel, isMember, handleLeaveGroup, isLeaving]);
 
     if (loading) return (
         <Layout>
@@ -368,6 +441,10 @@ const GroupMessages = () => {
 
     return (
         <Layout navItems={navItems}>
+            {/* Error/Success Messages */}
+            {error && <ErrorMessage message={error} setMessage={setError} />}
+            {success && <SuccessMessage message={success} setMessage={setSuccess} />}
+            
             <ChatScreen>
                 <ChatHeader
                     title={groupName}
@@ -378,13 +455,27 @@ const GroupMessages = () => {
                 />
 
                 {!isMember ? (
-                    <JoinGroupView onJoin={handleJoin} />
+                    <JoinGroupView onJoin={handleJoin} isLoading={isJoining} />
                 ) : (
                     <>
+                        {/* Show network error with retry button */}
+                        {networkError && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-6 m-6 text-center">
+                                <p className="text-red-600 mb-3">Connection problem. Please check your internet.</p>
+                                <button
+                                    onClick={retryLoadGroup}
+                                    className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors"
+                                >
+                                    Retry
+                                </button>
+                            </div>
+                        )}
+                        
                         {showMembers && (
                             <MembersList members={members} />
                         )}
-                        <div className="grow overflow-y-auto p-4">
+                        {/* Message list with consistent padding */}
+                        <div className="grow overflow-y-auto p-6">
                             <LoadMoreButton
                                 onClick={handleLoadMore}
                                 loading={loadingMore}
@@ -397,7 +488,25 @@ const GroupMessages = () => {
                                 onReply={(message) => setReplyToMessage(message)}
                             />
                             <div ref={messagesEndRef} />
+                            
+                            {/* Show "New Messages" button when user scrolled up */}
+                            {showScrollButton && (
+                                <button
+                                    onClick={scrollToBottom}
+                                    className="fixed bottom-28 right-10 bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                                >
+                                    New Messages ↓
+                                </button>
+                            )}
                         </div>
+                        
+                        {/* Show sending status above the message form */}
+                        {sendingMessage && (
+                            <div className="text-sm text-gray-600 px-6 py-3 text-center border-t border-gray-200">
+                                Sending...
+                            </div>
+                        )}
+                        
                         <MessageForm
                             onMessageSent={handleSend}
                             replyToMessage={replyToMessage}

@@ -44,7 +44,7 @@ const MessageForm = ({
     const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
     const isAudio = ['mp3', 'wav', 'ogg'].includes(fileExtension);
 
-    const fullUrl = "http://localhost:8000/" + url;
+    const fullUrl = (import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/") + url;
 
     if (isImage) {
       return <img key={idx} src={fullUrl} alt="Media" className="max-w-full rounded" />;
@@ -85,7 +85,7 @@ const MessageForm = ({
     if ((!newMessage.trim() && selectedFiles.length === 0) || sending) return;
 
     setSending(true);
-    setError('');
+    setError(null);
 
     try {
       await onMessageSent(newMessage, selectedFiles, replyToMessage?.id);
@@ -100,7 +100,7 @@ const MessageForm = ({
         textareaRef.current.style.height = 'auto';
       }
     } catch (error) {
-      setError('Failed to send message');
+      setError('Failed to send message. Please try again.');
     } finally {
       setSending(false);
     }
