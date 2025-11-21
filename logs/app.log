@@ -40,3 +40,6 @@
 [2025-11-21 00:20:56] [INFO] User logged in via API: anjola101
 [2025-11-21 01:25:13] [INFO] User logged in via API: anjola101
 [2025-11-21 02:40:06] [INFO] User logged in via API: anjola101
+[2025-11-21 07:14:21] [INFO] User logged in via API: anjola101
+[2025-11-21 09:18:01] [INFO] Database connection failed: SQLSTATE[HY000] [2006] MySQL server has gone away
+[2025-11-21 09:22:32] [INFO] User logged in via API: anjola101

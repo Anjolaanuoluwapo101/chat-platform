@@ -9,7 +9,7 @@ import shareService from '../../services/shareService';
 const ChannelsSection = () => {
   const [expandedChannel, setExpandedChannel] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const singleChannelLink = `${window.location.origin}/${auth.getCurrentUser()?.username}/messages`
+  const singleChannelLink = `${window.location.origin}/messages/${auth.getCurrentUser()?.username}`
   const toggleChannel = (channelId: string) => {
     setExpandedChannel(expandedChannel === channelId ? null : channelId);
   };

@@ -84,7 +84,7 @@ const GroupList = () => {
       title: 'Settings',
       icon: <SettingsIcon className='w-5 h-5' />,
       to: '',
-      onClick: () => { alert('Settings') }
+      onClick: () => {}
     },
     {
       title: 'Logout',

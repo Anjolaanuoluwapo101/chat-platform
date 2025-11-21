@@ -63,6 +63,7 @@ trait PusherTrait
             $pusherService = new PusherService();
             $authResponse = $pusherService->authenticatePrivateChannel($channelName, $socketId, $this->userId);
             return $this->jsonResponse($authResponse);
+            // return $authResponse;
         } catch (\Exception $e) {
             $this->jsonResponse(['error' => $e->getMessage()], 500);
         }

@@ -1,5 +1,6 @@
 import Pusher from 'pusher-js';
 
+Pusher.logToConsole = true;
 
 interface Message {
   id: number;
@@ -30,8 +31,7 @@ interface Message {
 
 const pusher = new Pusher(import.meta.env.VITE_PUSHER_CHANNEL_ID, {
   cluster: 'eu',
-  
-  // Define exactly how the auth request happens
+  forceTLS: true,
   channelAuthorization: {
     endpoint: import.meta.env.VITE_API_BASE_URL + 'pusher/auth',
     transport: "ajax",
@@ -40,22 +40,34 @@ const pusher = new Pusher(import.meta.env.VITE_PUSHER_CHANNEL_ID, {
         socket_id: payload.socketId,
         channel_name: payload.channelName
       };
-      console.log('Body:', body)
+
       fetch(import.meta.env.VITE_API_BASE_URL + 'pusher/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Accept': 'application/json'
         },
         body: JSON.stringify(body),
-        credentials: 'include' 
+        credentials: 'include'
       })
-      .then(response => {
-        if (!response.ok) throw new Error("Auth failed");
-        return response.json();
-      })
-      .then(data => callback(null, data))
-      .catch(err => callback(err, null));
+        .then(response => {
+          if (!response.ok) throw new Error("Auth failed");
+          return response.json();
+        })
+        .then(data => {
+
+          if (typeof data === 'string') {
+            try {
+              data = JSON.parse(data);
+            } catch (e) {
+              console.error("Could not parse auth response:", data);
+              return callback(new Error("Invalid JSON response"), null);
+            }
+          }
+        
+
+          callback(null, data);
+        })
+        .catch(err => callback(err, null));
     }
   }
 });

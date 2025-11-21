@@ -93,7 +93,7 @@ const Messages = () => {
       return () => {
         pusherUnsubscribed = true;
         clearTimeout(subscribeTimeout);
-        pusherService.unsubscribe(`messages-${username}`);
+        // pusherService.unsubscribe(`private-messages-${username}`);
       };
     } else {
       // If viewing someone else's messages, just show the form (no messages loaded)
@@ -175,7 +175,7 @@ const Messages = () => {
       title: 'Settings',
       icon: <SettingsIcon className='w-5 h-5' />,
       to: '',
-      onClick: () => {alert('Settings')}
+      onClick: () => {}
     },
     {
       title: 'Logout',

@@ -151,8 +151,8 @@ class MessageController extends BaseController
     {
         // Use ChannelManager to get the appropriate channel
         $channelManager = new ChannelManager();
-        $identifier = $username;
-        $channelInfo = $channelManager->getChannel('individual', $identifier);
+        // $identifier = $username;
+        $channelInfo = $channelManager->getChannel('individual', $username);
         $channel = $channelInfo['name'];
 
         // Trigger Pusher event for real-time updates

@@ -125,7 +125,7 @@ class RedisDatabase implements DatabaseInterface
                     'username' => $message['username'] ?? null,
                     'content' => $message['content'] ?? null,
                     'media_urls' => $message['media_urls'] ?? null,
-                    'created_at' => date('c'),
+                    'created_at' => $message['time'] ?? null,
                     'group_id' => $message['group_id'] ?? null,
                     'reply_to_message_id' => $message['reply_to_message_id'] ?? null,
                 ];

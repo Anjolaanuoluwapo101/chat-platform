@@ -43,4 +43,9 @@ class ChannelManager
     {
         return strpos($channelName, 'private-') === 0;
     }
+
+    public function isGroupChannel($channelName)
+    {
+        return strpos($channelName, 'private-group-') === 0;
+    }
 }
