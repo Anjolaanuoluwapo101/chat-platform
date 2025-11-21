@@ -153,6 +153,13 @@ export const MessageBubble = ({
     
   const alignmentClass = isSent ? 'ml-auto' : 'mr-auto';
   
+  // Function to decode HTML entities
+  const decodeHtmlEntities = (text: string): string => {
+    const textArea = document.createElement('textarea');
+    textArea.innerHTML = text;
+    return textArea.value;
+  };
+  
   return (
     <div className={`max-w-[85%] ${alignmentClass}`}>
       {/* Sender name for received messages in group chats */}
@@ -190,7 +197,9 @@ export const MessageBubble = ({
         )}
         
         {content && (
-          <div className="text-sm whitespace-pre-wrap text-left">{content}</div>
+          <div className="text-sm whitespace-pre-wrap text-left">
+            {decodeHtmlEntities(content)}
+          </div>
         )}
         
         {mediaUrls && mediaUrls.length > 0 && (

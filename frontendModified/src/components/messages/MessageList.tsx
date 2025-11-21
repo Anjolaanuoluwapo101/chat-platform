@@ -1,7 +1,5 @@
-import { type ReactNode} from 'react';
+import { type ReactNode, useState, useCallback } from 'react';
 import { MessageBubble, NoMessages } from './MessagesShared';
-import { useCallback } from 'react';
-
 
 interface Message {
   id: number;
@@ -31,15 +29,13 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
 
   // const baseURL= useState("https://talkyourtalk.onrender.com/");
   const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:80/";
-
+  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(null);
 
   const renderMedia = useCallback((url: string, idx: number): ReactNode => {
     const fileExtension = url.split('.').pop()?.toLowerCase() || '';
     const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
     const isVideo = ['mp4', 'webm', 'ogg'].includes(fileExtension);
     const isAudio = ['mp3', 'wav', 'ogg'].includes(fileExtension);
-
-    const fullUrl = baseURL + url; //ignore
 
     if (isImage) { 
       return <img key={idx} src={url} alt="Media" className="max-w-full rounded-lg mt-2" />;
@@ -59,7 +55,7 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
       );
     } else {
       return (
-        <a key={idx} href={fullUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline mt-2 inline-block">
+        <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline mt-2 inline-block">
           📎 {url.split('/').pop()}
         </a>
       );
@@ -73,12 +69,28 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
     return 'Anonymous'; // Fallback for anonymous
   };
 
+  const handleMessageClick = (messageId: number) => {
+    setSelectedMessageId(messageId === selectedMessageId ? null : messageId);
+  };
+
+  const handleReplyClick = (message: Message, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onReply(message);
+    setSelectedMessageId(null);
+  };
+
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setSelectedMessageId(null);
+    }
+  };
+
   return (
     <>
       {messages.length === 0 ? (
         <NoMessages />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3" onClick={handleOutsideClick}>
           {/* include unique id for each message */}
 
           {messages.map((message) => {
@@ -98,8 +110,14 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
               mediaUrls: message.replied_message_media_urls
             } : null;
 
+            const isSelected = selectedMessageId === message.id;
+
             return (
-              <div key={message.id} className="relative group">
+              <div 
+                key={message.id} 
+                className={`relative ${groupType ? 'cursor-pointer' : ''}`}
+                onClick={() => groupType && handleMessageClick(message.id)}
+              >
                 <MessageBubble
                   isSent={isSent}
                   sender={!isSent && groupType ? sender : undefined}
@@ -109,11 +127,11 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
                   renderMedia={renderMedia}
                   repliedMessage={repliedMessage || undefined}
                 />
-                {/* Reply button that appears on hover - only in group chats */}
-                {groupType && (
+                {/* Reply button that appears when message is clicked - only in group chats */}
+                {groupType && isSelected && (
                   <button
-                    onClick={() => onReply(message)}
-                    className="absolute bottom-0 right-0 mb-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+                    onClick={(e) => handleReplyClick(message, e)}
+                    className="absolute bottom-0 right-0 mb-2 mr-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                     aria-label="Reply to message"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

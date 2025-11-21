@@ -378,24 +378,6 @@ const GroupMessages = () => {
         setShowAdminPanel(tab);
     }, []);
 
-    // const handleLeaveGroup = useCallback(async () => {
-    //     if (!window.confirm('Are you sure you want to leave this group?')) {
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await groupService.leaveGroup(parseInt(groupId!));
-    //         if (response.success) {
-    //             // Redirect to groups list
-    //             window.location.href = '/groups';
-    //         } else {
-    //             alert("Failed to leave group");
-    //         }
-    //     } catch (err) {
-    //         console.error('Failed to leave group', err);
-    //         alert("Error leaving group");
-    //     }
-    // }, [groupId]);
 
     // Prepare navigation items for the layout
     const navItems = useMemo(() => {

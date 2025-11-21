@@ -159,12 +159,12 @@ const GroupList = () => {
                     </p>
                   </div>
                   <div className="ml-4 flex flex-col items-end shrink-0">
-                    {(group.last_message_ts && group.last_message_ts > 0) && (
+                    {(group.last_message_ts && Number(group.last_message_ts) > 0) && (
                       <p className="text-xs text-gray-400">
                         {formatTimestamp(group.last_message_ts)}
                       </p>
                     )}
-                    {(group.unread_count && group.unread_count > 0) && (
+                    {(group.unread_count && Number(group.unread_count) > 0) && (
                       <div className="mt-1 inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-semibold">
                         {group.unread_count}
                       </div>
