@@ -2,12 +2,6 @@ import axios from 'axios';
 import authService from './auth';
 import cacheManager from './cacheManager';
 
-// Extend AxiosRequestConfig to include cache options
-interface CacheConfig {
-  cache?: boolean;
-  cacheExpiry?: number;
-}
-
 // Create axios instance with base configuration
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
