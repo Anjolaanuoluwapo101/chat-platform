@@ -78,7 +78,11 @@ function App() {
             }
           />
 
-          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/privacy" element={
+            <ProtectedRoute>
+              <Privacy />
+            </ProtectedRoute>
+            } />
 
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>

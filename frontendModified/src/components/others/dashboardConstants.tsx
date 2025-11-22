@@ -23,7 +23,7 @@ export const DASHBOARD_CARDS: DashboardCard[] = [
   { 
     id: 2, 
     icon: GroupIcon, 
-    text: 'Join topic-based anonymous groups' 
+    text: 'Join topic-based anonymous or non-anonymous groups' 
   },
   { 
     id: 3, 
@@ -33,17 +33,17 @@ export const DASHBOARD_CARDS: DashboardCard[] = [
   { 
     id: 4, 
     icon: AttachmentIcon, 
-    text: 'Send images and files in messages' 
+    text: 'Send images,videos, audios, documents, and other types of media files in messages' 
   },
   { 
     id: 5, 
     icon: UserIcon, 
-    text: 'Create an account with just a username' 
+    text: 'Create an account with just a username, email verification disabled for privacy' 
   },
   { 
     id: 6, 
     icon: ReplyIcon, 
-    text: 'Reply to specific messages in conversations' 
+    text: 'Reply to specific messages!' 
   },
 ];
 
