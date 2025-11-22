@@ -7,7 +7,6 @@ import MessageList from './MessageList';
 import MessageForm from './MessageForm';
 import messageService from '../../services/messageService';
 import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
-import { DoorOpen } from 'lucide-react';
 import { getCommonNavItems } from '../nav/sharedNavItems';
 import PushNotificationService from '../../services/notifications';
 
