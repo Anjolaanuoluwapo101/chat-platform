@@ -9,7 +9,7 @@ import AdminPanel from './AdminPanel';
 import AdminNavItems from './AdminNavItems';
 import PushNotificationService from '../../services/notifications';
 
-import { HomeIcon, GroupsIcon, MembersIcon, BannedIcon, SettingsIcon } from './AdminIcons';
+import { MembersIcon, BannedIcon, SettingsIcon } from './AdminIcons';
 import {
     ChatScreen,
     ChatHeader,
@@ -21,6 +21,7 @@ import {
     SuccessMessage
 } from '../messages/MessagesShared';
 import Layout from '../../layouts/Layout';
+import { getBaseNavItems } from '../nav/sharedNavItems';
 
 interface Message {
     id: number;
@@ -60,7 +61,6 @@ const GroupMessages = () => {
         window.location.href = '/login';
     }
 
-    // ... (Keep your existing useState definitions) ...
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
     const [isMember, setIsMember] = useState(false);
@@ -381,10 +381,7 @@ const GroupMessages = () => {
 
     // Prepare navigation items for the layout
     const navItems = useMemo(() => {
-        const baseItems: NavItem[] = [
-            { title: 'Dashboard', to: '/', icon: <HomeIcon className="w-5 h-5" /> },
-            { title: 'Groups', to: '/groups', icon: <GroupsIcon className="w-5 h-5" /> }
-        ];
+        const baseItems = getBaseNavItems();
 
         // Add leave group item for all members
         if (isMember) {

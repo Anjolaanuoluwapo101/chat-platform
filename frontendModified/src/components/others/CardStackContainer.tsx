@@ -75,18 +75,8 @@ const CardStackContainer = ({ cards, onCardClick, activeIndex }: CardStackContai
             );
           })}
         </div>
-        
-        {/* Decorative elements */}
-        <div className="absolute -top-10 -left-10 w-24 h-24 bg-blue-100 rounded-full opacity-30 blur-2xl"></div>
-        <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-indigo-100 rounded-full opacity-30 blur-2xl"></div>
-      </div>
       
-      {/* Instruction text */}
-      <div className="text-center mt-4">
-        <p className="text-gray-600 text-lg">
-          Click on the card stack to explore our features
-        </p>
-      </div>
+       </div>
     </div>
   );
 };

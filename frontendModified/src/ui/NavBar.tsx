@@ -110,6 +110,7 @@ interface NavItemData {
   to?: string;
   icon: React.ReactNode;
   onClick?: () => void;
+  children?: NavItemData[]; // Add children property for dropdown items
 }
 
 interface NavItemProps {
@@ -123,6 +124,8 @@ interface NavItemProps {
  * Symmetrical padding and spacing
  */
 const NavItem = ({ item, onClick, isExpanded }: NavItemProps) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
   // Consistent padding for both expanded and collapsed states
   const baseClasses = "flex items-center rounded-lg cursor-pointer transition-colors duration-300";
   const expandedClasses = "px-5 py-3";
@@ -133,18 +136,69 @@ const NavItem = ({ item, onClick, isExpanded }: NavItemProps) => {
   const iconCollapsedClasses = "text-white";
   
   const textClasses = isExpanded ? "ml-4 text-sm font-medium" : "hidden";
+  
+  // Dropdown container classes
+  const dropdownContainerClasses = isExpanded 
+    ? "ml-8 mt-1 space-y-1" 
+    : "hidden";
+
+  const handleItemClick = (e: React.MouseEvent) => {
+    // If item has children, toggle dropdown instead of navigating
+    if (item.children && item.children.length > 0) {
+      e.preventDefault();
+      setIsDropdownOpen(!isDropdownOpen);
+    } else {
+      // Execute onClick if provided, otherwise follow href
+      if (onClick) {
+        onClick();
+      } else if (item.onClick) {
+        item.onClick();
+      }
+    }
+  };
 
   return (
-    <a 
-      href={item.to || '#'} 
-      onClick={onClick} 
-      className={`${baseClasses} ${isExpanded ? expandedClasses : collapsedClasses} hover:bg-blue-700`}
-    >
-      <span className={`${iconBaseClasses} ${isExpanded ? iconExpandedClasses : iconCollapsedClasses}`}>
-        {item.icon}
-      </span>
-      <span className={textClasses}>{item.title}</span>
-    </a>
+    <div>
+      <a 
+        href={item.to || '#'} 
+        onClick={handleItemClick} 
+        className={`${baseClasses} ${isExpanded ? expandedClasses : collapsedClasses} hover:bg-blue-700`}
+      >
+        <span className={`${iconBaseClasses} ${isExpanded ? iconExpandedClasses : iconCollapsedClasses}`}>
+          {item.icon}
+        </span>
+        {isExpanded && (
+          <>
+            <span className={textClasses}>{item.title}</span>
+            {item.children && item.children.length > 0 && (
+              <svg 
+                className={`ml-auto w-4 h-4 transform transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            )}
+          </>
+        )}
+      </a>
+      
+      {/* Dropdown for children items */}
+      {item.children && item.children.length > 0 && isDropdownOpen && (
+        <div className={dropdownContainerClasses}>
+          {item.children.map((child, idx) => (
+            <NavItem 
+              key={idx} 
+              item={child} 
+              onClick={child.onClick} 
+              isExpanded={isExpanded} 
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -153,10 +207,8 @@ interface NavBarProps {
   title?: string;
 }
 
-/**
- * Collapsible Navigation Bar Component
- * - Completely collapsed on sm/md screens with fixed floating hamburger button
- * - Always open on lg+ screens
+/*
+ * GLOBAL NAV BAR
  */
 const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
   const [expanded, setExpanded] = useState(false);

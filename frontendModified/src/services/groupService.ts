@@ -141,7 +141,7 @@ const groupService = {
 
   addMember: async (groupId: number, username: string): Promise<GroupResponse> => {
     try {
-      const response = await api.post(`/groups/${groupId}/members`, { username });
+      const response = await api.post(`/groups/${groupId}/members`, { username: username, group_id: groupId });
       return response.data;
     } catch (error) {
       return { success: false, errors: error };
@@ -150,7 +150,7 @@ const groupService = {
 
   removeMember: async (groupId: number, userId: number): Promise<GroupResponse> => {
     try {
-      const response = await api.post(`/groups/${groupId}/members/remove`, { user_id: userId });
+      const response = await api.post(`/groups/${groupId}/members/remove`, { user_id: userId, group_id: groupId });
       return response.data;
     } catch (error) {
       return { success: false, errors: error };

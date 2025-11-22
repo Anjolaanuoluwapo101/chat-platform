@@ -7,8 +7,8 @@ import MessageList from './MessageList';
 import MessageForm from './MessageForm';
 import messageService from '../../services/messageService';
 import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
-import { DoorOpen, HomeIcon, SettingsIcon } from 'lucide-react';
-import auth from '../../services/auth';
+import { DoorOpen } from 'lucide-react';
+import { getCommonNavItems } from '../nav/sharedNavItems';
 import PushNotificationService from '../../services/notifications';
 
 
@@ -157,34 +157,8 @@ const Messages = () => {
 
   const isOwnMessages = currentUser && currentUser.username === username;
 
-  // Define navigation items
-  const navItems = [
-    {
-      title: 'Dashboard',
-      icon: <HomeIcon className='w-5 h-5' />,
-      to: '/dashboard',
-      onClick: () => { }
-    },
-    {
-      title: 'Groups',
-      icon: <DoorOpen className='w-5 h-5' />,
-      to: '/groups',
-      onClick: () => { }
-    },
-    {
-      title: 'Settings',
-      icon: <SettingsIcon className='w-5 h-5' />,
-      to: '',
-      onClick: () => {}
-    },
-    {
-      title: 'Logout',
-      icon: <DoorOpen className='w-5 h-5' />,
-      to: '#',
-      onClick: () => { auth.logout() }
-    },
-  ];
-
+  // Define navigation items using shared common items
+  const navItems = getCommonNavItems();
 
   if (loading) {
     return (

@@ -6,6 +6,7 @@ import { ChatScreen, ChatHeader, LoadingSpinner } from '../messages/MessagesShar
 import Layout from '../../layouts/Layout';
 import { DoorOpen } from 'lucide-react';
 import CreateGroupModal from './CreateGroupModal';
+import { getCommonNavItems } from '../nav/sharedNavItems';
 import { GroupsIcon } from './AdminIcons';
 import { HomeIcon, SettingsIcon } from 'lucide-react';
 
@@ -66,7 +67,7 @@ const GroupList = () => {
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
   };
 
-  const navItems = [
+  const navItems = getCommonNavItems([
     {
       title: 'Create Group',
       icon: <GroupsIcon className='w-5 h-5' />,
@@ -97,7 +98,7 @@ const GroupList = () => {
       to: '',
       onClick: () => { auth.logout() }
     }
-  ]
+  ])
 
   if (loading) return (
     <Layout>

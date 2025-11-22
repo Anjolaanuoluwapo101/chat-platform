@@ -2,7 +2,7 @@ import  { useState } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '../../layouts/Layout';
 import CardStackContainer from './CardStackContainer';
-import { LayoutDashboardIcon, MessageCircleIcon, GroupIcon, SettingsIcon, Shield, Lock, Database, Eye, Server, FileText } from 'lucide-react';
+import { LayoutDashboardIcon, MessageCircleIcon, GroupIcon, SettingsIcon, Shield, Lock, Database, Eye, Server } from 'lucide-react';
 
 // Privacy feature cards for the card stack
 const PRIVACY_CARDS = [
@@ -31,11 +31,6 @@ const PRIVACY_CARDS = [
     icon: Server, 
     text: 'Dual storage system: SQL for persistence, Redis for real-time performance' 
   },
-  { 
-    id: 6, 
-    icon: FileText, 
-    text: 'Open source codebase - verify our privacy practices yourself' 
-  },
 ];
 
 const navItems = [
@@ -58,29 +53,16 @@ const Privacy = () => {
     <Layout navItems={navItems} title="Privacy - TYT!">
       <div className="flex flex-col items-center justify-start min-h-screen py-8 bg-linear-to-br from-gray-50 to-blue-50">
         <div className="w-full px-4 max-w-6xl">
-          {/* Header with animations like Dashboard */}
-          <motion.div 
-            className="text-center mb-16 mt-6"
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto text-xl">
-              How we protect your identity and data
-            </p>
-          </motion.div>
-
           {/* Privacy Features Section with Card Stack */}
           <motion.div 
-            className="mb-20"
+            className="mb-2"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
             <motion.div 
-              className="text-center mb-16"
+              className="text-center mb-2"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -263,13 +245,6 @@ const Privacy = () => {
                   <h3 className="text-xl font-bold text-gray-900 mb-4">No Third-Party Analytics</h3>
                   <p className="text-gray-700">
                     The platform does not use Google Analytics, Facebook Pixel, or any third-party tracking scripts.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Open Source</h3>
-                  <p className="text-gray-700">
-                    The codebase is publicly available. You can audit the code to verify privacy and security practices.
                   </p>
                 </div>
 

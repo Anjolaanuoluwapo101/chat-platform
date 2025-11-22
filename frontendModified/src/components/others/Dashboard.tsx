@@ -4,8 +4,9 @@ import { AnonymousIcon } from '../../ui/NavBar';
 import Layout from '../../layouts/Layout';
 import CardStackContainer from './CardStackContainer';
 import { DASHBOARD_CARDS } from './dashboardConstants';
-import { GroupIcon, LayoutDashboardIcon, MessageCircleIcon, SettingsIcon, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import ChannelsSection from './ChannelsSection';
+import { getCommonNavItems } from '../nav/sharedNavItems';
 // import PushNotificationService from '../../services/notifications';
 
 interface NavItem {
@@ -14,17 +15,8 @@ interface NavItem {
   icon: React.ReactNode;
 }
 
-const navItems: NavItem[] = [
-  { title: "Dashboard", to: "/dashboard", icon: <LayoutDashboardIcon /> },
-  { title: "Messages", to: "/messages", icon: <MessageCircleIcon /> },
-  { title: "Groups", to: "/groups", icon: <GroupIcon /> },
-  { title: "Settings", to: "/settings", icon: <SettingsIcon /> }
-];
+const navItems : NavItem[] = getCommonNavItems();
 
-/**
- * The main Dashboard component with card stack functionality.
- * Revamped styling to be consistent with the existing design patterns.
- */
 function Dashboard() {
   // State to track the top-most card
   const [activeIndex, setActiveIndex] = useState(0);
@@ -109,7 +101,7 @@ function Dashboard() {
                     visible: { opacity: 1, y: 0 }
                   }}
                 >
-                  <div className="text-2xl font-bold text-blue-600">10K+</div>
+                  <div className="text-2xl font-bold text-blue-600">1K+</div>
                   <div className="text-gray-600 text-sm">Messages Sent</div>
                 </motion.div>
                 <motion.div 
@@ -119,7 +111,7 @@ function Dashboard() {
                     visible: { opacity: 1, y: 0 }
                   }}
                 >
-                  <div className="text-2xl font-bold text-blue-600">500+</div>
+                  <div className="text-2xl font-bold text-blue-600">25+</div>
                   <div className="text-gray-600 text-sm">Groups Created</div>
                 </motion.div>
                 <motion.div 
@@ -129,8 +121,8 @@ function Dashboard() {
                     visible: { opacity: 1, y: 0 }
                   }}
                 >
-                  <div className="text-2xl font-bold text-blue-600">24/7</div>
-                  <div className="text-gray-600 text-sm">Availability</div>
+                  <div className="text-lg font-bold text-blue-600">Real <br></br>Time</div>
+                  <div className="text-gray-600 text-sm">Updates!</div>
                 </motion.div>
               </motion.div>
             </div>
@@ -145,7 +137,7 @@ function Dashboard() {
             transition={{ duration: 0.6 }}
           >
             <motion.div 
-              className="text-center mb-16"
+              className="text-center mb-2"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

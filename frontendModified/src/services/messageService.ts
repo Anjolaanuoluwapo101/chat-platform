@@ -30,7 +30,7 @@ const messageService = {
     try {
       const response = await api.get(`/messages?username=${username}`, {
         cache: true,
-        cacheExpiry: 180000 // 3 minutes
+        cacheExpiry: 200000000
       } as any);
       return response.data;
     } catch (error) {
