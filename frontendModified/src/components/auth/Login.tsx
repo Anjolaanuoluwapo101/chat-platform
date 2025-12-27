@@ -53,6 +53,7 @@ const Login = () => {
 
     if (result.success) {
       // navigate(`/messages/${formData.username}`);
+      // check session storage if redirect url exists
       navigate('/dashboard');
     } else {
       setErrors(result.errors);

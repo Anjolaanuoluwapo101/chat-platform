@@ -78,7 +78,6 @@ trait PusherTrait
             if (!$userId)
                 return $this->jsonResponse(['error' => 'User ID is required'], 400);
 
-            // Check if user is authenticated from tokens
             $user = $this->authenticateUser();
             if (!$user) {
                 $this->jsonResponse(['error' => 'Authentication required'], 401);

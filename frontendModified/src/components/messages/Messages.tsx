@@ -30,12 +30,27 @@ interface User {
   email: string;
 }
 
+// A component that shows that message has been sent and also puts a link to create an account 
+const SentMessage = () => {
+  return (
+    <div className="flex flex-col items-center justify-center p-20 m-auto text-sm text-green-600 mb-3 text-center">
+      <p>Your Message has been delivered!</p>
+      <p className="mt-2">
+        <button onClick={() => {
+          window.location.href = '/register'
+        }} className="text-blue-500 hover:underline">Create an account to send messages.</button>
+      </p>
+    </div>
+  );
+};
+
+
 const Messages = () => {
   const { username } = useParams<{ username: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sendingMessage, setSendingMessage] = useState(false); // Track if we're sending a message
-  const [messageSentSuccess, setMessageSentSuccess] = useState(false); // Show "Sent!" confirmation
+  const [messageSentSuccess, setMessageSentSuccess] = useState(true); // Show "Sent!" confirmation
   const [networkError, setNetworkError] = useState(false); // Track if we're offline
 
   const currentUser: User = authService.getCurrentUser() || { id: 0, username: '', email: '' };
@@ -92,7 +107,7 @@ const Messages = () => {
       return () => {
         pusherUnsubscribed = true;
         clearTimeout(subscribeTimeout);
-        // pusherService.unsubscribe(`private-messages-${username}`);
+        pusherService.unsubscribe(`private-messages-${username}`);
       };
     } else {
       // If viewing someone else's messages, just show the form (no messages loaded)
@@ -121,12 +136,14 @@ const Messages = () => {
       setSendingMessage(true);
       setMessageSentSuccess(false);
       setNetworkError(false);
-      
+
       await messageService.sendIndividualMessage(username!, message, files);
-      
+
       // Show "Sent!" confirmation for 2 seconds
       setMessageSentSuccess(true);
-      setTimeout(() => setMessageSentSuccess(false), 2000);
+      // Put the SentMessage component above the form after 2 seconds
+
+      setTimeout(() => setMessageSentSuccess(false), 10000);
     } catch (err) {
       console.error('Failed to send message', err);
       setNetworkError(true); // Show network error
@@ -194,8 +211,11 @@ const Messages = () => {
               </button>
             </div>
           )}
-          
-          <MessageList messages={messages} currentUser={currentUser} groupType={false} />
+          {messageSentSuccess ? (
+            <SentMessage />
+          ) : (
+            <MessageList messages={messages} currentUser={currentUser} groupType={false} />
+          )}
         </div>
 
         {!isOwnMessages && (

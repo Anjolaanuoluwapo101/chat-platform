@@ -5,25 +5,17 @@ import cacheManager from './cacheManager';
 // Create axios instance with base configuration
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true,
+  withCredentials: true, // This ensures cookies are included in requests
   headers: {
     'Content-Type': 'application/json'
   },
 });
 
-// Request interceptor to add CSRF token to headers and handle caching
+// Request interceptor to handle caching
 api.interceptors.request.use(
   (config: any) => {
-    // Add CSRF token for state-changing requests
-    const method = config.method?.toLowerCase();
-    if (method && ['post', 'put', 'delete', 'patch'].includes(method)) {
-      const csrfToken = authService.getCsrfToken();
-      if (csrfToken && config.headers) {
-        config.headers['X-CSRF-Token'] = csrfToken;
-      }
-    }
-    
     // Check cache for GET requests
+    const method = config.method?.toLowerCase();
     if (method === 'get' && config.cache !== false) {
       const cacheKey = cacheManager.generateKey(method, config.url, config.params);
       if (cacheManager.isValid(cacheKey)) {
@@ -40,7 +32,7 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle token expiration, CSRF errors, and caching
+// Response interceptor to handle token expiration and caching
 api.interceptors.response.use(
   (response) => {
     // Store cache for GET requests
@@ -63,16 +55,11 @@ api.interceptors.response.use(
     if (error.cached) {
       return Promise.resolve({ data: error.data, status: 200, statusText: 'OK' });
     }
-    
-    if (error.response?.status === 401) {
+    const isLoginPage = window.location.pathname === '/login';
+    const isRegisterPage = window.location.pathname === '/register';
+    if (error.response?.status === 401 && !isLoginPage && !isRegisterPage) {
       // Session expired or invalid, clear storage and redirect to login
-      sessionStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    // Handle CSRF token errors
-    if (error.response?.status === 403 && error.response?.data?.error === 'csrf_invalid') {
-      alert('Session expired. Please login again.');
-      sessionStorage.removeItem('user');
+      authService.removeToken();
       window.location.href = '/login';
     }
     return Promise.reject(error);

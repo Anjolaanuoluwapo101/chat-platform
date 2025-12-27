@@ -29,7 +29,7 @@ class DatabaseFactory
      */
     public static function createDefault(): DatabaseInterface
     {
-        $driver = Config::get('database_driver') ?? 'sqlite';
+        $driver = Config::get('database_driver') ?? 'mysql';
         return self::create($driver);
     }
 }

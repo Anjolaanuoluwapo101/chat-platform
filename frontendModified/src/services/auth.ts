@@ -15,7 +15,6 @@ interface User {
 
 interface LoginResponse {
   success: boolean;
-  csrf_token?: string;
   user?: User;
   errors?: any;
 }
@@ -29,27 +28,27 @@ interface RegisterData {
 interface RegisterResponse {
   success: boolean;
   message?: string;
-  csrf_token?: string;
   user?: User;
   errors?: any;
 }
 
 class AuthService {
-  private csrfToken: string | null = null;
-
   // Login user
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
       const response = await api.post('/login', credentials);
+      // Handle response data
       if (response.data.success) {
-        // Store CSRF token and user data
-        this.csrfToken = response.data.csrf_token;
+        // Handle successful login
+        // Store user data in session storage
         sessionStorage.setItem('user', JSON.stringify(response.data.user));
-        return { success: true, user: response.data.user };
+        // store isAuthenticated in session storage with the time(seconds) it was stored
+        sessionStorage.setItem('isAuthenticated', String(Date.now() / 1000));
+  
       }
-      return { success: false, errors: response.data.errors };
+      return response.data;
     } catch (error) {
-      return { success: false, errors: JSON.stringify(error) };
+      return { success: false, errors: { general: 'Login failed' } };
     }
   }
 
@@ -57,30 +56,15 @@ class AuthService {
   async register(userData: RegisterData): Promise<RegisterResponse> {
     try {
       const response = await api.post('/register', userData);
-      if (response.data.success) {
-        // Store CSRF token and user data
-        if (response.data.csrf_token) {
-          this.csrfToken = response.data.csrf_token;
-          sessionStorage.setItem('user', JSON.stringify(response.data.user));
-        }
-        return { success: true, message: response.data.message };
-      }
-      return { success: false, errors: response.data.errors };
+      return response.data;
     } catch (error) {
       return { success: false, errors: { general: 'Registration failed' } };
     }
   }
 
-  // Get CSRF Token (replaces getToken for API calls)
-  getCsrfToken(): string | null {
-    return this.csrfToken;
-  }
-
   // Remove token and user data
   removeToken(): void {
-    this.csrfToken = null;
-    sessionStorage.removeItem('csrf_token');
-    sessionStorage.removeItem('user');
+    // No need to manage tokens as session is handled via cookies
   }
 
   // Logout user
@@ -92,8 +76,6 @@ class AuthService {
       console.error('Logout error:', error);
     } finally {
       // Clear local data regardless of API call success
-      this.csrfToken = null;
-      sessionStorage.removeItem('user');
       PushNotificationService.logout();
       // Clear all cache on logout
       cacheManager.clear();
@@ -101,17 +83,56 @@ class AuthService {
     }
   }
 
-  // Get current user
-  getCurrentUser(): User | null {
-    const user = sessionStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  // Check if user is authenticated by calling backend
+  isAuthenticated() {
+    try {
+      // Check if any user data is stored in session storage
+      if (!sessionStorage.getItem('user')) {
+        //  Store current url
+        sessionStorage.setItem('redirectUrl', window.location.href);
+        return false;
+      }
+      // Check time of previous authentication and if not more than 10 minutes ago
+      const isAuthenticated = sessionStorage.getItem('isAuthenticated');
+      if (isAuthenticated && (Date.now() / 1000 - parseFloat(isAuthenticated)) > 3600) {
+        // clear session storage
+        sessionStorage.clear();
+        this.logout().then(() => {
+          sessionStorage.setItem('redirectUrl', window.location.href);
+          return false;
+        })
+      }else{
+        return true;
+      }
+      // // Call backend to check if user is authenticated
+      // const response = await api.get('/auth/validate');
+      // // Handle response data
+      // if (response.data.success) {
+      //   return true;
+      // } else {
+      //   // redirect to login page
+      //   window.location.href = '/login';
+      // }
+    } catch (error) {
+      console.error('Auth validation error:', error);
+      return false;
+    }
   }
 
-  // Check if user is authenticated
-  isAuthenticated(): boolean {
-    return !!sessionStorage.getItem('user');
-  }
+  // Get current user data from backend
+  getCurrentUser() {
+    try {
+      if (this.isAuthenticated()) {
+        return JSON.parse(sessionStorage.getItem('user') || '{}');
+      }else{
+        return null;
+      }
 
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return null;
+    }
+  }
 }
 
 export default new AuthService();

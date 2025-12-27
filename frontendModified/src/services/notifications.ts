@@ -58,7 +58,74 @@ class PushNotificationService {
      * * @param userId - The ID of the user in your database (e.g., "user-123")
      * @param authOptions - Configuration to reach your backend Beams auth endpoint
      */
-    public async login(userId: string, authOptions: AuthOptions): Promise<boolean> {
+    // public async login(userId: string, authOptions: AuthOptions): Promise<boolean> {
+    //     try {
+    //         if (!this.beamsClient) {
+    //             console.warn("Beams client not initialized. Call initialize() first.");
+    //             await this.initialize();
+    //         }
+
+    //         if (!this.beamsClient) return false;
+
+    //         //Configure the TokenProvider
+    //         const tokenProvider = new PusherPushNotifications.TokenProvider({
+    //             url: authOptions.url,
+    //             headers: authOptions.headers || {},
+    //             queryParams: authOptions.queryParams || {},
+    //         });
+
+    //         //Verify if we are already registered as this user to avoid redundant calls
+    //         const currentUserId = await this.beamsClient.getUserId();
+    //         if (currentUserId === userId) {
+    //             console.log("Already registered as user:", userId);
+    //             return true;
+    //         }
+
+    //         //Associate the device with the user
+    //         await this.beamsClient.setUserId(userId, tokenProvider);
+    //         console.log("Successfully registered authenticated user:", userId);
+    //         return true;
+
+    //     } catch (error) {
+    //         console.error("Could not set authenticated user:", error);
+    //         return false;
+    //     }
+    // }
+
+    public async login(userId: string, authOptions: AuthOptions): Promise<PushNotificationService|boolean> {
+        // --- CUSTOM TOKEN PROVIDER ---
+        // We build the provider manually so we can set credentials: 'include'
+        const customTokenProvider = {
+            fetchToken: async (userId: string) => {
+                const url = new URL(authOptions.url);
+                url.searchParams.append('user_id', userId);
+                
+                if (authOptions.queryParams) {
+                    Object.entries(authOptions.queryParams).forEach(([k, v]) => 
+                        url.searchParams.append(k, v)
+                    );
+                }
+    
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: authOptions.headers || {},
+                    credentials: 'include', // <--- Sends the PHP Session Cookie
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`Auth failed with status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+    
+                if (data.token) {
+                    return data; 
+                }
+        
+                return { token: data };
+            }
+        };
+
         try {
             if (!this.beamsClient) {
                 console.warn("Beams client not initialized. Call initialize() first.");
@@ -67,26 +134,48 @@ class PushNotificationService {
 
             if (!this.beamsClient) return false;
 
-            //Configure the TokenProvider
-            const tokenProvider = new PusherPushNotifications.TokenProvider({
-                url: authOptions.url,
-                headers: authOptions.headers || {},
-                queryParams: authOptions.queryParams || {},
-            });
-
-            //Verify if we are already registered as this user to avoid redundant calls
+            // Verify if we are already registered
             const currentUserId = await this.beamsClient.getUserId();
             if (currentUserId === userId) {
                 console.log("Already registered as user:", userId);
-                return true;
+                return this;
             }
 
-            //Associate the device with the user
-            await this.beamsClient.setUserId(userId, tokenProvider);
+            // Associate the device with the user using our Custom Provider
+            await this.beamsClient.setUserId(userId, customTokenProvider);
+            
             console.log("Successfully registered authenticated user:", userId);
-            return true;
+            // return self for chaining
+            return this;
 
-        } catch (error) {
+        } catch (error: any) {
+            const errStr = JSON.stringify(error);
+            
+            // 3. CATCH THE 404 ERROR (Zombie Device ID)
+            if (errStr.includes('404') || errStr.includes('Device not found')) {
+                console.warn("Stale Device ID detected. Healing connection...");
+
+                try {
+                    if (!this.beamsClient) return false;
+                    // A. Wipe the dead ID from the browser
+                    await this.beamsClient.clearAllState();
+
+                    // B. Get a brand new Device ID from the server
+                    await this.initialize();
+
+                    // C. Retry the login with the new ID
+                    if (this.beamsClient) {
+
+                         await this.beamsClient.setUserId(userId, customTokenProvider);
+                         console.log("Recovered from stale ID. Logged in successfully.");
+                         return true;
+                    }
+                } catch (retryError) {
+                    console.error("Critical: Failed to recover from stale ID", retryError);
+                    return false;
+                }
+            }
+
             console.error("Could not set authenticated user:", error);
             return false;
         }
@@ -121,6 +210,22 @@ class PushNotificationService {
             console.log("Interest added:", interest);
             return true;
         } catch (error) {
+            // const errorMessage = JSON.stringify(error);
+            // if (errorMessage.includes('404') || errorMessage.includes('Device not found')) {
+            //     console.warn("Device ID is stale. Re-registering...");
+            //     // 1. Wipe the dead state
+            //     await this.beamsClient?.clearAllState();
+            //     this.beamsClient = null; 
+                
+            //     // 2. Register brand new
+            //     await this.initialize();
+                
+            //     if(!this.beamsClient) return false;
+            //     // 3. Retry the action
+            //     await this.beamsClient.addDeviceInterest(interest);
+            //     return true;
+            // }
+            
             console.error("Error adding interest:", error);
             return false;
         }

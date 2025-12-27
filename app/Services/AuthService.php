@@ -90,6 +90,8 @@ class AuthService
 
         $userData = $this->validateToken($token);
         if (!$userData) {
+            // Clear invalid session
+            unset($_SESSION['jwt_token']);
             return null;
         }
 
@@ -98,6 +100,8 @@ class AuthService
         $user = $userModel->getById($userData['id']);
 
         if (!$user || !$user['is_verified']) {
+            // Clear invalid session
+            unset($_SESSION['jwt_token']);
             return null;
         }
 
@@ -110,67 +114,20 @@ class AuthService
     public function authenticateFromToken(): ?array
     {
         // First try session-based auth
-        $user = $this->authenticateFromSession();
-        if ($user) {
-            return $user;
+        
+    }
+
+    /**
+     * Invalidate current session.
+     */
+    public function logout(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
         
-        return null;
-    }
-
-    /**
-     * Refresh token (generate new one with updated expiration).
-     */
-    public function refreshToken(string $oldToken): ?string
-    {
-        $userData = $this->validateToken($oldToken);
-        if (!$userData) {
-            return null;
-        }
-
-        // Get fresh user data
-        $userModel = new User();
-        $user = $userModel->getById($userData['id']);
-
-        if (!$user) {
-            return null;
-        }
-
-        return $this->generateToken($user);
-    }
-
-    /**
-     * Generate CSRF token.
-     */
-    public function generateCsrfToken(): string
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $token = bin2hex(random_bytes(32));
-        $_SESSION['csrf_token'] = $token;
-        return $token;
-    }
-
-    /**
-     * Validate CSRF token.
-     */
-    public function validateCsrfToken(string $token): bool
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-    }
-
-    /**
-     * Get CSRF token from request header.
-     */
-    public function getCsrfTokenFromHeader(): ?string
-    {
-        $headers = getallheaders();
-        return $headers['X-CSRF-Token'] ?? $headers['X-Csrf-Token'] ?? null;
+        // Unset specific session variables
+        unset($_SESSION['jwt_token']);
+        unset($_SESSION['user']);
     }
 }

@@ -14,7 +14,7 @@ export const commonNavItems = [
   {
     title: 'Messages',
     icon: React.createElement(MessageSquareIcon, { className: 'w-5 h-5' }),
-    to: '/messages',
+    to: '/messages'+`/${auth.getCurrentUser()?.username}`,
   },
   {
     title: 'Groups',

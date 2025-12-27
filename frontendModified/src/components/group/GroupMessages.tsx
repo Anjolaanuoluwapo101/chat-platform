@@ -146,12 +146,20 @@ const GroupMessages = () => {
                         const msgRes = await groupService.getGroupMessages(parseInt(groupId!), null, 'before');
                         fetchedMessages = msgRes.messages || [];
                         // Initialize Push Notification Service
-                        PushNotificationService.initialize();
-                        
-                        // Check Interest
-                        if (!(await PushNotificationService.hasInterest("group_" + groupId))) {
-                            PushNotificationService.addInterest("group_" + groupId);
-                            console.log("Added interest: group_" + groupId)
+                       
+                        if (currentUser) {
+                            PushNotificationService.login(String(currentUser.id), {
+                                url: import.meta.env.VITE_API_BASE_URL + 'pusher/beam-auth',
+                                headers: {}
+                            }).then(async (beamsClient) => {
+                                // Check Interest
+                                if(typeof beamsClient === 'boolean') return
+    
+                                if (!(await beamsClient.hasInterest("group_" + groupId))) {
+                                    await beamsClient.addInterest("group_" + groupId);
+                                    console.log("Added interest: group_" + groupId)
+                                }
+                            });
                         }
 
                     } catch (e) {
@@ -215,7 +223,7 @@ const GroupMessages = () => {
         });
         // Mark new message as read
         groupService.markMessagesRead(parseInt(groupId!), data.id).catch(console.error);
-        
+
         // Only auto-scroll if user is already at bottom, otherwise show "New Messages" button
         const messagesContainer = messagesEndRef.current?.parentElement;
         if (messagesContainer) {
@@ -247,10 +255,10 @@ const GroupMessages = () => {
     const retryLoadGroup = useCallback(async () => {
         setLoading(true);
         setNetworkError(false);
-        
+
         try {
             const info = await groupService.getGroupInfo(parseInt(groupId!));
-            
+
             if (info.group) {
                 setGroupName(info.group.name || 'Group');
                 setIsAnonymous(Number(info.group.is_anonymous) === 1);
@@ -260,11 +268,11 @@ const GroupMessages = () => {
                 setAdmins(info.group.admins || []);
                 setBannedUsers(info.group.banned_users || []);
             }
-            
+
             setIsMember(!!info.is_member);
             const userIsAdmin = info.group?.admins?.some(admin => admin.id === currentUser?.id);
             setIsAdmin(!!userIsAdmin);
-            
+
             if (info.is_member) {
                 const msgRes = await groupService.getGroupMessages(parseInt(groupId!), null, 'before');
                 setMessages(msgRes.messages || []);
@@ -279,7 +287,7 @@ const GroupMessages = () => {
 
     const handleJoin = useCallback(async () => {
         if (isJoining) return; // Prevent multi-tap
-        
+
         try {
             setIsJoining(true);
             setError(null);
@@ -323,7 +331,7 @@ const GroupMessages = () => {
 
     const handleLeaveGroup = useCallback(async () => {
         if (isLeaving) return; // Prevent multi-tap
-        
+
         if (!window.confirm('Are you sure you want to leave this group?')) {
             return;
         }
@@ -350,9 +358,9 @@ const GroupMessages = () => {
         try {
             setError(null);
             setSendingMessage(true); // Show "Sending..." status
-            
+
             await groupService.sendGroupMessage(parseInt(groupId!), message, files, replyToMessageId);
-            
+
             // Message sent successfully - will appear via Pusher
             setSendingMessage(false);
         } catch (err) {
@@ -423,7 +431,7 @@ const GroupMessages = () => {
             {/* Error/Success Messages */}
             {error && <ErrorMessage message={error} setMessage={setError} />}
             {success && <SuccessMessage message={success} setMessage={setSuccess} />}
-            
+
             <ChatScreen>
                 <ChatHeader
                     title={groupName}
@@ -449,7 +457,7 @@ const GroupMessages = () => {
                                 </button>
                             </div>
                         )}
-                        
+
                         {showMembers && (
                             <MembersList members={members} />
                         )}
@@ -467,7 +475,7 @@ const GroupMessages = () => {
                                 onReply={(message) => setReplyToMessage(message)}
                             />
                             <div ref={messagesEndRef} />
-                            
+
                             {/* Show "New Messages" button when user scrolled up */}
                             {showScrollButton && (
                                 <button
@@ -478,14 +486,14 @@ const GroupMessages = () => {
                                 </button>
                             )}
                         </div>
-                        
+
                         {/* Show sending status above the message form */}
                         {sendingMessage && (
                             <div className="text-sm text-gray-600 px-6 py-3 text-center border-t border-gray-200">
                                 Sending...
                             </div>
                         )}
-                        
+
                         <MessageForm
                             onMessageSent={handleSend}
                             replyToMessage={replyToMessage}

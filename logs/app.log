@@ -66,3 +66,49 @@
 [2025-11-22 07:42:22] [INFO] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
 [2025-11-22 07:45:41] [INFO] User logged in via API: anjola101
 [2025-11-22 08:38:48] [INFO] User logged in via API: anjola101
+[2025-12-25 09:09:53] [INFO] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[2025-12-25 09:10:50] [ERROR] Registration error: Registration failed for: Anjola101 (anjolaakinsoyinu@gmail.com), verification code not sent
+[2025-12-25 09:29:42] [INFO] User registered: Anjola101 (anjolaakinsoyinu@gmail.com)
+[2025-12-25 09:33:12] [INFO] User registered: Anjola101 (anjolaakinsoyinu@gmail.com)
+[2025-12-25 09:36:12] [WARNING] Failed API login attempt for: Anjola101
+[2025-12-25 09:39:47] [ERROR] Registration error: Registration failed for: Anjola101 (anjolaakinsoyinu@gmail.com), verification code not sent
+[2025-12-25 09:50:53] [ERROR] Registration error: Registration failed for: Anjola101 - user already exists
+[2025-12-25 09:52:12] [WARNING] Failed API login attempt for: Anjola101
+[2025-12-25 09:52:55] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 09:53:11] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 09:53:24] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 09:57:59] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 09:59:20] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 10:01:47] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 10:08:24] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 10:12:05] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 10:45:00] [WARNING] Failed API login attempt for: Anjola101
+[2025-12-25 10:45:55] [ERROR] Registration error: Registration failed for: Anjola101 - user already exists
+[2025-12-25 10:50:07] [ERROR] Registration error: Registration failed for: Anjola101 - user already exists
+[2025-12-25 10:50:59] [ERROR] Registration error: Registration failed for: Anjola101 - user already exists
+[2025-12-25 10:51:57] [ERROR] Registration error: Registration failed for: Anjola101 - user already exists
+[2025-12-25 10:53:33] [ERROR] Registration error: Registration failed for: Anjola101 - user already exists
+[2025-12-25 10:54:22] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 11:00:14] [ERROR] Registration error: Registration failed for: Anjola303 (anjolaakinsoyinu@gmail.com) - database save operation failed
+[2025-12-25 11:02:11] [INFO] Saving user: Anjola303
+[2025-12-25 11:02:12] [INFO] User registered: Anjola303 (anjolaakinsoyinu@gmail.com)
+[2025-12-25 11:04:02] [INFO] User logged in via API: Anjola303
+[2025-12-25 12:20:01] [INFO] User logged in via API: Anjola303
+[2025-12-25 16:57:47] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-25 23:18:12] [WARNING] Failed API login attempt for: Anjola101
+[2025-12-25 23:18:36] [INFO] User logged in via API: Anjola303
+[2025-12-26 00:18:54] [INFO] User logged in via API: Anjola303
+[2025-12-26 00:28:10] [INFO] User logged in via API: Anjola303
+[2025-12-26 00:44:56] [INFO] User logged in via API: Anjola303
+[2025-12-26 00:58:02] [INFO] User logged in via API: Anjola303
+[2025-12-26 17:36:32] [INFO] User logged in via API: Anjola303
+[2025-12-26 18:07:05] [INFO] User logged in via API: Anjola303
+[2025-12-26 18:21:48] [INFO] createGroup of 16 failed: Error while switching to encrypted communication [rediss://flexible-condor-35435.upstash.io:6379]
+[2025-12-26 18:22:25] [INFO] SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'Non Anonymous' for key 'name'
+[2025-12-26 18:24:01] [INFO] User logged in via API: Anjola303
+[2025-12-26 19:41:32] [INFO] User logged in via API: Anjola303
+[2025-12-26 19:44:15] [INFO] User logged in via API: Anjola303
+[2025-12-26 19:47:11] [INFO] User logged in via API: Anjola303
+[2025-12-26 19:48:50] [INFO] User logged in via API: Anjola303
+[2025-12-27 01:24:54] [INFO] User logged in via API: Anjola303
+[2025-12-27 01:40:35] [INFO] User logged in via API: Anjola303

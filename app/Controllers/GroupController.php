@@ -18,34 +18,14 @@ class GroupController extends BaseController
     use PusherTrait;
     private $groupModel;
     private $logger;
-    private $authService;
-    private $user;
-    private $userId;
 
     public function __construct()
     {
         parent::__construct();
         $this->groupModel = new Group();
         $this->logger = new Logger();
-        $this->authService = new AuthService();
     }
 
-    protected function authenticateUser()
-    {
-        if (!isset($this->authService)) {
-            $this->authService = new AuthService();
-        }
-        $user = $this->authService->authenticateFromToken();
-        if ($user) {
-            $this->user = $user;
-            $this->userId = $user['id'];
-        } else {
-            // Authentication failed - return 401
-            $this->jsonResponse(['error' => 'Authentication required'], 401);
-            return null;
-        }
-        return $user;
-    }
 
     public function createGroup()
     {
@@ -614,7 +594,6 @@ class GroupController extends BaseController
         }
 
 
-
         $input = $_POST;
         $content = $input['content'] ?? '';
         $groupId = $input['group_id'] ?? null;
@@ -633,7 +612,6 @@ class GroupController extends BaseController
             $this->jsonResponse(['success' => false, 'error' => 'Not a member of this group'], 403);
             return;
         }
-
 
 
         $messageModel = new Message();

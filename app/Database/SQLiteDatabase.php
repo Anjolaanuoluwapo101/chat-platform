@@ -183,15 +183,23 @@ class SQLiteDatabase extends AbstractSQLDatabase
     public function saveUser($user)
     {
         try {
+            $this->logger->log('Saving user: ' . $user['username']);
             $stmt = $this->pdo->prepare("INSERT INTO users (username, password_hash, email, verification_code, is_verified) VALUES (?, ?, ?, ?, ?)");
-            return $stmt->execute([
+            $stmt->execute([
                 $user['username'],
                 $user['password_hash'],
                 $user['email'] ?? null,
                 $user['verification_code'] ?? null,
                 $user['is_verified'] ?? 0
             ]);
+            // check if user was created
+            // get the id
+            $userId = $this->pdo->lastInsertId();
+            // check if id exists in users table
+            return $this->getUserById($userId) != null ? true : false;
         } catch (PDOException $e) {
+            $this->logger->log($e->getMessage());
+            error_log($e->getMessage());
             return false;
         }
     }

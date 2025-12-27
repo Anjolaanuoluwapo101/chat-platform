@@ -191,11 +191,11 @@ export const FormInput = ({
   minLength?: number;
   error?: string;
 }) => (
-  <div>
+  <div className="mb-3 space-y-1">
     <label htmlFor={id} className="block text-sm font-medium text-gray-700 float-left">
       {label}
     </label>
-    <div className="mt-1">
+    <div className="relative mt-1">
       <input
         id={id}
         name={name}
@@ -245,11 +245,11 @@ export const PasswordInput = ({
   onTogglePassword: () => void;
   showForgotPassword?: boolean;
 }) => (
-  <div className="space-y-1">
+  <div className="mb-3 space-y-1">
     <div className="flex items-center justify-between">
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">
         {label}
-      </label>
+      </label>  
       {showForgotPassword && (
         <a href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline">
           Forgot password?
@@ -306,7 +306,7 @@ export const SubmitButton = ({ loading, loadingText, text, disabled = false }: {
  */
 export const ErrorMessage = ({ message }: { message?: string }) => (
   message ? (
-    <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
+    <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg m-2">
       {message}
     </div>
   ) : null
@@ -317,7 +317,7 @@ export const ErrorMessage = ({ message }: { message?: string }) => (
  */
 export const SuccessMessage = ({ message }: { message?: string }) => (
   message ? (
-    <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg">
+    <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg m-2">
       {message}
     </div>
   ) : null

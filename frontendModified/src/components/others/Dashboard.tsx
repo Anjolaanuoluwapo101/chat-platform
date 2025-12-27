@@ -7,7 +7,7 @@ import { DASHBOARD_CARDS } from './dashboardConstants';
 import { Shield } from 'lucide-react';
 import ChannelsSection from './ChannelsSection';
 import { getCommonNavItems } from '../nav/sharedNavItems';
-// import PushNotificationService from '../../services/notifications';
+import auth from '../../services/auth';
 
 interface NavItem {
   title: string;
@@ -27,11 +27,12 @@ function Dashboard() {
     setActiveIndex((prevIndex) => (prevIndex + 1) % DASHBOARD_CARDS.length);
   };
 
-  // PushNotificationService.initialize().then(() => {
-  //   console.log("Push Notification Service initialized.");
-  //   //add interest
-  //   PushNotificationService.addInterest("general");
-  // });
+  // Check if current user has been set, if not, refresh
+  if(auth.getCurrentUser().username == undefined || auth.getCurrentUser().username == null){
+  // reload the screen 
+  window.location.reload();
+}
+
 
   return (
     <Layout navItems={navItems} title="TYT!">

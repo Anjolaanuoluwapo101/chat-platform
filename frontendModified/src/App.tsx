@@ -28,11 +28,12 @@ function App() {
           <Route
             path="/messages"
             element={
-              <ProtectedRoute>
-                <Navigate to={`/messages/${authService.getCurrentUser()?.username}`} />
-              </ProtectedRoute>
+              // <ProtectedRoute>
+              <Navigate to={`/messages/:username}`} />
+              // </ProtectedRoute>
             }
           />
+
           <Route
             path="/messages/:username"
             element={
@@ -41,6 +42,14 @@ function App() {
               // </ProtectedRoute>
             }
           />
+          {/* <Route
+            path="/messages/:username"
+            element={
+              // <ProtectedRoute>
+              <Messages />
+              // </ProtectedRoute>
+            }
+          /> */}
 
           {/* Group Messages */}
           {/* Groups */}
@@ -82,7 +91,7 @@ function App() {
             <ProtectedRoute>
               <Privacy />
             </ProtectedRoute>
-            } />
+          } />
 
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>

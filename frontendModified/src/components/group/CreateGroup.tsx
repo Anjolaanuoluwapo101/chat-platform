@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import groupService from '../../services/groupService';
+import { ErrorMessage } from '../auth/AuthShared';
 
 interface CreateGroupProps {
   onSuccess?: () => void;
@@ -27,11 +28,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
       
       if (response.success && response.group_id) {
         // Call onSuccess callback if provided, otherwise navigate
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          navigate(`/groups/${response.group_id}`);
-        }
+        return onSuccess ? onSuccess() : navigate(`/group/${response.group_id}`);
       } else {
         setError('Failed to create group');
       }
@@ -45,7 +42,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
+      <div className='mb-3'>
         <label htmlFor="groupName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Group Name
         </label>
@@ -59,12 +56,12 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
           className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-700"
         />
       </div>
-      <div className="flex items-center">
+      <div className="mb-3 flex items-center">
         <input
           type="checkbox"
           id="isAnonymous"
           checked={isAnonymous}
-          onChange={(e) => setIsAnonymous(e.target.checked)}
+          onChange={() => setIsAnonymous(!isAnonymous)}
           disabled={loading}
           className="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
         />
@@ -72,7 +69,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
           Anonymous Group (usernames hidden)
         </label>
       </div>
-      {error && <div className="text-red-500 text-sm font-medium bg-red-50 dark:bg-red-900/20 p-3 rounded">{error}</div>}
+      {error && <ErrorMessage message={error} />}
       <button
         type="submit"
         disabled={loading}

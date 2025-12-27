@@ -39,9 +39,6 @@ class User
     public function register($username, $password, $email)
     {
         try {
-            if (!$this->validateUsername($username) || !$this->validateEmail($email)) {
-                return false;
-            }
 
             if ($user = $this->db->getUser($username)) {
                 return false; // User exists
@@ -56,11 +53,11 @@ class User
                 'verification_code' => $verificationCode,
                 'is_verified' => 1, // Automatically verify for now
             ];
-
-            $this->db->saveUser($user);
-            return $verificationCode; // Return code for email sending
+            $result = $this->db->saveUser($user);
+            return $result; // Return the result of the save operation (true/false)
         } catch (Exception $e) {
-            return $e->getMessage();
+            error_log($e->getMessage());
+            return false;
         }
     }
 

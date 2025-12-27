@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Factory\StorageFactory;
 use App\Factory\DatabaseFactory;
+use App\Services\AuthService;
+
 
 class BaseController
 {
@@ -11,14 +13,17 @@ class BaseController
      * Database instance according to configured driver.
      */
     protected $db;
-
+    protected $authService;
+    protected $user;
+    protected $userId;
     public function __construct()
     {
-
+        $this->authService = new AuthService();
+        
         // Create configured database instance for controllers to use
         $this->db = \App\Factory\DatabaseFactory::createDefault();
 
-        
+
     }
 
     /**
@@ -91,47 +96,34 @@ class BaseController
     }
 
     /**
-     * Authenticate user via token (for API calls).
+     * Authenticate user 
      */
     protected function authenticateUser()
     {
-        $token = $this->getBearerToken();
-        if (!$token) {
-            $this->jsonResponse(['error' => 'Unauthorized'], 401);
+        if (!isset($this->authService)) {
+            $this->authService = new AuthService();
         }
-
-        // For now, assume token is user ID (in production, validate JWT)
-        $userId = $token;
-        // TODO: Validate token properly
-        return $userId;
-    }
-
-    /**
-     * Validate CSRF token for state-changing requests.
-     */
-    protected function validateCsrfToken()
-    {
-        $authService = new \App\Services\AuthService();
-        $csrfToken = $authService->getCsrfTokenFromHeader();
-        
-        if (!$csrfToken || !$authService->validateCsrfToken($csrfToken)) {
-            $this->jsonResponse(['success' => false, 'error' => 'csrf_invalid', 'message' => 'Invalid or missing CSRF token'], 403);
+        $user = $this->checkAuth(); // Use the new method from BaseController
+        if ($user == null){
+            // Authentication failed - return 401
+            $this->jsonResponse(['error' => 'Authentication required'], 401);
+            return null;
         }
-    }
+        // Set user property for convenience
+        $this->user = $user;
+        $this->userId = $user['id'];
 
-    /**
-     * Require authentication via session.
-     */
-    protected function requireAuth()
-    {
-        $authService = new \App\Services\AuthService();
-        $user = $authService->authenticateFromToken();
-        
-        if (!$user) {
-            $this->jsonResponse(['success' => false, 'error' => 'unauthorized', 'message' => 'Authentication required'], 401);
-        }
-        
         return $user;
+    }
+
+    /**
+     * Check if user is authenticated via session (without returning error).
+     * Used for checking authentication state without forcing login.
+     */
+    protected function checkAuth()
+    {
+        $authService = new AuthService();
+        return $authService->authenticateFromSession();
     }
 
     /**
@@ -188,14 +180,14 @@ class BaseController
     {
         // Get database instance
         $db = DatabaseFactory::createDefault();
-        
+
         // Prepare media data
         $mediaData = [
             'message_id' => $messageId,
             'file_path' => $filePath,
             'mime_type' => $mimeType
         ];
-        
+
         // Determine which table to save to based on MIME type
         if (strpos($mimeType, 'image') === 0) {
             // Save to photos table
@@ -207,7 +199,7 @@ class BaseController
             // Save to audio table
             return $db->saveAudio($mediaData);
         }
-        
+
         // If MIME type doesn't match any category, we don't save it to a specific table
         return true;
     }

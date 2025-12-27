@@ -42,6 +42,11 @@ class UserController extends BaseController
             if (empty($username) || strlen($username) < 5) {
                 $errors['username'] = 'Username must be at least 5 characters.';
             }
+            // the username must be alphanumeric only no whitespaces or special characters
+            if (!ctype_alnum($username)) {
+                $errors['username'] = 'Username must be alphanumeric only.';
+            }
+
             if (empty($password) || strlen($password) < 5) {
                 $errors['password'] = 'Password must be at least 5 characters.';
             }
@@ -53,22 +58,18 @@ class UserController extends BaseController
                 $this->jsonResponse(['success' => false, 'errors' => $errors], 400);
                 return;
             }
+            $registrationSuccess = $user->register($username, $password, $email);
 
-            $verificationCode = $user->register($username, $password, $email);
-
-            if ($verificationCode) {
+            if ($registrationSuccess) {
                 $this->logger->info("User registered: $username ($email)");
-                $url = Config::get('app')['url'] . "/verify.php?username=" . urlencode($username) . "&code=$verificationCode";
-                // /$mailer->sendVerificationEmail($email, $verificationCode, $url); //render free tier does not support email verification
+                $userData = $user->getByUsername($username);
+                $authService = new AuthService();
+                $token = $authService->generateToken($userData);
 
                 // Start session and store JWT token
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
-
-                $userData = $user->getByUsername($username);
-                $authService = new AuthService();
-                $token = $authService->generateToken($userData);
 
                 // Store JWT in session (not returned to client)
                 $_SESSION['jwt_token'] = $token;
@@ -78,13 +79,9 @@ class UserController extends BaseController
                     'email' => $userData['email']
                 ];
 
-                // Generate and return CSRF token
-                $csrfToken = $authService->generateCsrfToken();
-
                 $this->jsonResponse([
                     'success' => true,
-                    'message' => 'Registration successful. Check your email for verification.    You will be redirected to  login page in 3 seconds',
-                    'csrf_token' => $csrfToken,
+                    'message' => 'Registration successful.',
                     'user' => [
                         'id' => $userData['id'],
                         'username' => $userData['username'],
@@ -92,7 +89,12 @@ class UserController extends BaseController
                     ]
                 ]);
             } else {
-                throw new \Exception("Registration failed for: $username ($email), verification code not sent");
+                // Check if the user already exists
+                if ($user->getByUsername($username)) {
+                    throw new \Exception("Registration failed for: $username - user already exists");
+                } else {
+                    throw new \Exception("Registration failed for: $username ($email) - database save operation failed");
+                }
             }
         } catch (\Exception $e) {
             $this->logger->error("Registration error: " . $e->getMessage());
@@ -138,22 +140,19 @@ class UserController extends BaseController
 
                     // Store JWT in session (not returned to client)
                     $_SESSION['jwt_token'] = $token;
+                    // not returned to client and also not used for authentication
                     $_SESSION['user'] = [
                         'id' => $userData['id'],
                         'username' => $userData['username'],
                         'email' => $userData['email']
                     ];
-
-                    // Generate and return CSRF token
-                    $csrfToken = $authService->generateCsrfToken();
-
+                    
                     $this->jsonResponse([
                         'success' => true,
-                        'csrf_token' => $csrfToken,
                         'user' => [
                             'id' => $userData['id'],
                             'username' => $userData['username'],
-                            'email' => $userData['email']
+                            'email' => $userData['email'],
                         ]
                     ]);
                 } else {
@@ -169,6 +168,46 @@ class UserController extends BaseController
         } catch (\Exception $e) {
             $this->logger->error("Login error: " . $e->getMessage());
             $this->jsonResponse(['success' => false, 'errors' => ['general' => 'An error occurred during login.', 'details' => $e->getMessage()]], 500);
+        }
+    }
+
+    /**
+     * API endpoint to check auth
+     */
+    public function validateAuth()
+    {
+        $user = $this->checkAuth();
+        if($user) {
+            $this->jsonResponse(['success' => true]);
+        } else {
+            $this->jsonResponse(['success' => false], 401);
+        }
+    }
+
+    /**
+     * API endpoint to get current user data server-side or validate current authentication
+     */
+    public function getCurrentUser()
+    {
+        try {
+            // For getting user data, we also check session authentication
+            $user = $this->checkAuth();
+            
+            if ($user) {
+                $this->jsonResponse([
+                    'success' => true,
+                    'user' => [
+                        'id' => $user['id'],
+                        'username' => $user['username'],
+                        'email' => $user['email']
+                    ]
+                ]);
+            } else {
+                $this->jsonResponse(['success' => false, 'user' => null], 401);
+            }
+        } catch (\Exception $e) {
+            $this->logger->error("Get user error: " . $e->getMessage());
+            $this->jsonResponse(['success' => false, 'user' => null], 401);
         }
     }
 
