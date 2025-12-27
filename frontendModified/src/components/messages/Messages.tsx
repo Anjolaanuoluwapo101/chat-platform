@@ -50,7 +50,7 @@ const Messages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [sendingMessage, setSendingMessage] = useState(false); // Track if we're sending a message
-  const [messageSentSuccess, setMessageSentSuccess] = useState(true); // Show "Sent!" confirmation
+  const [messageSentSuccess, setMessageSentSuccess] = useState(false); // Show "Sent!" confirmation
   const [networkError, setNetworkError] = useState(false); // Track if we're offline
 
   const currentUser: User = authService.getCurrentUser() || { id: 0, username: '', email: '' };
