@@ -54,7 +54,10 @@ const Login = () => {
     if (result.success) {
       // navigate(`/messages/${formData.username}`);
       // check session storage if redirect url exists
-      navigate('/dashboard');
+      alert("You will be redirected to the dashboard")
+      setTimeout(()=>{
+        window.location.href = '/dashboard'
+      },2000);
     } else {
       setErrors(result.errors);
     }
