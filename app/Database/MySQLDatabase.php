@@ -5,7 +5,6 @@ namespace App\Database;
 use App\Config\Config;
 use PDO;
 use PDOException;
-use App\Log\Logger;
 
 class MySQLDatabase extends AbstractSQLDatabase
 {

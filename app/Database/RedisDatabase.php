@@ -7,7 +7,6 @@ use App\Factory\DatabaseFactory;
 use App\Config\Config;
 use Predis\Client as PredisClient;
 use App\Log\Logger;
-use App\Database\SQLiteDatabase;
 
 /**
  * RedisDatabase provides a Redis-backed fast layer for chat operations.

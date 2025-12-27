@@ -21,7 +21,7 @@ class BaseController
         $this->authService = new AuthService();
         
         // Create configured database instance for controllers to use
-        $this->db = \App\Factory\DatabaseFactory::createDefault();
+        $this->db = DatabaseFactory::createDefault();
 
 
     }

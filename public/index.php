@@ -16,7 +16,7 @@ if (session_status() == PHP_SESSION_NONE) {
     // this protects the session cookie from being accessed by JavaScript 
     session_set_cookie_params([
         'lifetime' => 3600, // 1 hour
-        'path' => '/',
+        'path' => '/', 
         'domain' => '', // Set to your domain in production
         'secure' => $isHttps, // HTTPS only in production
         'httponly' => true, // No JavaScript access
@@ -55,7 +55,8 @@ if (strpos($requestUriPath, '/api') !== 0) {
 // } else {
 //     header('Access-Control-Allow-Origin: http://localhost:5173');
 // }
-header('Access-Control-Allow-Origin: http://localhost:5173');
+// header('Access-Control-Allow-Origin: http://localhost:5173');
+header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Access-Control-Allow-Origin, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
