@@ -1,4 +1,5 @@
 import React, { useRef, useState, type ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import {
   MessageFormWrapper,
   MessageFormContainer,
@@ -123,23 +124,27 @@ const MessageForm = ({
 
       {/* Reply preview */}
       {replyToMessage && (
-        <div className="px-4 py-2 bg-blue-50 border-b border-blue-200 flex items-start justify-between">
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="px-4 py-2 bg-slate-800/80 border-b border-slate-600 flex items-start justify-between"
+        >
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-blue-700 truncate">
+            <div className="text-xs font-semibold text-amber-400 truncate">
               Replying to {replyToMessage.username}
             </div>
-            <div className="text-xs text-blue-600 truncate">
+            <div className="text-xs text-slate-300 truncate">
               {replyToMessage.content}
             </div>
             {replyToMessage.media_urls && replyToMessage.media_urls.length > 0 && (
               <div className="mt-1 flex flex-wrap gap-1">
                 {replyToMessage.media_urls.slice(0, 3).map((url, idx) => (
-                  <div key={idx} className="w-8 h-8 bg-gray-200 rounded overflow-hidden">
+                  <div key={idx} className="w-8 h-8 bg-slate-700 rounded overflow-hidden">
                     {renderMedia(url, idx)}
                   </div>
                 ))}
                 {replyToMessage.media_urls.length > 3 && (
-                  <div className="w-8 h-8 bg-gray-300 rounded flex items-center justify-center text-xs">
+                  <div className="w-8 h-8 bg-slate-600 rounded flex items-center justify-center text-xs text-slate-300">
                     +{replyToMessage.media_urls.length - 3}
                   </div>
                 )}
@@ -148,12 +153,12 @@ const MessageForm = ({
           </div>
           <button
             onClick={onCancelReply}
-            className="ml-2 text-blue-500 hover:text-blue-700"
+            className="ml-2 text-slate-400 hover:text-slate-200"
             type="button"
           >
             ✕
           </button>
-        </div>
+        </motion.div>
       )}
 
       {/* Main form bar */}

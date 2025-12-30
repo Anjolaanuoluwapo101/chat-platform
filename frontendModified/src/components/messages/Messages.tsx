@@ -9,6 +9,7 @@ import messageService from '../../services/messageService';
 import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
 import { getCommonNavItems } from '../nav/sharedNavItems';
 import PushNotificationService from '../../services/notifications';
+import { motion } from 'framer-motion';
 
 
 interface Message {
@@ -33,14 +34,18 @@ interface User {
 // A component that shows that message has been sent and also puts a link to create an account 
 const SentMessage = () => {
   return (
-    <div className="flex flex-col items-center justify-center p-20 m-auto text-sm text-green-600 mb-3 text-center">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col items-center justify-center p-20 m-auto text-sm text-green-400 mb-3 text-center bg-slate-800/80 backdrop-blur-sm rounded-xl border border-slate-600"
+    >
       <p>Your Message has been delivered!</p>
       <p className="mt-2">
         <button onClick={() => {
           window.location.href = '/register'
-        }} className="text-blue-500 hover:underline">Create an account to send messages.</button>
+        }} className="text-amber-400 hover:text-amber-300 hover:underline">Create an account to send messages.</button>
       </p>
-    </div>
+    </motion.div>
   );
 };
 
@@ -179,58 +184,98 @@ const Messages = () => {
   if (loading) {
     return (
       <Layout navItems={navItems}>
-        <ChatScreen>
-          <ChatHeader
-            title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}
-            onToggleMembers={handleLogout}
-          />
-          <LoadingSpinner />
-        </ChatScreen>
+        <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 bg-linear-to-br from-amber-900/20 via-orange-900/20 to-amber-900/20"></div>
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-slate-700 rounded-full mix-blur-multiply filter blur-xl opacity-5 animate-pulse"></div>
+          </div>
+          
+          <div className="relative z-10">
+            <ChatScreen>
+              <ChatHeader
+                title={isOwnMessages ? `Your Private Messages` : `Send Message to ${username}`}
+                onToggleMembers={handleLogout}
+              />
+              <LoadingSpinner />
+            </ChatScreen>
+          </div>
+        </div>
       </Layout>
     );
   }
 
   return (
     <Layout navItems={navItems}>
-      <ChatScreen>
-        <ChatHeader
-          title={isOwnMessages ? `Your Messages` : `Send Message to ${username}`}
-          onToggleMembers={handleLogout}
-        />
-        {/* Message list with consistent padding */}
-        <div className="grow overflow-y-auto p-6 scrollbar-hide">
-          {/* Show network error with retry button */}
-          {networkError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6 text-center">
-              <p className="text-red-600 mb-3">Connection problem. Please check your internet.</p>
-              <button
-                onClick={retryLoadMessages}
-                className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors"
-              >
-                Retry
-              </button>
-            </div>
-          )}
-          {messageSentSuccess ? (
-            <SentMessage />
-          ) : (
-            <MessageList messages={messages} currentUser={currentUser} groupType={false} />
-          )}
+      <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-amber-900/20 via-orange-900/20 to-amber-900/20"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-slate-700 rounded-full mix-blur-multiply filter blur-xl opacity-5 animate-pulse"></div>
         </div>
+        
+        <div className="relative z-10">
+          <ChatScreen>
+            <ChatHeader
+              title={isOwnMessages ? `Your Private Messages` : `Send Message to ${username}`}
+              onToggleMembers={handleLogout}
+            />
+            {/* Message list with consistent padding */}
+            <div className="grow overflow-y-auto p-6 scrollbar-hide">
+              {/* Show network error with retry button */}
+              {networkError && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-xl p-6 mb-6 text-center"
+                >
+                  <p className="text-red-400 mb-3">Connection problem. Please check your internet.</p>
+                  <button
+                    onClick={retryLoadMessages}
+                    className="bg-linear-to-r from-amber-500 to-orange-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+                  >
+                    Retry
+                  </button>
+                </motion.div>
+              )}
+              {messageSentSuccess ? (
+                <SentMessage />
+              ) : (
+                <MessageList messages={messages} currentUser={currentUser} groupType={false} />
+              )}
+            </div>
 
-        {!isOwnMessages && (
-          <div className="p-6 border-t border-gray-200">
-            {/* Show status message above the form */}
-            {sendingMessage && (
-              <div className="text-sm text-gray-600 mb-3 text-center">Sending...</div>
+            {!isOwnMessages && (
+              <div className="p-6 border-t border-slate-600 bg-slate-800/50 backdrop-blur-sm">
+                {/* Show status message above the form */}
+                {sendingMessage && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-sm text-slate-300 mb-3 text-center"
+                  >
+                    Sending...
+                  </motion.div>
+                )}
+                {messageSentSuccess && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-sm text-green-400 mb-3 text-center"
+                  >
+                    ✓ Sent!
+                  </motion.div>
+                )}
+                <MessageForm onMessageSent={handleSend} />
+              </div>
             )}
-            {messageSentSuccess && (
-              <div className="text-sm text-green-600 mb-3 text-center">✓ Sent!</div>
-            )}
-            <MessageForm onMessageSent={handleSend} />
-          </div>
-        )}
-      </ChatScreen>
+          </ChatScreen>
+        </div>
+      </div>
     </Layout>
   );
 };

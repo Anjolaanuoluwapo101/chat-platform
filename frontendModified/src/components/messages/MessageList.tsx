@@ -1,4 +1,5 @@
 import { type ReactNode, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { MessageBubble, NoMessages } from './MessagesShared';
 
 interface Message {
@@ -90,10 +91,10 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
       {messages.length === 0 ? (
         <NoMessages />
       ) : (
-        <div className="space-y-3" onClick={handleOutsideClick}>
+        <div className="space-y-4" onClick={handleOutsideClick}>
           {/* include unique id for each message */}
 
-          {messages.map((message) => {
+          {messages.map((message, index) => {
             let isSent = false;
             let sender = '';
             if (groupType && message.username) {
@@ -113,8 +114,12 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
             const isSelected = selectedMessageId === message.id;
 
             return (
-              <div 
+              <motion.div 
                 key={message.id} 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                whileHover={{ scale: 1.02 }}
                 className={`relative ${groupType ? 'cursor-pointer' : ''}`}
                 onClick={() => groupType && handleMessageClick(message.id)}
               >
@@ -131,15 +136,15 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
                 {groupType && isSelected && (
                   <button
                     onClick={(e) => handleReplyClick(message, e)}
-                    className="absolute bottom-0 right-0 mb-2 mr-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+                    className="absolute bottom-0 right-0 mb-2 mr-2 bg-slate-700 rounded-full p-1 shadow-md hover:bg-slate-600"
                     aria-label="Reply to message"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                     </svg>
                   </button>
                 )}
-              </div>
+              </motion.div>
             );
           })}
         </div>

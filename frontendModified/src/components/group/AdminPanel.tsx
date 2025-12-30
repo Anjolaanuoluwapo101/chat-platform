@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import groupService from '../../services/groupService';
 import { CloseIcon } from './AdminIcons';
+import { motion } from 'framer-motion';
 
 interface User {
   id: number;
@@ -195,20 +196,20 @@ const AdminPanel = ({
   const renderMembersTab = () => (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold mb-2">Add Member</h3>
+        <h3 className="text-lg font-semibold mb-2 text-white">Add Member</h3>
         <div className="flex space-x-2 mb-4">
           <input
             type="text"
             placeholder="Enter username"
             value={newMemberUsername}
             onChange={(e) => setNewMemberUsername(e.target.value)}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 bg-slate-700 text-white border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             disabled={loading}
           />
           <button 
             onClick={handleAddMember}
             disabled={loading || !newMemberUsername.trim()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 text-white rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50"
           >
             Add
           </button>
@@ -216,24 +217,24 @@ const AdminPanel = ({
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-2">Admins</h3>
+        <h3 className="text-lg font-semibold mb-2 text-white">Admins</h3>
         {admins.length > 0 ? (
           <ul className="space-y-2">
             {admins.map(admin => (
-              <li key={admin.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                <span>{admin.username}</span>
+              <li key={admin.id} className="flex justify-between items-center p-2 bg-slate-700/50 rounded border border-slate-600">
+                <span className="text-slate-200">{admin.username}</span>
                 <div className="space-x-2">
                   <button 
                     onClick={() => handleDemoteAdmin(admin.id)}
                     disabled={loading}
-                    className="px-3 py-1 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50"
+                    className="px-3 py-1 text-sm bg-linear-to-r from-amber-600 to-orange-600 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                   >
                     Demote
                   </button>
                   <button 
                     onClick={() => handleBanUser(admin.id)}
                     disabled={loading}
-                    className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+                    className="px-3 py-1 text-sm bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                   >
                     Ban
                   </button>
@@ -242,38 +243,38 @@ const AdminPanel = ({
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">No admins found</p>
+          <p className="text-slate-400">No admins found</p>
         )}
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-2">Members</h3>
+        <h3 className="text-lg font-semibold mb-2 text-white">Members</h3>
         {members.length > 0 ? (
           <ul className="space-y-2">
             {members
               .filter(member => !admins.some(admin => admin.id === member.id))
               .map(member => (
-                <li key={member.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                  <span>{member.username}</span>
+                <li key={member.id} className="flex justify-between items-center p-2 bg-slate-700/50 rounded border border-slate-600">
+                  <span className="text-slate-200">{member.username}</span>
                   <div className="space-x-2">
                     <button 
                       onClick={() => handlePromoteToAdmin(member.id)}
                       disabled={loading}
-                      className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+                      className="px-3 py-1 text-sm bg-linear-to-r from-green-600 to-green-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                     >
                       Promote
                     </button>
                     <button 
                       onClick={() => handleRemoveMember(member.id)}
                       disabled={loading}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+                      className="px-3 py-1 text-sm bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                     >
                       Remove
                     </button>
                     <button 
                       onClick={() => handleBanUser(member.id)}
                       disabled={loading}
-                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+                      className="px-3 py-1 text-sm bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                     >
                       Ban
                     </button>
@@ -282,7 +283,7 @@ const AdminPanel = ({
               ))}
           </ul>
         ) : (
-          <p className="text-gray-500">No members found</p>
+          <p className="text-slate-400">No members found</p>
         )}
       </div>
     </div>
@@ -290,16 +291,16 @@ const AdminPanel = ({
 
   const renderBannedUsersTab = () => (
     <div>
-      <h3 className="text-lg font-semibold mb-2">Banned Users</h3>
+      <h3 className="text-lg font-semibold mb-2 text-white">Banned Users</h3>
       {bannedUsers.length > 0 ? (
         <ul className="space-y-2">
           {bannedUsers.map(user => (
-            <li key={user.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-              <span>{user.username}</span>
+            <li key={user.id} className="flex justify-between items-center p-2 bg-slate-700/50 rounded border border-slate-600">
+              <span className="text-slate-200">{user.username}</span>
               <button 
                 onClick={() => handleUnbanUser(user.id)}
                 disabled={loading}
-                className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-linear-to-r from-green-600 to-green-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
               >
                 Unban
               </button>
@@ -307,20 +308,20 @@ const AdminPanel = ({
           ))}
         </ul>
       ) : (
-        <p className="text-gray-500">No banned users found</p>
+        <p className="text-slate-400">No banned users found</p>
       )}
     </div>
   );
 
   const renderSettingsTab = () => (
     <div className="space-y-4">
-      <div className="p-4 bg-red-50 rounded">
-        <h3 className="text-lg font-semibold text-red-800 mb-2">Danger Zone</h3>
-        <p className="text-red-700 mb-4">Deleting a group is permanent and cannot be undone.</p>
+      <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
+        <h3 className="text-lg font-semibold text-red-400 mb-2">Danger Zone</h3>
+        <p className="text-slate-300 mb-4">Deleting a group is permanent and cannot be undone.</p>
         <button 
           onClick={handleDeleteGroup}
           disabled={loading}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+          className="px-4 py-2 bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
         >
           Delete Group
         </button>
@@ -329,25 +330,28 @@ const AdminPanel = ({
   );
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-600">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Admin Panel</h2>
+        <h2 className="text-xl font-bold text-white">Admin Panel</h2>
         <button 
           onClick={onClose}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-slate-400 hover:text-slate-200"
         >
           <CloseIcon className="w-6 h-6" />
         </button>
       </div>
 
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-slate-600 mb-6">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('members')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'members'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-amber-500 text-amber-400'
+                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
             }`}
           >
             Members
@@ -356,8 +360,8 @@ const AdminPanel = ({
             onClick={() => setActiveTab('banned')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'banned'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-amber-500 text-amber-400'
+                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
             }`}
           >
             Banned Users
@@ -366,8 +370,8 @@ const AdminPanel = ({
             onClick={() => setActiveTab('settings')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'settings'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-amber-500 text-amber-400'
+                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
             }`}
           >
             Settings
@@ -383,15 +387,15 @@ const AdminPanel = ({
 
       {loading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+          <div className="bg-slate-800 p-6 rounded-lg shadow-xl border border-slate-600">
             <div className="flex items-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mr-3"></div>
-              <span>Processing...</span>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500 mr-3"></div>
+              <span className="text-white">Processing...</span>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

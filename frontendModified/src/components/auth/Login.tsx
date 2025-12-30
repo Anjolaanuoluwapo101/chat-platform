@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import authService from '../../services/auth';
 import Layout from '../../layouts/Layout';
 
@@ -26,7 +25,6 @@ interface Errors {
 }
 
 
-
 const Login = () => {
   const [formData, setFormData] = useState<FormData>({
     username: '',
@@ -35,7 +33,6 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -52,12 +49,7 @@ const Login = () => {
     const result = await authService.login(formData);
 
     if (result.success) {
-      // navigate(`/messages/${formData.username}`);
-      // check session storage if redirect url exists
-      alert("You will be redirected to the dashboard")
-      setTimeout(()=>{
-        window.location.href = '/dashboard'
-      },2000);
+      window.location.href = '/dashboard';
     } else {
       setErrors(result.errors);
     }

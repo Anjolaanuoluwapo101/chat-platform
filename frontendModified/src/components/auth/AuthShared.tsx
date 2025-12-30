@@ -49,21 +49,21 @@ export const AnonymousIcon = (props: SVGProps<SVGSVGElement>) => (
     <path d="M 38 24 Q 42 23 45 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     <path d="M 55 24 Q 58 23 62 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
 
-    {/* Bandana - main cloth covering from midway down (nose to chin) */}
-    <ellipse cx="50" cy="45" rx="24" ry="14" fill="#2563EB" />
+    {/* Bandana - main cloth covering from midway down (nose to chin) amber color */}
+    <ellipse cx="50" cy="45" rx="24" ry="14" fill="#B45309" />
 
     {/* Bandana - top fold at nose level */}
-    <ellipse cx="50" cy="40" rx="24" ry="3" fill="#1E40AF" />
+    <ellipse cx="50" cy="40" rx="24" ry="3" fill="#78350F" />
 
     {/* Bandana - bottom edge */}
-    <ellipse cx="50" cy="50" rx="22" ry="2" fill="#1E40AF" opacity="0.6" />
+    <ellipse cx="50" cy="50" rx="22" ry="2" fill="#78350F" opacity="0.6" />
 
     {/* Bandana - knot on right side */}
-    <circle cx="73" cy="45" r="4.5" fill="#1E40AF" />
-    <circle cx="76" cy="43" r="3.5" fill="#2563EB" />
+    <circle cx="73" cy="45" r="4.5" fill="#78350F" />
+    <circle cx="76" cy="43" r="3.5" fill="#B45309" />
 
     {/* Bandana - left side tie hint */}
-    <circle cx="27" cy="45" r="2" fill="#1E40AF" opacity="0.7" />
+    <circle cx="27" cy="45" r="2" fill="#78350F" opacity="0.7" />
   </svg>
 );
 
@@ -139,8 +139,8 @@ export const EyeOffIcon = (props: SVGProps<SVGSVGElement>) => (
  * Auth Card Container Component
  */
 export const AuthCard = ({ children }: { children: ReactNode }) => (
-  <div className="flex items-center justify-center min-h-screen bg-gray-100 font-inter">
-    <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-lg">
+  <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 font-inter">
+    <div className="w-full max-w-md p-8 space-y-8 bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-600 shadow-xl">
       {children}
     </div>
   </div>
@@ -151,13 +151,13 @@ export const AuthCard = ({ children }: { children: ReactNode }) => (
  */
 export const AuthHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
   <div className="text-center">
-    <div className="inline-block p-3 bg-blue-100 rounded-full">
-      <AnonymousIcon className="w-12 h-12 text-blue-600" />
+    <div className="inline-block p-3 bg-amber-500/20 rounded-full">
+      <AnonymousIcon className="w-12 h-12 text-amber-400" />
     </div>
-    <h2 className="mt-4 text-3xl font-bold text-gray-900">
+    <h2 className="mt-4 text-3xl font-bold text-white">
       {title}
     </h2>
-    <p className="mt-2 text-sm text-gray-600">
+    <p className="mt-2 text-sm text-slate-300">
       {subtitle}
     </p>
   </div>
@@ -192,7 +192,7 @@ export const FormInput = ({
   error?: string;
 }) => (
   <div className="mb-3 space-y-1">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700 float-left">
+    <label htmlFor={id} className="block text-sm font-medium text-slate-200 float-left">
       {label}
     </label>
     <div className="relative mt-1">
@@ -205,11 +205,11 @@ export const FormInput = ({
         minLength={minLength}
         value={value}
         onChange={onChange}
-        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full px-4 py-3 text-white placeholder-slate-400 bg-slate-700/50 border border-slate-600 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
         placeholder={placeholder}
       />
     </div>
-    {error && <span className="text-sm text-red-600 mt-1">{error}</span>}
+    {error && <span className="text-sm text-red-400 mt-1">{error}</span>}
   </div>
 );
 
@@ -247,11 +247,11 @@ export const PasswordInput = ({
 }) => (
   <div className="mb-3 space-y-1">
     <div className="flex items-center justify-between">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="block text-sm font-medium text-slate-200">
         {label}
-      </label>  
+      </label>
       {showForgotPassword && (
-        <a href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500 hover:underline">
+        <a href="#" className="text-sm font-medium text-amber-400 hover:text-amber-300 hover:underline">
           Forgot password?
         </a>
       )}
@@ -266,13 +266,13 @@ export const PasswordInput = ({
         minLength={minLength}
         value={value}
         onChange={onChange}
-        className="w-full px-4 py-3 text-gray-900 placeholder-gray-400 border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full px-4 py-3 text-white placeholder-slate-400 bg-slate-700/50 border border-slate-600 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
         placeholder={placeholder}
       />
       <button
         type="button"
         onClick={onTogglePassword}
-        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600"
+        className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 hover:text-slate-200"
         aria-label={showPassword ? 'Hide password' : 'Show password'}
       >
         {showPassword ? (
@@ -282,7 +282,7 @@ export const PasswordInput = ({
         )}
       </button>
     </div>
-    {error && <span className="text-sm text-red-600 mt-1">{error}</span>}
+    {error && <span className="text-sm text-red-400 mt-1">{error}</span>}
   </div>
 );
 
@@ -294,7 +294,7 @@ export const SubmitButton = ({ loading, loadingText, text, disabled = false }: {
     <button
       type="submit"
       disabled={loading || disabled}
-      className="w-full px-4 py-3 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full px-4 py-3 font-semibold text-white bg-linear-to-r from-amber-500 to-orange-500 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {loading ? loadingText : text}
     </button>
@@ -306,7 +306,7 @@ export const SubmitButton = ({ loading, loadingText, text, disabled = false }: {
  */
 export const ErrorMessage = ({ message }: { message?: string }) => (
   message ? (
-    <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg m-2">
+    <div className="p-3 text-sm text-red-400 bg-red-900/30 border border-red-700/50 rounded-lg m-2">
       {message}
     </div>
   ) : null
@@ -317,7 +317,7 @@ export const ErrorMessage = ({ message }: { message?: string }) => (
  */
 export const SuccessMessage = ({ message }: { message?: string }) => (
   message ? (
-    <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg m-2">
+    <div className="p-3 text-sm text-green-400 bg-green-900/30 border border-green-700/50 rounded-lg m-2">
       {message}
     </div>
   ) : null
@@ -328,8 +328,8 @@ export const SuccessMessage = ({ message }: { message?: string }) => (
  */
 export const AuthLink = ({ text, linkText, href }: { text: string; linkText: string; href: string }) => (
   <div className="text-center text-sm">
-    <span className="text-gray-600">{text} </span>
-    <a href={href} className="font-medium text-blue-600 hover:text-blue-500 hover:underline">
+    <span className="text-slate-300">{text} </span>
+    <a href={href} className="font-medium text-amber-400 hover:text-amber-300 hover:underline">
       {linkText}
     </a>
   </div>

@@ -41,9 +41,10 @@ class AuthService {
       if (response.data.success) {
         // Handle successful login
         // Store user data in session storage
-        sessionStorage.setItem('user', JSON.stringify(response.data.user));
+        sessionStorage.setItem('user', JSON.stringify(response.data.user))
         // store isAuthenticated in session storage with the time(seconds) it was stored
         sessionStorage.setItem('isAuthenticated', String(Date.now() / 1000));
+        window.location.href = sessionStorage.getItem('redirectURI') ?? '/login'
   
       }
       return response.data;

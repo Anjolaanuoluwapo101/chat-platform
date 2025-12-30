@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import groupService from '../../services/groupService';
 import { ErrorMessage } from '../auth/AuthShared';
+import { motion } from 'framer-motion';
 
 interface CreateGroupProps {
   onSuccess?: () => void;
@@ -41,9 +42,14 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <motion.form 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      onSubmit={handleSubmit} 
+      className="space-y-4"
+    >
       <div className='mb-3'>
-        <label htmlFor="groupName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label htmlFor="groupName" className="block text-sm font-medium text-slate-300 mb-1">
           Group Name
         </label>
         <input
@@ -53,7 +59,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
           onChange={(e) => setGroupName(e.target.value)}
           placeholder="Enter group name"
           disabled={loading}
-          className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-700"
+          className="w-full px-3 py-2 bg-slate-700 text-white border border-slate-600 rounded focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:bg-slate-600"
         />
       </div>
       <div className="mb-3 flex items-center">
@@ -63,9 +69,9 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
           checked={isAnonymous}
           onChange={() => setIsAnonymous(!isAnonymous)}
           disabled={loading}
-          className="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+          className="h-4 w-4 rounded border-slate-600 text-amber-500 focus:ring-amber-500"
         />
-        <label htmlFor="isAnonymous" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+        <label htmlFor="isAnonymous" className="ml-2 text-sm text-slate-300">
           Anonymous Group (usernames hidden)
         </label>
       </div>
@@ -73,11 +79,11 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:hover:bg-gray-400 text-white font-medium py-2 px-4 rounded transition-colors duration-150"
+        className="w-full bg-linear-to-r from-amber-500 to-orange-500 hover:shadow-lg text-white font-medium py-2 px-4 rounded transition-all duration-300 disabled:opacity-50"
       >
         {loading ? 'Creating...' : 'Create Group'}
       </button>
-    </form>
+    </motion.form>
   );
 };
 

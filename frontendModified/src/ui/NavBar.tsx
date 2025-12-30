@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AnonymousIcon } from '../components/auth/AuthShared';
 
 // --- SVG Icon Components ---
 // Using inline SVGs as per single-file requirement.
@@ -7,51 +8,6 @@ import React, { useState } from 'react';
  * Anonymous Figure Icon with Bandana
  * A bust silhouette with a bandana tied around nose and mouth
  */
-const AnonymousIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg
-    {...props}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    fill="currentColor"
-  >
-    {/* Head */}
-    <ellipse cx="50" cy="35" rx="22" ry="28" fill="currentColor" />
-    
-    {/* Neck */}
-    <rect x="43" y="58" width="14" height="12" fill="currentColor" />
-    
-    {/* Shoulders */}
-    <path d="M 30 70 Q 50 75 70 70 L 75 85 Q 50 90 25 85 Z" fill="currentColor" />
-    
-    {/* Eyes - positioned in upper half of face */}
-    <ellipse cx="42" cy="28" rx="3" ry="4" fill="#1F2937" />
-    <ellipse cx="58" cy="28" rx="3" ry="4" fill="#1F2937" />
-    
-    {/* Eye highlights */}
-    <ellipse cx="43" cy="27" rx="1" ry="1.5" fill="white" opacity="0.8" />
-    <ellipse cx="59" cy="27" rx="1" ry="1.5" fill="white" opacity="0.8" />
-    
-    {/* Subtle eyebrows */}
-    <path d="M 38 24 Q 42 23 45 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-    <path d="M 55 24 Q 58 23 62 24" stroke="#1F2937" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-    
-    {/* Bandana - main cloth covering from midway down (nose to chin) */}
-    <ellipse cx="50" cy="45" rx="24" ry="14" fill="#2563EB" />
-    
-    {/* Bandana - top fold at nose level */}
-    <ellipse cx="50" cy="40" rx="24" ry="3" fill="#1E40AF" />
-    
-    {/* Bandana - bottom edge */}
-    <ellipse cx="50" cy="50" rx="22" ry="2" fill="#1E40AF" opacity="0.6" />
-    
-    {/* Bandana - knot on right side */}
-    <circle cx="73" cy="45" r="4.5" fill="#1E40AF" />
-    <circle cx="76" cy="43" r="3.5" fill="#2563EB" />
-    
-    {/* Bandana - left side tie hint */}
-    <circle cx="27" cy="45" r="2" fill="#1E40AF" opacity="0.7" />
-  </svg>
-);
 
 const HomeIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -162,7 +118,7 @@ const NavItem = ({ item, onClick, isExpanded }: NavItemProps) => {
       <a 
         href={item.to || '#'} 
         onClick={handleItemClick} 
-        className={`${baseClasses} ${isExpanded ? expandedClasses : collapsedClasses} hover:bg-blue-700`}
+        className={`${baseClasses} ${isExpanded ? expandedClasses : collapsedClasses} hover:bg-amber-700/50`}
       >
         <span className={`${iconBaseClasses} ${isExpanded ? iconExpandedClasses : iconCollapsedClasses}`}>
           {item.icon}
@@ -217,7 +173,7 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
     <div className="flex">
       {/* Sidebar - Hidden on sm/md, always visible and open on lg+ */}
       <aside 
-        className={`h-screen sticky top-0 bg-blue-600 text-white transition-all duration-300 ease-in-out hidden lg:flex lg:w-64 flex-col border rounded-lg ${
+        className={`h-screen sticky top-0 bg-amber-600/80 backdrop-blur-sm text-white transition-all duration-300 ease-in-out hidden lg:flex lg:w-64 flex-col border rounded-lg ${
           expanded ? 'w-64' : ''
         }`}
       >
@@ -259,7 +215,7 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
 
       {/* Mobile sidebar - Hidden on lg+, visible on sm/md when expanded */}
       <aside 
-        className={`fixed top-0 left-0 h-screen bg-blue-600 text-white transition-all duration-300 ease-in-out lg:hidden z-50 ${
+        className={`fixed top-0 left-0 h-screen bg-amber-600/80 backdrop-blur-sm text-white transition-all duration-300 ease-in-out lg:hidden z-50 ${
           expanded ? 'w-64' : '-translate-x-full'
         }`}
       >
@@ -277,7 +233,7 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
               <button 
                 onClick={() => setExpanded(false)} 
                 aria-label="Close menu" 
-                className="p-2 rounded-full text-white hover:bg-blue-700"
+                className="p-2 rounded-full text-white hover:bg-amber-700/50"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -306,7 +262,7 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
       <button
         onClick={() => setExpanded(!expanded)}
         aria-label={expanded ? "Close menu" : "Open menu"}
-        className="fixed top-6 left-6 p-4 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors duration-300 lg:hidden z-40"
+        className="fixed top-6 left-6 p-4 rounded-full bg-amber-600/80 backdrop-blur-sm text-white shadow-lg hover:bg-amber-700/80 transition-colors duration-300 lg:hidden z-40"
       >
         {/* {expanded ? (
           <CloseIcon className="w-6 h-6" />

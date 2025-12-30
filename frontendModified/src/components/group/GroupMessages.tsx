@@ -8,6 +8,7 @@ import MessageForm from '../messages/MessageForm';
 import AdminPanel from './AdminPanel';
 import AdminNavItems from './AdminNavItems';
 import PushNotificationService from '../../services/notifications';
+import { motion } from 'framer-motion';
 
 import { MembersIcon, BannedIcon, SettingsIcon } from './AdminIcons';
 import {
@@ -154,7 +155,7 @@ const GroupMessages = () => {
                             }).then(async (beamsClient) => {
                                 // Check Interest
                                 if(typeof beamsClient === 'boolean') return
-    
+
                                 if (!(await beamsClient.hasInterest("group_" + groupId))) {
                                     await beamsClient.addInterest("group_" + groupId);
                                     console.log("Added interest: group_" + groupId)
@@ -420,93 +421,119 @@ const GroupMessages = () => {
 
     if (loading) return (
         <Layout>
-            <ChatScreen>
-                <LoadingSpinner />
-            </ChatScreen>
+            <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Background Elements */}
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute inset-0 bg-linear-to-br from-amber-900/20 via-orange-900/20 to-amber-900/20"></div>
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-slate-700 rounded-full mix-blur-multiply filter blur-xl opacity-5 animate-pulse"></div>
+                </div>
+                
+                <div className="relative z-10">
+                    <ChatScreen>
+                        <LoadingSpinner />
+                    </ChatScreen>
+                </div>
+            </div>
         </Layout>
     );
 
     return (
         <Layout navItems={navItems}>
-            {/* Error/Success Messages */}
-            {error && <ErrorMessage message={error} setMessage={setError} />}
-            {success && <SuccessMessage message={success} setMessage={setSuccess} />}
+            {/* Background Elements */}
+            <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute inset-0 bg-linear-to-br from-amber-900/20 via-orange-900/20 to-amber-900/20"></div>
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-slate-700 rounded-full mix-blur-multiply filter blur-xl opacity-5 animate-pulse"></div>
+                </div>
+                
+                <div className="relative z-10">
+                    {/* Error/Success Messages */}
+                    {error && <ErrorMessage message={error} setMessage={setError} />}
+                    {success && <SuccessMessage message={success} setMessage={setSuccess} />}
 
-            <ChatScreen>
-                <ChatHeader
-                    title={groupName}
-                    isAnonymous={isAnonymous}
-                    membersCount={members.length}
-                    onToggleMembers={toggleMembers}
-                    showMembersButton={isMember}
-                />
-
-                {!isMember ? (
-                    <JoinGroupView onJoin={handleJoin} isLoading={isJoining} />
-                ) : (
-                    <>
-                        {/* Show network error with retry button */}
-                        {networkError && (
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-6 m-6 text-center">
-                                <p className="text-red-600 mb-3">Connection problem. Please check your internet.</p>
-                                <button
-                                    onClick={retryLoadGroup}
-                                    className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition-colors"
-                                >
-                                    Retry
-                                </button>
-                            </div>
-                        )}
-
-                        {showMembers && (
-                            <MembersList members={members} />
-                        )}
-                        {/* Message list with consistent padding */}
-                        <div className="grow overflow-y-auto p-6">
-                            <LoadMoreButton
-                                onClick={handleLoadMore}
-                                loading={loadingMore}
-                                hasMore={hasMore}
-                            />
-                            <MessageList
-                                messages={messages}
-                                currentUser={currentUser} // Pass current user ID
-                                groupType={true}
-                                onReply={(message) => setReplyToMessage(message)}
-                            />
-                            <div ref={messagesEndRef} />
-
-                            {/* Show "New Messages" button when user scrolled up */}
-                            {showScrollButton && (
-                                <button
-                                    onClick={scrollToBottom}
-                                    className="fixed bottom-28 right-10 bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-                                >
-                                    New Messages ↓
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Show sending status above the message form */}
-                        {sendingMessage && (
-                            <div className="text-sm text-gray-600 px-6 py-3 text-center border-t border-gray-200">
-                                Sending...
-                            </div>
-                        )}
-
-                        <MessageForm
-                            onMessageSent={handleSend}
-                            replyToMessage={replyToMessage}
-                            onCancelReply={() => setReplyToMessage(null)}
+                    <ChatScreen>
+                        <ChatHeader
+                            title={groupName}
+                            isAnonymous={isAnonymous}
+                            membersCount={members.length}
+                            onToggleMembers={toggleMembers}
+                            showMembersButton={isMember}
                         />
-                    </>
-                )}
-            </ChatScreen>
+
+                        {!isMember ? (
+                            <JoinGroupView onJoin={handleJoin} isLoading={isJoining} />
+                        ) : (
+                            <>
+                                {/* Show network error with retry button */}
+                                {networkError && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-xl p-6 m-6 text-center">
+                                        <p className="text-red-400 mb-3">Connection problem. Please check your internet.</p>
+                                        <button
+                                            onClick={retryLoadGroup}
+                                            className="bg-linear-to-r from-amber-500 to-orange-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+                                        >
+                                            Retry
+                                        </button>
+                                    </motion.div>
+                                )}
+
+                                {showMembers && (
+                                    <MembersList members={members} />
+                                )}
+                                {/* Message list with consistent padding */}
+                                <div className="grow overflow-y-auto p-6">
+                                    <LoadMoreButton
+                                        onClick={handleLoadMore}
+                                        loading={loadingMore}
+                                        hasMore={hasMore}
+                                    />
+                                    <MessageList
+                                        messages={messages}
+                                        currentUser={currentUser} // Pass current user ID
+                                        groupType={true}
+                                        onReply={(message) => setReplyToMessage(message)}
+                                    />
+                                    <div ref={messagesEndRef} />
+
+                                    {/* Show "New Messages" button when user scrolled up */}
+                                    {showScrollButton && (
+                                        <button
+                                            onClick={scrollToBottom}
+                                            className="fixed bottom-28 right-10 bg-linear-to-r from-amber-600 to-orange-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+                                            New Messages ↓
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Show sending status above the message form */}
+                                {sendingMessage && (
+                                    <div className="text-sm text-amber-400 px-6 py-3 text-center border-t border-slate-600">
+                                        Sending...
+                                    </div>
+                                )}
+
+                                <MessageForm
+                                    onMessageSent={handleSend}
+                                    replyToMessage={replyToMessage}
+                                    onCancelReply={() => setReplyToMessage(null)}
+                                />
+                            </>
+                        )}
+                    </ChatScreen>
+                </div>
+            </div>
 
             {/* Admin Panel Modal */}
             {showAdminPanel && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div className="bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-600">
                         <AdminPanel
                             groupId={parseInt(groupId!)}
                             admins={admins}
