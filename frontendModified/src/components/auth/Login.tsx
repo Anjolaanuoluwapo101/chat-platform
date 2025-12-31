@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import authService from '../../services/auth';
 import Layout from '../../layouts/Layout';
-
+// 
 import {
   NavBarData,
   AuthCard,
@@ -45,12 +45,10 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
-
+    
     const result = await authService.login(formData);
 
-    if (result.success) {
-      window.location.href = '/dashboard';
-    } else {
+    if (!result.success) {
       setErrors(result.errors);
     }
 
@@ -86,7 +84,7 @@ const Login = () => {
             onChange={handleChange}
             showPassword={showPassword}
             onTogglePassword={() => setShowPassword(!showPassword)}
-            showForgotPassword={true}
+            showForgotPassword={false}
             error={errors?.password ?? ''}
           />
 

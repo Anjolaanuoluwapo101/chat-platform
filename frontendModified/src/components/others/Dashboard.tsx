@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AnonymousIcon } from '../auth/AuthShared';
 import Layout from '../../layouts/Layout';
 import { getCommonNavItems } from '../nav/sharedNavItems';
 import auth from '../../services/auth';
@@ -16,7 +15,6 @@ const navItems : NavItem[] = getCommonNavItems();
 
 function Dashboard() {
   const [activeTab, setActiveTab] = useState<'single' | 'multi'>('single');
-  const [userStats, setUserStats] = useState({ messages: 0, groups: 0, channels: 0 });
   const [copyStatus, setCopyStatus] = useState({ copied: false, message: '' });
 
   // Check if current user has been set, if not, refresh
@@ -24,17 +22,6 @@ function Dashboard() {
     window.location.reload();
   }
 
-  useEffect(() => {
-    // Simulate loading user stats
-    setTimeout(() => {
-      setUserStats({
-        messages: Math.floor(Math.random() * 100) + 10,
-        groups: Math.floor(Math.random() * 15) + 3,
-        channels: Math.floor(Math.random() * 5) + 1
-      });
-      
-    }, 500);
-  }, []);
 
   const copyChannelLink = () => {
     const channelLink = `${window.location.origin}/messages/${auth.getCurrentUser()?.username}`;
@@ -79,16 +66,8 @@ function Dashboard() {
 
   return (
     <Layout navItems={navItems} title="TYT!">
-      <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-br from-amber-900/20 via-orange-900/20 to-amber-900/20"></div>
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-orange-500 rounded-full mix-blur-multiply filter blur-xl opacity-10 animate-pulse"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-slate-700 rounded-full mix-blur-multiply filter blur-xl opacity-5 animate-pulse"></div>
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen  text-white">
+        <div className="relative z-10  max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
           <header className="py-16">
             <motion.div
@@ -98,15 +77,15 @@ function Dashboard() {
               viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <div className="inline-flex items-center justify-center mb-6">
+              {/* <div className="inline-flex items-center justify-center mb-6">
                 <div className="bg-linear-to-br from-amber-500 via-orange-500 to-amber-600 p-6 rounded-2xl shadow-2xl shadow-amber-500/20">
                   <AnonymousIcon className="w-20 h-20 text-white" />
                 </div>
-              </div>
+              </div> */}
               
               <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
                 <span className="block">Talk Your Talk!</span>
-                <span className="block text-2xl font-normal text-slate-300 mt-2">Secure Anonymous Communication Platform</span>
+                <span className="block text-2xl font-normal text-slate-300 mt-2">Fast and Secure Communication Platform</span>
               </h1>
               
               <p className="text-xl text-slate-100 max-w-3xl mx-auto leading-relaxed">
@@ -128,23 +107,9 @@ function Dashboard() {
               className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-600"
             >
               <div className="flex items-center">
-                <div className="p-3 bg-amber-500/20 rounded-lg mr-4">
-                  <motion.div 
-                    className="w-6 h-6 bg-linear-to-r from-amber-400 to-orange-400 rounded-full"
-                    animate={{ 
-                      scale: [1, 1.1, 1],
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      ease: "easeInOut"
-                    }}
-                  ></motion.div>
-                </div>
                 <div>
-                  <p className="text-2xl font-bold text-white">{userStats.messages}</p>
-                  <p className="text-slate-200">Messages</p>
+                  <span className="text-2xl font-bold text-white">1200+</span>
+                  <span className="text-xl text-slate-200">  Messages</span>
                 </div>
               </div>
             </motion.div>
@@ -154,24 +119,9 @@ function Dashboard() {
               className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-600"
             >
               <div className="flex items-center">
-                <div className="p-3 bg-orange-500/20 rounded-lg mr-4">
-                  <motion.div 
-                    className="w-6 h-6 bg-linear-to-r from-orange-400 to-amber-400 rounded-full"
-                    animate={{ 
-                      scale: [1, 1.1, 1],
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      ease: "easeInOut",
-                      delay: 0.3
-                    }}
-                  ></motion.div>
-                </div>
                 <div>
-                  <p className="text-2xl font-bold text-white">{userStats.groups}</p>
-                  <p className="text-slate-200">Groups</p>
+                  <span className="text-2xl font-bold text-white">100+</span>
+                  <span className="text-xl text-slate-200">  Groups</span>
                 </div>
               </div>
             </motion.div>
@@ -181,24 +131,9 @@ function Dashboard() {
               className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-600"
             >
               <div className="flex items-center">
-                <div className="p-3 bg-slate-500/20 rounded-lg mr-4">
-                  <motion.div 
-                    className="w-6 h-6 bg-linear-to-r from-slate-400 to-slate-500 rounded-full"
-                    animate={{ 
-                      scale: [1, 1.1, 1],
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      ease: "easeInOut",
-                      delay: 0.6
-                    }}
-                  ></motion.div>
-                </div>
                 <div>
-                  <p className="text-2xl font-bold text-white">{userStats.channels}</p>
-                  <p className="text-slate-200">Channels</p>
+                  <span className="text-2xl font-bold text-white text-left">3</span>
+                  <span className="text-xl text-slate-200">  Channel Types!</span>
                 </div>
               </div>
             </motion.div>
@@ -260,20 +195,8 @@ function Dashboard() {
                       whileHover={{ scaleX: 1.02 }}
                       className="flex items-start"
                     >
-                      <div className="p-2 bg-linear-to-r from-amber-500/20 to-orange-500/20 rounded-lg mr-4 mt-1">
-                        <motion.div 
-                          className="w-2 h-2 bg-linear-to-r from-amber-400 to-orange-400 rounded-full"
-                          animate={{ 
-                            scale: [1, 1.3, 1],
-                          }}
-                          transition={{ 
-                            duration: 1.5,
-                            repeat: Infinity,
-                            repeatType: "loop",
-                            ease: "easeInOut",
-                            delay: index * 0.2
-                          }}
-                        ></motion.div>
+                      <div className="p-2 bg-linear-to-r from-amber-500/5 to-orange-500/75 rounded-lg mr-4 mt-1">
+                        <div className="bg-linear-to-r from-amber-400 to-orange-400 rounded-full"></div>
                       </div>
                       <span className="text-slate-200">{feature}</span>
                     </motion.div>
@@ -332,15 +255,15 @@ function Dashboard() {
             whileInView={{ opacity: 1, y: 0 }}
             className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-600 mb-16 text-center"
           >
-            <h2 className="text-3xl font-bold text-white mb-4">Have Something to Share?</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Have Something to Share To The Developer?</h2>
             <p className="text-slate-200 text-xl mb-6">
-              Your thoughts, ideas, and messages are welcome here. Send an anonymous message to connect and communicate freely.
+              Your thoughts, ideas, and messages are welcome here. Send an anonymous message to me! Don't worry I won't know you sent it.
             </p>
             <p className="text-slate-300 mb-8">
               All messages are kept private and secure. Your identity remains protected while allowing for open communication.
             </p>
             <a
-              href={`/messages/${auth.getCurrentUser()?.username}`}
+              href={`/messages/Anjola303`}
               className="inline-block px-8 py-4 bg-linear-to-r from-amber-500 to-orange-500 text-white font-bold rounded-lg hover:shadow-xl transition-all duration-300"
             >
               Send Me a Message
@@ -361,7 +284,7 @@ function Dashboard() {
               { title: "Real-Time", desc: "Instant message delivery without refresh required" },
               { title: "Flexible Modes", desc: "Choose between anonymous and non-anonymous communication" },
               { title: "Community", desc: "Join topic-based groups with like-minded individuals" },
-              { title: "Rich Media", desc: "Share images, videos, audio, and documents securely" }
+              { title: "Rich Media", desc: "Supports images, videos, audio, and documents" }
             ].map((feature, index) => (
               <motion.div
                 key={index}
@@ -370,55 +293,27 @@ function Dashboard() {
                 viewport={{ once: true }}
                 whileInView={{ opacity: 1, y: 0 }}
                 whileHover={{ scaleX: 1.03 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-6 border border-slate-600"
+                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-0 border border-slate-600 flex flex-col"
               >
-                <div className="relative w-full h-32 mb-4 rounded-lg overflow-hidden">
+                <div className="relative h-[250px] w-full aspect-[4/5] overflow-hidden rounded-t-xl">
+                  <img 
+                    src={
+                      feature.title === "Complete Privacy" ? "/privacy.png" :
+                      feature.title === "Secure Identity" ? "/identity.png" :
+                      feature.title === "Real-Time" ? "/realtime.png" :
+                      feature.title === "Flexible Modes" ? "/flexiblemodes.png" :
+                      feature.title === "Community" ? "/community.png" :
+                      "/supportmedia.png"
+                    } 
+                    alt={feature.title} 
+                    className="w-full h-full object-cover absolute inset-0"
+                  />
                   <div className="absolute inset-0 bg-black/40 z-10"></div>
-                  {feature.title === "Complete Privacy" && (
-                    <img 
-                      src="https://images.unsplash.com/photo-1504728237481-88c99d0b3a6b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-                      alt="Complete Privacy" 
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                  {feature.title === "Secure Identity" && (
-                    <img 
-                      src="https://images.unsplash.com/photo-1563014959-7aaa83350933?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-                      alt="Secure Identity" 
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                  {feature.title === "Real-Time" && (
-                    <img 
-                      src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-                      alt="Real-Time" 
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                  {feature.title === "Flexible Modes" && (
-                    <img 
-                      src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-                      alt="Flexible Modes" 
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                  {feature.title === "Community" && (
-                    <img 
-                      src="https://images.unsplash.com/photo-1573164713988-8665fc963095?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-                      alt="Community" 
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                  {feature.title === "Rich Media" && (
-                    <img 
-                      src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
-                      alt="Rich Media" 
-                      className="w-full h-full object-cover"
-                    />
-                  )}
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2 relative z-20">{feature.title}</h3>
-                <p className="text-slate-200 relative z-20">{feature.desc}</p>
+                <div className="relative z-20 p-6 flex-grow flex flex-col justify-end">
+                  <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                  <p className="text-slate-200">{feature.desc}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>

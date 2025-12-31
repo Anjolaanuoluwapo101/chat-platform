@@ -130,3 +130,17 @@
 [2025-12-30 12:48:51] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
 [2025-12-30 12:49:36] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
 [2025-12-30 12:51:01] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 00:17:19] [INFO] User logged in via API: Anjola303
+[2025-12-31 06:17:05] [INFO] User logged in via API: Anjola303
+[2025-12-31 06:57:48] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 06:58:01] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 06:59:07] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 06:59:08] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 07:03:48] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 07:03:49] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 07:05:40] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 07:05:53] [INFO] Database connection failed: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for sql3.freesqldatabase.com failed: No such host is known. 
+[2025-12-31 07:24:56] [INFO] Database connection failed: SQLSTATE[HY000] [2002] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+[2025-12-31 10:04:50] [INFO] User logged in via API: Anjola303
+[2025-12-31 20:02:08] [INFO] User logged in via API: Anjola303
+[2025-12-31 20:23:15] [INFO] User logged in via API: Anjola303

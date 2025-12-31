@@ -1,4 +1,4 @@
-import { HomeIcon, SettingsIcon, MessageSquareIcon } from '../../ui/NavBar';
+import { HomeIcon,MessageSquareIcon } from '../../ui/NavBar';
 
 import { DoorOpen, GroupIcon, Shield} from 'lucide-react';
 import auth from '../../services/auth';
@@ -22,21 +22,21 @@ export const commonNavItems = [
     to: '/groups',
   },
   {
-    title: 'Settings',
-    icon: React.createElement(SettingsIcon, { className: 'w-5 h-5' }),
+    title: 'Privacy',
+    icon: React.createElement(Shield, { className: 'w-5 h-5' }),
     to: '',
-    children: [
+    // children: [
+    // //   {
+    // //     title: 'Metrics',
+    // //     to: '/metrics',
+    // //     icon: React.createElement( TrendingUp, { className: 'w-5 h-5' }),
+    // //   },
     //   {
-    //     title: 'Metrics',
-    //     to: '/metrics',
-    //     icon: React.createElement( TrendingUp, { className: 'w-5 h-5' }),
-    //   },
-      {
-        title: 'Privacy',
-        to: '/privacy',
-        icon: React.createElement(Shield, { className: 'w-5 h-5' }),
-      }
-    ],
+    //     title: 'Privacy',
+    //     to: '/privacy',
+    //     icon: React.createElement(Shield, { className: 'w-5 h-5' }),
+    //   }
+    // ],
   },
   {
     title: 'Logout',

@@ -1,4 +1,5 @@
 import React, { type ReactNode, type SVGProps } from 'react';
+import {Link} from 'react-router-dom';
 import { LogIn, UserPlus } from 'lucide-react';
 
 /**
@@ -139,8 +140,8 @@ export const EyeOffIcon = (props: SVGProps<SVGSVGElement>) => (
  * Auth Card Container Component
  */
 export const AuthCard = ({ children }: { children: ReactNode }) => (
-  <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 font-inter">
-    <div className="w-full max-w-md p-8 space-y-8 bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-600 shadow-xl">
+  <div className="flex items-center justify-center min-h-screen  font-inter">
+    <div className="w-full max-w-md p-8 space-y-8 bg-slate-800/80  rounded-2xl border border-slate-600 shadow-xl mx-4">
       {children}
     </div>
   </div>
@@ -329,8 +330,11 @@ export const SuccessMessage = ({ message }: { message?: string }) => (
 export const AuthLink = ({ text, linkText, href }: { text: string; linkText: string; href: string }) => (
   <div className="text-center text-sm">
     <span className="text-slate-300">{text} </span>
-    <a href={href} className="font-medium text-amber-400 hover:text-amber-300 hover:underline">
+    {/* <a href={href} className="font-medium text-amber-400 hover:text-amber-300 hover:underline">
       {linkText}
-    </a>
+    </a> */}
+    <Link to={href} className="font-medium text-amber-400 hover:text-amber-300 hover:underline">
+      {linkText}
+    </Link>
   </div>
 );

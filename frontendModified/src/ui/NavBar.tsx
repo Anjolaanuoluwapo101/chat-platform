@@ -72,31 +72,26 @@ interface NavItemData {
 interface NavItemProps {
   item: NavItemData;
   onClick?: () => void;
-  isExpanded: boolean;
 }
 
 /**
  * Navigation Item Component
  * Symmetrical padding and spacing
  */
-const NavItem = ({ item, onClick, isExpanded }: NavItemProps) => {
+const NavItem = ({ item, onClick }: NavItemProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   // Consistent padding for both expanded and collapsed states
-  const baseClasses = "flex items-center rounded-lg cursor-pointer transition-colors duration-300";
+  const baseClasses = "flex items-center rounded-lg cursor-pointer transition-colors duration-300 ";
   const expandedClasses = "px-5 py-3";
-  const collapsedClasses = "p-3 justify-center";
   
   const iconBaseClasses = "w-5 h-5";
   const iconExpandedClasses = "text-white";
-  const iconCollapsedClasses = "text-white";
   
-  const textClasses = isExpanded ? "ml-4 text-sm font-medium" : "hidden";
+  const textClasses = "ml-4 text-sm font-medium";
   
   // Dropdown container classes
-  const dropdownContainerClasses = isExpanded 
-    ? "ml-8 mt-1 space-y-1" 
-    : "hidden";
+  const dropdownContainerClasses = "ml-8 mt-1 space-y-1";
 
   const handleItemClick = (e: React.MouseEvent) => {
     // If item has children, toggle dropdown instead of navigating
@@ -118,27 +113,25 @@ const NavItem = ({ item, onClick, isExpanded }: NavItemProps) => {
       <a 
         href={item.to || '#'} 
         onClick={handleItemClick} 
-        className={`${baseClasses} ${isExpanded ? expandedClasses : collapsedClasses} hover:bg-amber-700/50`}
+        className={`${baseClasses} ${expandedClasses} hover:bg-amber-700/50 hover:scale-[1.02] transition-all duration-200`}
       >
-        <span className={`${iconBaseClasses} ${isExpanded ? iconExpandedClasses : iconCollapsedClasses}`}>
+        <span className={`${iconBaseClasses} ${iconExpandedClasses}`}>
           {item.icon}
         </span>
-        {isExpanded && (
-          <>
-            <span className={textClasses}>{item.title}</span>
-            {item.children && item.children.length > 0 && (
-              <svg 
-                className={`ml-auto w-4 h-4 transform transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24" 
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            )}
-          </>
-        )}
+        <>
+          <span className={textClasses}>{item.title}</span>
+          {item.children && item.children.length > 0 && (
+            <svg 
+              className={`ml-auto w-4 h-4 transform transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          )}
+        </>
       </a>
       
       {/* Dropdown for children items */}
@@ -149,7 +142,6 @@ const NavItem = ({ item, onClick, isExpanded }: NavItemProps) => {
               key={idx} 
               item={child} 
               onClick={child.onClick} 
-              isExpanded={isExpanded} 
             />
           ))}
         </div>
@@ -198,7 +190,6 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
                 key={idx} 
                 item={it} 
                 onClick={it.onClick} 
-                isExpanded={true} 
               />
             ))}
           </nav>
@@ -252,7 +243,6 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
                   it.onClick?.();
                   setExpanded(false);
                 }} 
-                isExpanded={true} 
               />
             ))}
           </nav>

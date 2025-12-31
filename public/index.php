@@ -17,7 +17,8 @@ if (session_status() == PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 3600, // 1 hour
         'path' => '/', 
-        'domain' => 'https://talkyourtalk.onrender.com', // Set to your domain in production
+        'domain' => 'wwww.talkyourtalk.onrender.com', 
+        // 'domain' => '',
         'secure' => $isHttps, // HTTPS only in production
         'httponly' => true, // No JavaScript access
         'samesite' => 'Lax' // CSRF protection (use 'Strict' for same-domain only)

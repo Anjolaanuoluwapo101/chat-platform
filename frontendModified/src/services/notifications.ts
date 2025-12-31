@@ -243,6 +243,12 @@ class PushNotificationService {
         }
     }
 
+    public async removeAllInterests(): Promise<boolean> {
+        // Get all interests and remove them
+        const interests = await this.getInterests();
+        return Promise.all(interests.map(interest => this.removeInterest(interest))).then(() => true);
+    }
+
     public async getInterests(): Promise<string[]> {
         if (!this.beamsClient) return [];
         try {

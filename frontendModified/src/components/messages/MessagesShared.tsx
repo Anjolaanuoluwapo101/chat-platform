@@ -164,7 +164,7 @@ export const MessageBubble = ({
   return (
     <motion.div 
       className={`max-w-[85%] ${alignmentClass}`}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.01 }}
     >
       {/* Sender name for received messages in group chats */}
       {!isSent && sender && (

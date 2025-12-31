@@ -44,8 +44,18 @@ class AuthService {
         sessionStorage.setItem('user', JSON.stringify(response.data.user))
         // store isAuthenticated in session storage with the time(seconds) it was stored
         sessionStorage.setItem('isAuthenticated', String(Date.now() / 1000));
-        window.location.href = sessionStorage.getItem('redirectURI') ?? '/login'
-  
+        
+        // Check for redirect URI after successful login
+        const redirectURI = sessionStorage.getItem('redirectURI');
+        if (redirectURI && redirectURI !== window.location.href) {
+          // Clear the redirect URI to prevent reuse
+          sessionStorage.removeItem('redirectURI');
+          window.location.href = redirectURI;
+        } else {
+          // Default redirect after login
+          window.location.href = '/dashboard';
+        }
+
       }
       return response.data;
     } catch (error) {
@@ -80,17 +90,18 @@ class AuthService {
       PushNotificationService.logout();
       // Clear all cache on logout
       cacheManager.clear();
+      sessionStorage.clear();
+      localStorage.clear();
+      // PushNotificationService.removeAllInterests();
+      PushNotificationService.logout();
       window.location.href = '/login';
     }
   }
 
-  // Check if user is authenticated by calling backend
   isAuthenticated() {
     try {
       // Check if any user data is stored in session storage
       if (!sessionStorage.getItem('user')) {
-        //  Store current url
-        sessionStorage.setItem('redirectUrl', window.location.href);
         return false;
       }
       // Check time of previous authentication and if not more than 10 minutes ago
@@ -99,7 +110,6 @@ class AuthService {
         // clear session storage
         sessionStorage.clear();
         this.logout().then(() => {
-          sessionStorage.setItem('redirectUrl', window.location.href);
           return false;
         })
       }else{

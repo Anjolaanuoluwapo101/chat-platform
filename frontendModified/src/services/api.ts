@@ -59,8 +59,12 @@ api.interceptors.response.use(
     const isRegisterPage = window.location.pathname === '/register';
     if (error.response?.status === 401 && !isLoginPage && !isRegisterPage) {
       // Session expired or invalid, clear storage and redirect to login
-      // Store the redirect URI
-      sessionStorage.setItem('redirectURI', document.referrer)
+      // Store the current URL for redirect after login
+      const currentUrl = window.location.href;
+      // Don't store login or register URLs
+      if (!currentUrl.includes('/login') && !currentUrl.includes('/register')) {
+        sessionStorage.setItem('redirectURI', currentUrl);
+      }
       authService.removeToken();
       authService.logout();
       window.location.href = '/login';

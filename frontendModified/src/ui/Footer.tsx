@@ -6,7 +6,7 @@ interface FooterProps {
 
 const Footer = ({ children }: FooterProps) => {
   return (
-    <footer className="border-t border-slate-700/60 p-4 text-sm text-slate-400 bg-slate-900/50 backdrop-blur-sm">
+    <footer className="border-t p-4 text-sm text-slate-400 bg-slate-900/95">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
         <div>© {new Date().getFullYear()} Talk Your Talk!</div>
         <div className="flex items-center gap-4">
@@ -20,4 +20,4 @@ const Footer = ({ children }: FooterProps) => {
   );
 };
 
-export default Footer;
+export default Footer
