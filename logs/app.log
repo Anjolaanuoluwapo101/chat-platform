@@ -144,3 +144,4 @@
 [2025-12-31 10:04:50] [INFO] User logged in via API: Anjola303
 [2025-12-31 20:02:08] [INFO] User logged in via API: Anjola303
 [2025-12-31 20:23:15] [INFO] User logged in via API: Anjola303
+[2026-01-01 13:52:17] [INFO] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it

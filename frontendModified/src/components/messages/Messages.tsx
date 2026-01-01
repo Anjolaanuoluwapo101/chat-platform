@@ -124,6 +124,7 @@ const Messages = () => {
   useEffect(() => {
     (async () => {
       if (currentUser?.id) {
+        await PushNotificationService.initialize();
         await PushNotificationService.login(String(currentUser.id),
           {
             url: import.meta.env.VITE_API_BASE_URL + 'pusher/beam-auth',

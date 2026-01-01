@@ -149,7 +149,8 @@ const GroupMessages = () => {
                         // Initialize Push Notification Service
                        
                         if (currentUser) {
-                            PushNotificationService.login(String(currentUser.id), {
+                            await PushNotificationService.initialize();
+                            await PushNotificationService.login(String(currentUser.id), {
                                 url: import.meta.env.VITE_API_BASE_URL + 'pusher/beam-auth',
                                 headers: {}
                             }).then(async (beamsClient) => {
