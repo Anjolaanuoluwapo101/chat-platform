@@ -22,7 +22,7 @@ import {
     SuccessMessage
 } from '../messages/MessagesShared';
 import Layout from '../../layouts/Layout';
-import { getBaseNavItems } from '../nav/sharedNavItems';
+import {getCommonNavItems } from '../nav/sharedNavItems';
 
 interface Message {
     id: number;
@@ -391,7 +391,7 @@ const GroupMessages = () => {
 
     // Prepare navigation items for the layout
     const navItems = useMemo(() => {
-        const baseItems = getBaseNavItems();
+        const baseItems = getCommonNavItems();
 
         // Add leave group item for all members
         if (isMember) {

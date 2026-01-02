@@ -48,6 +48,8 @@ class MessageController extends BaseController
         }
 
         $messages = $messageModel->getMessages($username);
+        // reverse the array to get the latest messages first
+        $messages = array_reverse($messages);
         $isOwner = $username === $user['username'];
 
         $this->jsonResponse([
