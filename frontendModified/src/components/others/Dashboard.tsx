@@ -279,12 +279,60 @@ function Dashboard() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
           >
             {[
-              { title: "Complete Privacy", desc: "End-to-end encryption with no personal data collection" },
-              { title: "Secure Identity", desc: "Your real identity remains completely protected" },
-              { title: "Real-Time", desc: "Instant message delivery without refresh required" },
-              { title: "Flexible Modes", desc: "Choose between anonymous and non-anonymous communication" },
-              { title: "Community", desc: "Join topic-based groups with like-minded individuals" },
-              { title: "Rich Media", desc: "Supports images, videos, audio, and documents" }
+              { 
+                title: "Complete Privacy", 
+                desc: "End-to-end encryption with no personal data collection",
+                icon: (
+                  <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                )
+              },
+              { 
+                title: "Secure Identity", 
+                desc: "Your real identity remains completely protected",
+                icon: (
+                  <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                )
+              },
+              { 
+                title: "Real-Time", 
+                desc: "Instant message delivery without refresh required",
+                icon: (
+                  <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                )
+              },
+              { 
+                title: "Flexible Modes", 
+                desc: "Choose between anonymous and non-anonymous communication",
+                icon: (
+                  <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                )
+              },
+              { 
+                title: "Community", 
+                desc: "Join topic-based groups with like-minded individuals",
+                icon: (
+                  <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                )
+              },
+              { 
+                title: "Rich Media", 
+                desc: "Supports images, videos, audio, and documents",
+                icon: (
+                  <svg className="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                )
+              }
             ].map((feature, index) => (
               <motion.div
                 key={index}
@@ -292,27 +340,15 @@ function Dashboard() {
                 transition={{ duration: 0.5, delay: 0.1 * index }}
                 viewport={{ once: true }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scaleX: 1.03 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-0 border border-slate-600 flex flex-col"
+                whileHover={{ y: -5 }}
+                className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-600 hover:border-amber-500/50 transition-all duration-300"
               >
-                <div className="relative h-[250px] w-full aspect-[4/5] overflow-hidden rounded-t-xl">
-                  <img 
-                    src={
-                      feature.title === "Complete Privacy" ? "/privacy.png" :
-                      feature.title === "Secure Identity" ? "/identity.png" :
-                      feature.title === "Real-Time" ? "/realtime.png" :
-                      feature.title === "Flexible Modes" ? "/flexiblemodes.png" :
-                      feature.title === "Community" ? "/community.png" :
-                      "/supportmedia.png"
-                    } 
-                    alt={feature.title} 
-                    className="w-full h-full object-cover absolute inset-0"
-                  />
-                  <div className="absolute inset-0 bg-black/40 z-10"></div>
-                </div>
-                <div className="relative z-20 p-6 flex-grow flex flex-col justify-end">
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-4 p-3 bg-slate-700/50 rounded-full">
+                    {feature.icon}
+                  </div>
                   <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                  <p className="text-slate-200">{feature.desc}</p>
+                  <p className="text-slate-300">{feature.desc}</p>
                 </div>
               </motion.div>
             ))}
