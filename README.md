@@ -1,3 +1,13 @@
+title: Shop Conv
+emoji: 📚
+colorFrom: blue
+colorTo: blue
+sdk: docker
+pinned: false
+license: mit
+
+
+
 # Anonymous Chat Platform - TalkYourTalk
 
 This is a full-stack web application that allows users to send anonymous messages to friends. 
