@@ -48,10 +48,9 @@ const CardStackContainer = ({ cards, onCardClick, activeIndex }: CardStackContai
               <div
                 key={card.id}
                 className={`
-                  absolute inset-0 bg-white rounded-2xl shadow-xl border border-gray-200 
-                  flex flex-col items-center justify-center p-8 transition-all duration-500 
+                  absolute inset-0 bg-white rounded-lg shadow-sm border border-gray-200
+                  flex flex-col items-center justify-center p-8 transition-all duration-500
                   ${stackDepth < 3 ? 'opacity-100' : 'opacity-0'}
-                  hover:shadow-2xl
                 `}
                 style={{
                   transform: `translateY(${stackDepth < 3 ? stackDepth * -20 : -40}px) scale(${stackDepth < 3 ? 1 - stackDepth * 0.05 : 0.9})`,
@@ -60,8 +59,7 @@ const CardStackContainer = ({ cards, onCardClick, activeIndex }: CardStackContai
                 }}
               >
                 <div className="mb-6 relative">
-                  <div className="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-50"></div>
-                  <div className="relative bg-white p-4 rounded-full shadow-lg">
+                  <div className="relative bg-white p-4 rounded-full shadow-sm">
                     <IconComponent className="w-20 h-20 text-blue-600" />
                   </div>
                 </div>

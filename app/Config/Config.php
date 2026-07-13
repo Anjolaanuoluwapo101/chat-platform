@@ -12,16 +12,22 @@ class Config
     private static function loadEnv()
     {
         if (self::$dotenv === null) {
-            // Load .env file
-            self::$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
-            self::$dotenv->load();
+            $envPath = __DIR__ . '/../../';
+            if (file_exists($envPath . '.env')) {
+                // Load .env file only if it exists (local development)
+                self::$dotenv = Dotenv::createImmutable($envPath);
+                self::$dotenv->load();
+            } else {
+                // In production, Dotenv isn't needed as vars are provided by the environment
+                self::$dotenv = true; // Mark as loaded so we don't keep checking
+            }
         }
     }
     
     public static function get($key)
     {
         // Load environment variables
-        // @self::loadEnv();
+        @self::loadEnv();
         
         $config = [
             'name' => getenv('APP_NAME') ?: $_ENV['APP_NAME'],
@@ -32,6 +38,7 @@ class Config
                 // 'url' => getenv('REDIS_URL') ?: $_ENV['REDIS_URL'],
                 'url' => $_ENV['REDIS_URL'],
                 'password' => getenv('REDIS_PASSWORD') ?: $_ENV['REDIS_PASSWORD'],
+                'fallback_driver' => getenv('REDIS_FALLBACK_DRIVER') ?: ($_ENV['REDIS_FALLBACK_DRIVER'] ?? 'postgres'),
             ],
             // for sqlite
             'database' => [
@@ -44,6 +51,15 @@ class Config
                 'username' => getenv('MYSQL_USERNAME') ?: $_ENV['MYSQL_USERNAME'],
                 'password' => getenv('MYSQL_PASSWORD') ?: $_ENV['MYSQL_PASSWORD'],
                 'port' => getenv('MYSQL_PORT') ?: $_ENV['MYSQL_PORT'],
+            ],
+            // for postgres / supabase
+            'postgres' => [
+                'url' => getenv('SUPABASE_URL') ?: ($_ENV['SUPABASE_URL'] ?? (getenv('POSTGRES_URL') ?: ($_ENV['POSTGRES_URL'] ?? null))),
+                'host' => getenv('PG_HOST') ?: ($_ENV['PG_HOST'] ?? '127.0.0.1'),
+                'dbname' => getenv('PG_DBNAME') ?: ($_ENV['PG_DBNAME'] ?? 'postgres'),
+                'username' => getenv('PG_USERNAME') ?: ($_ENV['PG_USERNAME'] ?? 'postgres'),
+                'password' => getenv('PG_PASSWORD') ?: ($_ENV['PG_PASSWORD'] ?? ''),
+                'port' => getenv('PG_PORT') ?: ($_ENV['PG_PORT'] ?? 5432),
             ],
             'app' => [
                 'name' => getenv('APP_NAME') ?: $_ENV['APP_NAME'],

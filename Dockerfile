@@ -89,29 +89,99 @@
 
 
 
-# Use PHP 8.2-FPM (FastCGI Process Manager)
+# # Use PHP 8.2-FPM (FastCGI Process Manager)
+# FROM php:8.2-fpm
+
+# # Install Nginx
+# RUN apt-get update && apt-get install -y nginx
+
+# # Install required extensions
+# RUN docker-php-ext-install pdo pdo_mysql
+
+# # Install Composer
+# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# # Install Node.js v20 (Required for Vite/React)
+# RUN apt-get update && apt-get install -y curl
+# RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+
+# # Install system dependencies
+# RUN apt-get update && apt-get install -y \
+#     apt-utils \
+#     nodejs \
+#     git \
+#     zip \
+#     unzip \
+#     libpng-dev \
+#     libonig-dev \
+#     libxml2-dev \
+#     libzip-dev \
+#     libjpeg-dev \
+#     libfreetype6-dev \
+#     libpq-dev \
+#     sqlite3 \
+#     libsqlite3-dev \
+#     && docker-php-ext-configure gd --with-freetype --with-jpeg \
+#     && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip \
+#     && rm -rf /var/lib/apt/lists/*
+
+# RUN pecl install redis && docker-php-ext-enable redis
+
+# # --- Nginx Configuration ---
+# # Copy our custom Nginx config file, overwriting the default
+# COPY nginx.conf /etc/nginx/sites-available/default
+# # --- End Nginx Configuration ---
+
+# WORKDIR /var/www/html
+
+# # Backend Build
+# COPY composer.json composer.lock ./
+# RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
+
+# COPY app/ ./app/
+# COPY database/ ./database/
+# COPY public/ ./public/
+# # not needed btw
+# COPY public/.htaccess ./public/.htaccess 
+
+# RUN composer dump-autoload --optimize --no-scripts 
+
+# # Frontend Build
+# WORKDIR /var/www/html/frontendModified
+# COPY frontendModified/package*.json ./
+# RUN npm install
+# COPY frontendModified/ .
+# RUN npm run build
+# RUN cp -r dist/* ../public/
+
+# # Final Config
+# WORKDIR /var/www/html
+
+# # Permissions
+# RUN chown -R www-data:www-data /var/www/html
+# RUN chmod -R 755 /var/www/html
+
+# RUN find /var/www/html/public -type d -exec chmod 755 {} \;
+# RUN find /var/www/html/public -type f -exec chmod 644 {} \;
+# RUN chown -R www-data:www-data /var/www/html
+
+# EXPOSE 7860
+
+# # This command starts BOTH PHP-FPM and Nginx
+# CMD sh -c "php-fpm & nginx -g 'daemon off;'"
+
+
+# Use PHP 8.2-FPM
 FROM php:8.2-fpm
 
-# Install Nginx
-RUN apt-get update && apt-get install -y nginx
-
-# Install required extensions
-RUN docker-php-ext-install pdo pdo_mysql
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Install Node.js v20 (Required for Vite/React)
-RUN apt-get update && apt-get install -y curl
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-
-# Install system dependencies
+# Install system packages + nginx + nodejs
 RUN apt-get update && apt-get install -y \
-    apt-utils \
-    nodejs \
+    nginx \
+    curl \
     git \
     zip \
     unzip \
+    apt-utils \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
@@ -121,51 +191,60 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     sqlite3 \
     libsqlite3-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+# PHP Extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip
+
+# Redis
 RUN pecl install redis && docker-php-ext-enable redis
 
-# --- Nginx Configuration ---
-# Copy our custom Nginx config file, overwriting the default
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Nginx config
 COPY nginx.conf /etc/nginx/sites-available/default
-# --- End Nginx Configuration ---
 
 WORKDIR /var/www/html
 
-# Backend Build
+# Backend
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts --ignore-platform-reqs
 
-COPY app/ ./app/
-COPY database/ ./database/
-COPY public/ ./public/
-# not needed btw
-COPY public/.htaccess ./public/.htaccess 
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --prefer-dist \
+    --ignore-platform-reqs
 
-RUN composer dump-autoload --optimize --no-scripts 
+COPY . .
 
-# Frontend Build
+RUN composer dump-autoload --optimize
+
+# Frontend
 WORKDIR /var/www/html/frontendModified
-COPY frontendModified/package*.json ./
-RUN npm install
-COPY frontendModified/ .
-RUN npm run build
-RUN cp -r dist/* ../public/
 
-# Final Config
+RUN npm install
+RUN npm run build
+
+RUN cp -r dist/* /var/www/html/public/
+
+# Final
 WORKDIR /var/www/html
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
-
-RUN find /var/www/html/public -type d -exec chmod 755 {} \;
-RUN find /var/www/html/public -type f -exec chmod 644 {} \;
 RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 80
+EXPOSE 7860
 
-# This command starts BOTH PHP-FPM and Nginx
-CMD sh -c "php-fpm & nginx -g 'daemon off;'"
+CMD ["sh", "-c", "php-fpm & nginx -g 'daemon off;'"]

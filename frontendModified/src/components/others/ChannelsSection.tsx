@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Plus, Minus, X } from 'lucide-react';
 import auth from '../../services/auth';
 import shareService from '../../services/shareService';
 
@@ -40,8 +41,8 @@ const ChannelsSection = () => {
     <div className="w-full mt-8">
       <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
         {/* Single Channel */}
-        <div 
-          className="bg-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:bg-blue-50"
+        <div
+          className="bg-white rounded-lg shadow-sm border border-blue-200 overflow-hidden transition-colors duration-300 ease-in-out hover:bg-blue-50"
           onClick={() => toggleChannel('single')}
           role="button"
           tabIndex={0}
@@ -55,16 +56,18 @@ const ChannelsSection = () => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold text-gray-900">Single Channel</h3>
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-2xl text-blue-600 font-bold">
-                  {expandedChannel === 'single' ? '−' : '+'}
-                </span>
+                {expandedChannel === 'single' ? (
+                  <Minus className="w-5 h-5 text-blue-600" strokeWidth={2.5} />
+                ) : (
+                  <Plus className="w-5 h-5 text-blue-600" strokeWidth={2.5} />
+                )}
               </div>
             </div>
             <p className="text-gray-600 mb-6 text-left">Receive messages from anonymous users</p>
           </div>
 
           {expandedChannel === 'single' && (
-            <div className="px-8 pb-8 animate-fadeIn">
+            <div className="px-8 pb-8">
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <button
                   onClick={(e) => {
@@ -95,8 +98,8 @@ const ChannelsSection = () => {
         </div>
 
         {/* Multiple Channel */}
-        <div 
-          className="bg-white rounded-2xl shadow-lg border border-blue-200 overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl hover:bg-blue-50"
+        <div
+          className="bg-white rounded-lg shadow-sm border border-blue-200 overflow-hidden transition-colors duration-300 ease-in-out hover:bg-blue-50"
           onClick={() => toggleChannel('multiple')}
           role="button"
           tabIndex={0}
@@ -110,16 +113,18 @@ const ChannelsSection = () => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold text-gray-900">Multiple Channel</h3>
               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-2xl text-blue-600 font-bold">
-                  {expandedChannel === 'multiple' ? '−' : '+'}
-                </span>
+                {expandedChannel === 'multiple' ? (
+                  <Minus className="w-5 h-5 text-blue-600" strokeWidth={2.5} />
+                ) : (
+                  <Plus className="w-5 h-5 text-blue-600" strokeWidth={2.5} />
+                )}
               </div>
             </div>
             <p className="text-gray-600 mb-6 text-left">Create, View and Manage Anonymous and Non-Anonymous Groups</p>
           </div>
 
           {expandedChannel === 'multiple' && (
-            <div className="px-8 pb-8 animate-fadeIn">
+            <div className="px-8 pb-8">
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <p className="text-gray-600 mb-6">Manage your anonymous group conversations in one place.</p>
                 <a
@@ -139,8 +144,8 @@ const ChannelsSection = () => {
 
       {/* Modal for Single Channel Link */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-md max-w-md w-full p-8">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-gray-900">Your Single Channel Link</h3>
               <button
@@ -148,9 +153,7 @@ const ChannelsSection = () => {
                 className="text-gray-500 hover:text-gray-700"
                 aria-label="Close modal"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="h-6 w-6" strokeWidth={2} />
               </button>
             </div>
 

@@ -28,10 +28,7 @@ interface SendMessageResponse {
 const messageService = {
   getMessages: async (username: string): Promise<MessageResponse> => {
     try {
-      const response = await api.get(`/messages?username=${username}`, {
-        cache: true,
-        cacheExpiry: 200000000
-      } as any);
+      const response = await api.get(`/messages?username=${username}`);
       return response.data;
     } catch (error) {
       return { success: false, errors: error };

@@ -35,7 +35,8 @@ class RedisDatabase implements DatabaseInterface
         }
 
         // fallback durable store
-        $this->persistent = DatabaseFactory::create('mysql');
+        $fallbackDriver = $cfg['fallback_driver'] ?? 'mysql';
+        $this->persistent = DatabaseFactory::create($fallbackDriver);
 
     }
 
@@ -313,6 +314,16 @@ class RedisDatabase implements DatabaseInterface
             try {
                 $keyMeta = "group:{$groupId}:meta";
                 $meta = $this->client->hgetall($keyMeta);
+                
+                // If the hash exists but is missing critical fields like 'is_anonymous', fetch from SQL
+                if ($meta && !isset($meta['is_anonymous'])) {
+                    $sqlMeta = $this->persistent->getGroupInfo($groupId);
+                    if ($sqlMeta) {
+                        // Optionally merge or just return the complete SQL meta
+                        return array_merge($sqlMeta, $meta);
+                    }
+                }
+                
                 return $meta ?: $this->persistent->getGroupInfo($groupId);
             } catch (\Exception $e) {
                 $this->logger->log('Redis getGroup failed: ' . $e->getMessage());

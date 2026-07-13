@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Msgr — UI Wireframes v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ─────────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────────── */
+:root {
+  --page:        #F5F6F0;
+  --white:       #FFFFFF;
+  --green:       #1AC564;
+  --green-dark:  #15A354;
+  --green-pale:  #E8FAF1;
+  --red:         #F03A47;
+  --red-pale:    #FEF0F1;
+  --ink:         #1A1A2A;
+  --ink-mid:     #4A4A5A;
+  --ink-mute:    #9B9BAD;
+  --bubble-in:   #EDEDEE;
+  --bubble-out:  #CFCFD2;
+  --border:      #E8E8EE;
+  --border-soft: #F2F2F6;
+  --shadow-sm:   0 2px 12px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04);
+  --shadow-md:   0 8px 32px rgba(0,0,0,.09), 0 2px 8px rgba(0,0,0,.05);
+  --r-phone:     36px;
+  --r-card:      14px;
+  --r-pill:      100px;
+  --r-btn:       12px;
+  --font-dm:     'DM Sans', -apple-system, sans-serif;
+  --font-inter:  'Inter', -apple-system, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+
+body {
+  font-family: var(--font-inter);
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─────────────────────────────────────────────
+   DOCUMENT CHROME
+───────────────────────────────────────────── */
+.doc-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 56px 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 0 var(--border);
+}
+.doc-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.doc-logo {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-dm);
+  font-size: 18px; font-weight: 800;
+  color: var(--white);
+  letter-spacing: -1px;
+}
+.doc-name {
+  font-family: var(--font-dm);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.2px;
+}
+.doc-name span {
+  color: var(--ink-mute);
+  font-weight: 400;
+  font-size: 13px;
+  margin-left: 8px;
+}
+.doc-meta {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+}
+.meta-pill {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-mute);
+  background: var(--border-soft);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  letter-spacing: .02em;
+}
+
+.doc-legend {
+  padding: 12px 56px;
+  background: #FAFAF7;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 11px;
+  color: var(--ink-mute);
+  font-weight: 500;
+}
+.legend-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+/* ─────────────────────────────────────────────
+   CANVAS
+───────────────────────────────────────────── */
+.canvas {
+  padding: 52px 56px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+}
+
+/* ─────────────────────────────────────────────
+   SECTION
+───────────────────────────────────────────── */
+.section {}
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.s-num {
+  font-family: var(--font-inter);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.s-title {
+  font-family: var(--font-dm);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.s-path {
+  font-size: 11px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--ink-mute);
+  background: var(--border-soft);
+  padding: 2px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+}
+.s-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.badge-pub  { background: var(--green-pale); color: var(--green-dark); }
+.badge-pro  { background: #EEF1FF; color: #4060D4; }
+.s-note {
+  margin-left: auto;
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  font-weight: 400;
+  max-width: 480px;
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────
+   PHONE PAIR
+───────────────────────────────────────────── */
+.phone-pair {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+.phone-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.phone-col-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-mute);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.phone-col-label::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+/* ─────────────────────────────────────────────
+   PHONE SHELL
+───────────────────────────────────────────── */
+.phone {
+  width: 260px;
+  border-radius: var(--r-phone);
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+/* Notch pill */
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px; height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  z-index: 10;
+}
+
+/* Status bar */
+.sbar {
+  height: 34px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+.sbar-r { display: flex; gap: 5px; align-items: center; font-size: 9px; }
+
+/* App topbar */
+.topbar {
+  padding: 10px 16px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--white);
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-family: var(--font-dm);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.topbar-sub {
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+}
+
+/* Icon buttons */
+.icon-btn {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.icon-btn-ghost { background: transparent; color: var(--ink-mute); }
+.icon-btn-green { background: var(--green); color: var(--white); }
+.icon-btn-red   { background: var(--red); color: var(--white); border-radius: 50%; }
+
+/* Screen body */
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────
+   AUTH FORMS
+───────────────────────────────────────────── */
+.auth-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 20px 16px;
+  gap: 14px;
+  background: var(--white);
+}
+.auth-logo-ring {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-dm);
+  font-size: 22px; font-weight: 800;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.auth-headline {
+  font-family: var(--font-dm);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+  letter-spacing: -.2px;
+}
+.auth-sub {
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 180px;
+  margin-top: -6px;
+}
+.field-group { width: 100%; display: flex; flex-direction: column; gap: 4px; }
+.field-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--ink-mute);
+}
+.field-input {
+  width: 100%;
+  height: 38px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--border-soft);
+  padding: 0 13px;
+  font-size: 12px;
+  color: var(--ink-mute);
+  display: flex;
+  align-items: center;
+}
+.field-input.focus {
+  border-color: var(--green);
+  background: var(--green-pale);
+}
+.link-right {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--green-dark);
+  text-align: right;
+  width: 100%;
+}
+.btn-green {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--r-pill);
+  background: var(--green);
+  color: var(--white);
+  font-family: var(--font-dm);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: .01em;
+}
+.btn-outline {
+  width: 100%;
+  height: 38px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border);
+  color: var(--ink-mid);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.divider-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+.divider-or-line { flex: 1; height: 1px; background: var(--border); }
+.divider-or-text { font-size: 10px; color: var(--ink-mute); font-weight: 500; }
+.strength-row {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+}
+.strength-track {
+  flex: 1; height: 3px; border-radius: 2px; background: var(--border);
+}
+.strength-fill { height: 100%; border-radius: 2px; }
+
+/* ─────────────────────────────────────────────
+   CHAT / MESSAGES
+───────────────────────────────────────────── */
+.chat-area {
+  flex: 1;
+  padding: 14px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  background: var(--white);
+}
+.time-stamp {
+  text-align: center;
+  font-size: 10px;
+  color: var(--ink-mute);
+  font-weight: 500;
+  padding: 4px 0;
+}
+.msg-row { display: flex; align-items: flex-end; gap: 6px; }
+.msg-row.out { flex-direction: row-reverse; }
+.av-xs {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.av-xs svg { width: 14px; height: 14px; }
+.bubble {
+  max-width: 72%;
+  padding: 9px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.bubble.in  { background: var(--bubble-in); border-bottom-left-radius: 5px; }
+.bubble.out { background: var(--bubble-out); border-bottom-right-radius: 5px; color: var(--ink); }
+.btime { font-size: 9px; color: var(--ink-mute); margin-top: 2px; }
+.btime.r { text-align: right; }
+
+/* Compose bar */
+.compose {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--border-soft);
+  background: var(--white);
+  flex-shrink: 0;
+}
+.compose-input {
+  flex: 1;
+  height: 34px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border);
+  background: var(--border-soft);
+  padding: 0 13px;
+  font-size: 11px;
+  color: var(--ink-mute);
+  display: flex;
+  align-items: center;
+}
+.send-btn {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.send-btn svg { width: 15px; height: 15px; fill: none; stroke: white; stroke-width: 2; }
+
+/* Photo tray */
+.photo-tray {
+  display: flex;
+  height: 80px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.photo-thumb {
+  flex: 1;
+  background: var(--border);
+  position: relative;
+}
+.photo-thumb + .photo-thumb { border-left: 2px solid var(--white); }
+.photo-thumb-inner {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #D0D5C8 0%, #B8BDB0 100%);
+}
+.photo-thumb:nth-child(1) .photo-thumb-inner { background: linear-gradient(160deg, #B8C4B0 0%, #8FA08A 100%); }
+.photo-thumb:nth-child(2) .photo-thumb-inner { background: linear-gradient(160deg, #C8B8A8 0%, #A08878 100%); }
+.photo-thumb:nth-child(3) .photo-thumb-inner { background: linear-gradient(160deg, #A8B8C0 0%, #7898A8 100%); }
+.photo-tray-actions {
+  position: absolute;
+  bottom: 8px; left: 10px;
+  display: flex; gap: 6px;
+}
+.photo-action-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.85);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+
+/* ─────────────────────────────────────────────
+   EMPTY / CHAT OVER STATE (from reference)
+───────────────────────────────────────────── */
+.state-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px;
+  background: var(--white);
+  gap: 12px;
+}
+.state-illustration {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.state-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.state-row.right { flex-direction: row-reverse; }
+.state-av {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.state-av svg { width: 22px; height: 22px; }
+.state-line {
+  height: 10px;
+  border-radius: 6px;
+  background: var(--border);
+}
+.state-line.long  { flex: 1; }
+.state-line.short { width: 55%; }
+.state-title {
+  font-family: var(--font-dm);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+  letter-spacing: -.2px;
+}
+.state-body {
+  font-size: 12px;
+  color: var(--ink-mute);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 180px;
+}
+.btn-green-pill {
+  height: 40px;
+  padding: 0 28px;
+  border-radius: var(--r-pill);
+  background: var(--green);
+  color: var(--white);
+  font-family: var(--font-dm);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.state-filter {
+  font-size: 12px;
+  color: var(--ink-mute);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ─────────────────────────────────────────────
+   DASHBOARD / HOME SCREEN
+───────────────────────────────────────────── */
+.home-content {
+  flex: 1;
+  padding: 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--page);
+  overflow: hidden;
+}
+.home-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--ink-mute);
+}
+.home-card {
+  background: var(--white);
+  border-radius: var(--r-card);
+  border: 1px solid var(--border);
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.home-card-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.home-card-meta { flex: 1; }
+.home-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  font-family: var(--font-dm);
+}
+.home-card-sub {
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+}
+.home-card-cta {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+.unread-badge {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--white);
+  font-size: 9px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.session-block {
+  background: var(--white);
+  border-radius: var(--r-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.session-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 14px;
+  font-size: 11px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.session-row:last-child { border-bottom: none; }
+.session-key { color: var(--ink-mute); }
+.session-val { color: var(--ink); font-weight: 600; }
+
+/* ─────────────────────────────────────────────
+   GROUPS LIST
+───────────────────────────────────────────── */
+.group-list { flex: 1; overflow: hidden; background: var(--white); }
+.group-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.group-row:last-child { border-bottom: none; }
+.group-av {
+  width: 40px; height: 40px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+  font-family: var(--font-dm);
+}
+.group-meta { flex: 1; min-width: 0; }
+.group-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.group-last {
+  font-size: 10px;
+  color: var(--ink-mute);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.group-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.group-time { font-size: 9px; color: var(--ink-mute); }
+.search-bar {
+  margin: 10px 12px 6px;
+  height: 34px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border);
+  background: var(--border-soft);
+  display: flex;
+  align-items: center;
+  padding: 0 13px;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+
+/* ─────────────────────────────────────────────
+   BOTTOM NAV
+───────────────────────────────────────────── */
+.bottom-nav {
+  display: flex;
+  border-top: 1px solid var(--border-soft);
+  background: var(--white);
+  padding: 6px 0 8px;
+  flex-shrink: 0;
+}
+.nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--ink-mute);
+  cursor: pointer;
+}
+.nav-tab.active { color: var(--green); }
+.nav-icon {
+  width: 22px; height: 22px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.nav-tab.active .nav-icon { background: var(--green-pale); }
+.home-pill {
+  width: 44px; height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin: 4px auto 0;
+}
+
+/* ─────────────────────────────────────────────
+   ADMIN MODAL
+───────────────────────────────────────────── */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26,26,42,.45);
+  display: flex;
+  align-items: flex-end;
+  z-index: 20;
+}
+.modal-sheet {
+  width: 100%;
+  background: var(--white);
+  border-radius: 24px 24px 0 0;
+  padding: 12px 16px 16px;
+}
+.drag-handle {
+  width: 36px; height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  margin: 0 auto 14px;
+}
+.modal-title {
+  font-family: var(--font-dm);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.modal-sub { font-size: 10px; color: var(--ink-mute); margin-top: 2px; }
+.tab-row { display: flex; gap: 5px; margin: 10px 0; }
+.tab-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border);
+  color: var(--ink-mute);
+}
+.tab-pill.active { background: var(--green); border-color: var(--green); color: var(--white); }
+.admin-member {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.admin-member:last-of-type { border-bottom: none; }
+.role-dot {
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  font-size: 8px;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.role-dot.admin { background: #EEF1FF; color: #4060D4; }
+.role-dot.member { background: var(--border-soft); color: var(--ink-mute); }
+.admin-name { flex: 1; font-size: 11px; font-weight: 700; color: var(--ink); }
+.admin-actions { display: flex; gap: 4px; }
+.action-chip {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  border: 1px solid;
+}
+.action-chip.promote { border-color: #C0D0FF; color: #4060D4; background: #EEF1FF; }
+.action-chip.demote  { border-color: #FFE0A0; color: #A07010; background: #FFF8E0; }
+.action-chip.ban     { border-color: #FFC0C5; color: var(--red); background: var(--red-pale); }
+.danger-btn {
+  width: 100%;
+  height: 36px;
+  border-radius: var(--r-pill);
+  background: var(--red-pale);
+  border: 1.5px solid #FFC0C5;
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* ─────────────────────────────────────────────
+   PRIVACY PAGE
+───────────────────────────────────────────── */
+.privacy-content {
+  flex: 1;
+  padding: 14px;
+  background: var(--page);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+.privacy-card {
+  background: var(--white);
+  border-radius: var(--r-card);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+}
+.privacy-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 5px;
+  font-family: var(--font-dm);
+}
+.privacy-card-body {
+  font-size: 10px;
+  color: var(--ink-mute);
+  line-height: 1.6;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 11px;
+  color: var(--ink);
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle {
+  width: 32px; height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  flex-shrink: 0;
+}
+.toggle.on  { background: var(--green); justify-content: flex-end; }
+.toggle.off { background: var(--border); justify-content: flex-start; }
+.toggle-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+
+/* ─────────────────────────────────────────────
+   API REFERENCE TABLE
+───────────────────────────────────────────── */
+.api-panel {
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.api-panel-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.api-panel-title {
+  font-family: var(--font-dm);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.api-panel-sub {
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin-top: 3px;
+}
+.api-legend { display: flex; flex-direction: column; gap: 5px; font-size: 11px; color: var(--ink-mute); }
+.api-legend-row { display: flex; align-items: center; gap: 6px; }
+.ep-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.ep-table th {
+  text-align: left;
+  padding: 9px 14px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  background: #FAFAF7;
+  border-bottom: 1px solid var(--border);
+}
+.ep-table td { padding: 7px 14px; vertical-align: middle; border-bottom: .5px solid var(--border-soft); }
+.ep-table tr:last-child td { border-bottom: none; }
+.ep-table tr:hover td { background: var(--border-soft); }
+.m-pill {
+  display: inline-block;
+  font-size: 9px; font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: .03em;
+}
+.m-get  { background: var(--green-pale); color: var(--green-dark); }
+.m-post { background: #EEF1FF; color: #3050C0; }
+.ep-path { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 10.5px; color: var(--ink); }
+.ep-path.unused { color: var(--ink-mute); }
+.u-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.u-dot.yes { background: var(--green); }
+.u-dot.no  { background: var(--red); }
+.api-alert {
+  margin: 14px 20px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid;
+}
+.api-alert.warn  { background: #FFF8E8; border-color: #FFE0A0; }
+.api-alert.info  { background: var(--border-soft); border-color: var(--border); }
+.api-alert-title { font-size: 11px; font-weight: 700; }
+.api-alert.warn .api-alert-title { color: #A07010; }
+.api-alert.info .api-alert-title { color: var(--ink-mid); }
+.api-alert-body  { font-size: 10px; margin-top: 3px; line-height: 1.5; }
+.api-alert.warn .api-alert-body { color: #907010; }
+.api-alert.info .api-alert-body { color: var(--ink-mute); }
+
+/* ─────────────────────────────────────────────
+   SVG AVATAR SILHOUETTE
+───────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+.doc-footer {
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  padding: 18px 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--ink-mute);
+}
+.footer-brand { font-weight: 700; color: var(--ink-mid); }
+
+</style>
+</head>
+<body>
+
+<!-- ════════════ HEADER ════════════ -->
+<header class="doc-header">
+  <div class="doc-brand">
+    <div class="doc-logo">M</div>
+    <div class="doc-name">Msgr <span>UI Wireframes v2 · Mobile</span></div>
+  </div>
+  <div class="doc-meta">
+    <span class="meta-pill">9 screens</span>
+    <span class="meta-pill">27 endpoints</span>
+    <span class="meta-pill">Pusher WS + Beams</span>
+    <span class="meta-pill">sessionStorage auth</span>
+  </div>
+</header>
+
+<div class="doc-legend">
+  <span style="font-weight:700;color:var(--ink-mid);margin-right:4px">Legend:</span>
+  <span><span class="legend-dot" style="background:var(--green)"></span>Public route</span>
+  <span><span class="legend-dot" style="background:#4060D4"></span>Protected route (auth required)</span>
+  <span><span class="legend-dot" style="background:var(--red)"></span>Bug / orphaned</span>
+  <span><span class="legend-dot" style="background:var(--ink-mute)"></span>Backend-only endpoint</span>
+</div>
+
+<!-- ════════════ CANVAS ════════════ -->
+<main class="canvas">
+
+
+<!-- ──────────── 01 · LOGIN ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">01</span>
+    <span class="s-title">Login</span>
+    <span class="s-path">/login</span>
+    <span class="s-badge badge-pub">Public</span>
+    <span class="s-note">POST /api/login · stores user + isAuthenticated in sessionStorage · redirects to stored redirectURI or /dashboard on success</span>
+  </div>
+  <div class="phone-pair">
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--green)">Default state</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>●●●</span><span>WiFi</span><span>88%</span></div></div>
+        <div class="auth-wrap">
+          <div class="auth-logo-ring">M</div>
+          <div class="auth-headline">Welcome back</div>
+          <div class="auth-sub">Sign in to send and receive anonymous messages</div>
+          <div class="field-group">
+            <div class="field-label">Username</div>
+            <div class="field-input">your_username</div>
+          </div>
+          <div class="field-group">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div class="field-label">Password</div>
+              <div class="link-right">Forgot?</div>
+            </div>
+            <div class="field-input" style="letter-spacing:5px">••••••••</div>
+          </div>
+          <div class="btn-green">Sign in</div>
+          <div class="divider-or"><div class="divider-or-line"></div><div class="divider-or-text">or</div><div class="divider-or-line"></div></div>
+          <div class="btn-outline">Create an account</div>
+        </div>
+        <div style="display:flex;justify-content:center;padding:10px 0 12px"><div class="home-pill"></div></div>
+      </div>
+    </div>
+
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--green)">Active input state</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>●●●</span><span>WiFi</span><span>88%</span></div></div>
+        <div class="auth-wrap">
+          <div class="auth-logo-ring">M</div>
+          <div class="auth-headline">Welcome back</div>
+          <div class="auth-sub">Sign in to send and receive anonymous messages</div>
+          <div class="field-group">
+            <div class="field-label">Username</div>
+            <div class="field-input" style="color:var(--ink);border-color:var(--border)">artco_dev</div>
+          </div>
+          <div class="field-group">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <div class="field-label">Password</div>
+              <div class="link-right">Forgot?</div>
+            </div>
+            <div class="field-input focus" style="letter-spacing:5px;color:var(--ink)">••••••••</div>
+          </div>
+          <div class="btn-green">Sign in</div>
+          <div class="divider-or"><div class="divider-or-line"></div><div class="divider-or-text">or</div><div class="divider-or-line"></div></div>
+          <div class="btn-outline">Create an account</div>
+        </div>
+        <div style="display:flex;justify-content:center;padding:10px 0 12px"><div class="home-pill"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ──────────── 02 · REGISTER ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">02</span>
+    <span class="s-title">Register</span>
+    <span class="s-path">/register</span>
+    <span class="s-badge badge-pub">Public</span>
+    <span class="s-note">POST /api/register · stores user + isAuthenticated in sessionStorage · redirects to /login after 3s on success</span>
+  </div>
+  <div class="phone-pair">
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--green)">Empty form</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div style="flex:1">
+            <div class="topbar-title">Create account</div>
+            <div class="topbar-sub">Join and start messaging</div>
+          </div>
+        </div>
+        <div class="auth-wrap" style="padding-top:14px">
+          <div class="field-group">
+            <div class="field-label">Username</div>
+            <div class="field-input">choose a username</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Email address</div>
+            <div class="field-input">you@example.com</div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Password</div>
+            <div class="field-input" style="letter-spacing:4px">••••••••</div>
+            <div class="strength-row">
+              <div class="strength-track"><div class="strength-fill" style="width:60%;background:#F5A623"></div></div>
+              <span style="font-size:9px;color:#A07010;font-weight:700">Medium</span>
+            </div>
+          </div>
+          <div class="btn-green" style="margin-top:4px">Create account</div>
+          <div style="font-size:9px;text-align:center;color:var(--ink-mute);line-height:1.5;max-width:180px">By signing up you agree to our Terms and Privacy Policy</div>
+          <div class="divider-or"><div class="divider-or-line"></div><div class="divider-or-text">or</div><div class="divider-or-line"></div></div>
+          <div class="btn-outline">Already have an account?</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--green)">Success — redirecting</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div style="flex:1">
+            <div class="topbar-title">Create account</div>
+            <div class="topbar-sub">Join and start messaging</div>
+          </div>
+        </div>
+        <div class="state-screen">
+          <div style="width:64px;height:64px;border-radius:20px;background:var(--green-pale);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:28px">✓</div>
+          <div class="state-title" style="font-size:18px">Account created!</div>
+          <div class="state-body">You're all set. Redirecting you to sign in…</div>
+          <div style="width:100%;height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin-top:8px">
+            <div style="width:70%;height:100%;background:var(--green);border-radius:2px"></div>
+          </div>
+          <div style="font-size:10px;color:var(--ink-mute)">Redirecting in 1s…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ──────────── 03 · DASHBOARD ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">03</span>
+    <span class="s-title">Dashboard</span>
+    <span class="s-path">/dashboard</span>
+    <span class="s-badge badge-pro">Protected</span>
+    <span class="s-note">No API calls · all data from sessionStorage · / redirects here</span>
+  </div>
+  <div class="phone-pair">
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:#4060D4">Logged in</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--green-pale);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--font-dm);font-size:13px;font-weight:800;color:var(--green)">A</div>
+          <div style="flex:1">
+            <div class="topbar-title" style="font-size:13px">artco_dev</div>
+            <div class="topbar-sub" style="color:var(--green)">● Online</div>
+          </div>
+          <div style="font-size:9px;font-weight:700;padding:4px 10px;border-radius:var(--r-pill);background:var(--red-pale);color:var(--red);border:1px solid #FFC0C5">Logout</div>
+        </div>
+        <div class="home-content">
+          <div class="home-section-label">Quick access</div>
+          <div class="home-card">
+            <div class="home-card-icon" style="background:var(--green-pale)">✉</div>
+            <div class="home-card-meta">
+              <div class="home-card-name">Messages</div>
+              <div class="home-card-sub">Your anonymous inbox</div>
+            </div>
+            <div class="unread-badge">14</div>
+          </div>
+          <div class="home-card">
+            <div class="home-card-icon" style="background:#EEF1FF">⊕</div>
+            <div class="home-card-meta">
+              <div class="home-card-name">Groups</div>
+              <div class="home-card-sub">3 active groups</div>
+            </div>
+            <div class="home-card-cta">→</div>
+          </div>
+          <div class="home-card">
+            <div class="home-card-icon" style="background:#FFF8E8">🔒</div>
+            <div class="home-card-meta">
+              <div class="home-card-name">Privacy</div>
+              <div class="home-card-sub">Static · no API calls</div>
+            </div>
+            <div class="home-card-cta">→</div>
+          </div>
+          <div class="home-section-label" style="margin-top:2px">Session</div>
+          <div class="session-block">
+            <div class="session-row"><span class="session-key">Logged in as</span><span class="session-val">artco_dev</span></div>
+            <div class="session-row"><span class="session-key">Session started</span><span class="session-val">2h ago</span></div>
+            <div class="session-row"><span class="session-key">Auth method</span><span class="session-val">sessionStorage</span></div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-tab active"><div class="nav-icon">⊞</div>Home</div>
+          <div class="nav-tab"><div class="nav-icon">✉</div>Msgs</div>
+          <div class="nav-tab"><div class="nav-icon">⊕</div>Groups</div>
+          <div class="nav-tab"><div class="nav-icon">⚙</div>Privacy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ──────────── 04 · MESSAGES ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">04</span>
+    <span class="s-title">Messages</span>
+    <span class="s-path">/messages/:username</span>
+    <span class="s-badge badge-pub">Public</span>
+    <span class="s-note">Case A (own inbox): GET /api/messages · Pusher private-messages-{username} · Beams token init &nbsp;|&nbsp; Case B (sending): POST /api/messages</span>
+  </div>
+  <div class="phone-pair">
+
+    <!-- Active chat (own inbox) -->
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--green)">Your inbox — active chat</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div class="icon-btn icon-btn-red" style="font-size:13px;width:26px;height:26px">✕</div>
+          <div style="flex:1;text-align:center">
+            <div class="topbar-title">artco_dev</div>
+            <div class="topbar-sub">Your anonymous inbox</div>
+          </div>
+          <div class="icon-btn icon-btn-green" style="width:28px;height:20px;border-radius:6px;font-size:12px">▶</div>
+        </div>
+        <div class="chat-area">
+          <div class="time-stamp">10:45 PM</div>
+          <div class="msg-row">
+            <div class="av-xs">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#9B9BAD"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#9B9BAD"/></svg>
+            </div>
+            <div>
+              <div class="bubble in">Hey! How are you?</div>
+              <div class="btime">10:45 PM</div>
+            </div>
+          </div>
+          <div class="msg-row out">
+            <div>
+              <div class="bubble out">Hello! I am great</div>
+              <div class="btime r">10:46 PM</div>
+            </div>
+          </div>
+          <div class="msg-row out">
+            <div>
+              <div class="bubble out">Thank you! How are you doing?</div>
+              <div class="btime r">10:46 PM</div>
+            </div>
+          </div>
+          <div class="msg-row">
+            <div class="av-xs">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#9B9BAD"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#9B9BAD"/></svg>
+            </div>
+            <div>
+              <div class="bubble in">I am doing great too!</div>
+              <div class="btime">10:47 PM</div>
+            </div>
+          </div>
+        </div>
+        <div class="compose">
+          <div style="color:var(--ink-mute);font-size:16px;flex-shrink:0">📎</div>
+          <div class="compose-input">Type something...</div>
+          <div class="send-btn">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+        </div>
+        <div class="photo-tray">
+          <div class="photo-thumb"><div class="photo-thumb-inner"></div></div>
+          <div class="photo-thumb"><div class="photo-thumb-inner"></div></div>
+          <div class="photo-thumb"><div class="photo-thumb-inner"></div></div>
+          <div class="photo-tray-actions">
+            <div class="photo-action-btn">📷</div>
+            <div class="photo-action-btn">⊞</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat ended state -->
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--red)">Session ended — empty state</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar" style="justify-content:space-between">
+          <div style="font-size:16px;color:var(--red)">🏠</div>
+        </div>
+        <div class="state-screen">
+          <div class="state-illustration">
+            <div class="state-row">
+              <div class="state-av">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#CFCFD2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#CFCFD2"/></svg>
+              </div>
+              <div class="state-line long"></div>
+              <div class="state-line" style="width:30%"></div>
+            </div>
+            <div class="state-row right">
+              <div class="state-av">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#CFCFD2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#CFCFD2"/></svg>
+              </div>
+              <div class="state-line short"></div>
+              <div class="state-line" style="width:20%"></div>
+            </div>
+          </div>
+          <div class="state-title">Chat Over!</div>
+          <div class="state-body">Tap Chat Now to use same filters or refine results using Filter option</div>
+          <div class="btn-green-pill">CHAT NOW</div>
+          <div class="state-filter">
+            <span style="font-size:10px">▼</span>
+            Filter
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-tab"><div class="nav-icon">⊞</div>Home</div>
+          <div class="nav-tab active"><div class="nav-icon">✉</div>Msgs</div>
+          <div class="nav-tab"><div class="nav-icon">⊕</div>Groups</div>
+          <div class="nav-tab"><div class="nav-icon">⚙</div>Privacy</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ──────────── 05 · GROUPS ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">05</span>
+    <span class="s-title">Groups</span>
+    <span class="s-path">/groups</span>
+    <span class="s-badge badge-pro">Protected</span>
+    <span class="s-note">GET /api/groups on mount · POST /api/groups (create modal) · re-fetches list after successful create</span>
+  </div>
+  <div class="phone-pair">
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:#4060D4">Group list</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div class="topbar-title" style="flex:1">Groups</div>
+          <div style="font-size:10px;font-weight:700;padding:5px 12px;border-radius:var(--r-pill);background:var(--green);color:white">+ New</div>
+        </div>
+        <div class="search-bar">
+          <span style="font-size:13px">🔍</span>
+          Search groups…
+        </div>
+        <div class="group-list">
+          <div class="group-row">
+            <div class="group-av" style="background:var(--green-pale);color:var(--green-dark)">DS</div>
+            <div class="group-meta">
+              <div class="group-name">Design Squad</div>
+              <div class="group-last">Check the new mockup!</div>
+            </div>
+            <div class="group-right">
+              <div class="group-time">3m</div>
+              <div class="unread-badge">3</div>
+            </div>
+          </div>
+          <div class="group-row">
+            <div class="group-av" style="background:#E8FFF4;color:#1A9655">DO</div>
+            <div class="group-meta">
+              <div class="group-name">Dev Ops Channel</div>
+              <div class="group-last">Pipeline passed ✓</div>
+            </div>
+            <div class="group-right">
+              <div class="group-time">14m</div>
+            </div>
+          </div>
+          <div class="group-row">
+            <div class="group-av" style="background:#FFF8E8;color:#A07010">AC</div>
+            <div class="group-meta">
+              <div class="group-name">Anonymous Chat</div>
+              <div class="group-last">Who is this? 👀</div>
+            </div>
+            <div class="group-right">
+              <div class="group-time">1h</div>
+              <div class="unread-badge">11</div>
+            </div>
+          </div>
+          <div class="group-row">
+            <div class="group-av" style="background:var(--red-pale);color:var(--red)">PA</div>
+            <div class="group-meta">
+              <div class="group-name">Project Alpha</div>
+              <div class="group-last">Meeting at 5pm</div>
+            </div>
+            <div class="group-right">
+              <div class="group-time">2h</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-tab"><div class="nav-icon">⊞</div>Home</div>
+          <div class="nav-tab"><div class="nav-icon">✉</div>Msgs</div>
+          <div class="nav-tab active"><div class="nav-icon">⊕</div>Groups</div>
+          <div class="nav-tab"><div class="nav-icon">⚙</div>Privacy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty groups -->
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--ink-mute)">No groups yet — empty state</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div class="topbar-title" style="flex:1">Groups</div>
+          <div style="font-size:10px;font-weight:700;padding:5px 12px;border-radius:var(--r-pill);background:var(--green);color:white">+ New</div>
+        </div>
+        <div class="state-screen">
+          <div class="state-illustration" style="margin-bottom:4px">
+            <div class="state-row">
+              <div class="state-av">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#CFCFD2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#CFCFD2"/></svg>
+              </div>
+              <div class="state-line long"></div>
+            </div>
+            <div class="state-row right">
+              <div class="state-av">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#CFCFD2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#CFCFD2"/></svg>
+              </div>
+              <div class="state-line short"></div>
+            </div>
+          </div>
+          <div class="state-title" style="font-size:17px">No groups yet</div>
+          <div class="state-body">Create one to start chatting privately with your people</div>
+          <div class="btn-green-pill">CREATE GROUP</div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-tab"><div class="nav-icon">⊞</div>Home</div>
+          <div class="nav-tab"><div class="nav-icon">✉</div>Msgs</div>
+          <div class="nav-tab active"><div class="nav-icon">⊕</div>Groups</div>
+          <div class="nav-tab"><div class="nav-icon">⚙</div>Privacy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ──────────── 06 · GROUP MESSAGES ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">06</span>
+    <span class="s-title">Group messages</span>
+    <span class="s-path">/groups/:groupId</span>
+    <span class="s-badge badge-pro">Protected</span>
+    <span class="s-note">GET info → GET messages (?limit=50) · Pusher private-group-{id} · POST markread per new message · scroll-up loads older via ?reference_id=&direction=before</span>
+  </div>
+  <div class="phone-pair">
+
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:#4060D4">Member view — active chat</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div style="font-size:16px;font-weight:700;color:var(--green);flex-shrink:0">‹</div>
+          <div style="flex:1">
+            <div class="topbar-title" style="font-size:13px">Design Squad</div>
+            <div class="topbar-sub">12 members · anonymous</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <div style="font-size:8px;font-weight:700;padding:3px 7px;border-radius:var(--r-pill);background:var(--green-pale);color:var(--green-dark)">● Live</div>
+            <div class="icon-btn icon-btn-ghost" style="font-size:14px;width:28px;height:28px">⚙</div>
+          </div>
+        </div>
+        <div class="chat-area" style="gap:6px">
+          <div style="text-align:center;font-size:9px;color:var(--ink-mute);padding:2px 0">↑ Load earlier</div>
+          <div class="msg-row">
+            <div class="av-xs" style="background:#E8FFF4">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#1A9655"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#1A9655"/></svg>
+            </div>
+            <div>
+              <div class="bubble in">Review the new nav flow?</div>
+              <div class="btime">sigma_07 · 4:01</div>
+            </div>
+          </div>
+          <div class="msg-row">
+            <div class="av-xs">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#9B9BAD"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#9B9BAD"/></svg>
+            </div>
+            <div>
+              <div class="bubble in">Left comments in Figma</div>
+              <div class="btime">Anonymous · 4:03</div>
+            </div>
+          </div>
+          <div class="msg-row out">
+            <div>
+              <div class="bubble out">Pushed the updated components</div>
+              <div class="btime r">You · 4:05</div>
+            </div>
+          </div>
+          <div class="msg-row">
+            <div class="av-xs">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#9B9BAD"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#9B9BAD"/></svg>
+            </div>
+            <div>
+              <div class="bubble in">Mobile spacing feels off</div>
+              <div class="btime">Anonymous · 4:07</div>
+            </div>
+          </div>
+        </div>
+        <!-- Reply strip -->
+        <div style="padding:6px 12px 6px 14px;background:var(--green-pale);border-top:1px solid rgba(26,197,100,.2);border-left:3px solid var(--green);font-size:10px;color:var(--green-dark);font-weight:500;flex-shrink:0">
+          Replying to sigma_07: "Yeah let me fix…"
+        </div>
+        <div class="compose">
+          <div style="color:var(--ink-mute);font-size:16px;flex-shrink:0">📎</div>
+          <div class="compose-input">Message Design Squad…</div>
+          <div class="send-btn">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-tab"><div class="nav-icon">⊞</div>Home</div>
+          <div class="nav-tab"><div class="nav-icon">✉</div>Msgs</div>
+          <div class="nav-tab active"><div class="nav-icon">⊕</div>Groups</div>
+          <div class="nav-tab"><div class="nav-icon">⚙</div>Privacy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Non-member join view -->
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:var(--ink-mute)">Non-member — join gate</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar">
+          <div style="font-size:16px;font-weight:700;color:var(--green);flex-shrink:0">‹</div>
+          <div style="flex:1">
+            <div class="topbar-title" style="font-size:13px">Anonymous Chat</div>
+            <div class="topbar-sub">47 members · anonymous</div>
+          </div>
+        </div>
+        <div class="state-screen">
+          <div style="width:56px;height:56px;border-radius:18px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:26px">🔐</div>
+          <div class="state-title" style="font-size:17px">Members only</div>
+          <div class="state-body">Join this group to see messages and participate in the conversation</div>
+          <div class="btn-green-pill" style="padding:0 32px">JOIN GROUP</div>
+          <div style="font-size:10px;color:var(--ink-mute);margin-top:-4px">GET /api/groups/{id}/info · then POST /api/groups/{id}/join</div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-tab"><div class="nav-icon">⊞</div>Home</div>
+          <div class="nav-tab"><div class="nav-icon">✉</div>Msgs</div>
+          <div class="nav-tab active"><div class="nav-icon">⊕</div>Groups</div>
+          <div class="nav-tab"><div class="nav-icon">⚙</div>Privacy</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ──────────── 07 · ADMIN PANEL ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">07</span>
+    <span class="s-title">Admin panel</span>
+    <span class="s-path">Modal inside /groups/:groupId</span>
+    <span class="s-badge badge-pro">Protected · admin only</span>
+    <span class="s-note">7 POST actions · each calls onAdminDataRefresh() → GET /api/groups/{id}/info · data passed as props from GroupMessages</span>
+  </div>
+  <div class="phone-pair">
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:#4060D4">Members tab — open</div>
+      <div class="phone" style="position:relative;min-height:560px">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <!-- Dimmed chat behind -->
+        <div style="padding:14px;opacity:.25;flex:1;display:flex;flex-direction:column;gap:8px">
+          <div class="time-stamp">4:01 PM</div>
+          <div class="msg-row"><div class="av-xs"></div><div class="bubble in" style="background:var(--border-soft)">Review the nav flow?</div></div>
+          <div class="msg-row out"><div class="bubble out" style="background:var(--border)">Pushed the update</div></div>
+        </div>
+        <!-- Modal overlay -->
+        <div class="modal-overlay">
+          <div class="modal-sheet">
+            <div class="drag-handle"></div>
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px">
+              <div>
+                <div class="modal-title">Admin panel</div>
+                <div class="modal-sub">Design Squad · 7 available actions</div>
+              </div>
+              <div style="font-size:13px;color:var(--ink-mute);padding:2px">✕</div>
+            </div>
+            <div class="tab-row">
+              <div class="tab-pill active">Members</div>
+              <div class="tab-pill">Admins</div>
+              <div class="tab-pill">Banned</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <div class="field-input" style="flex:1;height:32px;font-size:10px">Add by username…</div>
+              <div style="height:32px;padding:0 12px;border-radius:var(--r-pill);background:var(--green);color:white;font-size:10px;font-weight:700;display:flex;align-items:center">Add</div>
+            </div>
+            <div class="admin-member">
+              <div class="av-xs" style="width:28px;height:28px;background:var(--green-pale)">
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="12" cy="8" r="4" fill="#1A9655"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#1A9655"/></svg>
+              </div>
+              <div class="admin-name">artco_dev</div>
+              <div class="role-dot admin">A</div>
+              <div class="admin-actions">
+                <div class="action-chip demote">Demote</div>
+                <div class="action-chip ban">Ban</div>
+              </div>
+            </div>
+            <div class="admin-member">
+              <div class="av-xs" style="width:28px;height:28px;background:#E8FFF4">
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="12" cy="8" r="4" fill="#1A9655"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#1A9655"/></svg>
+              </div>
+              <div class="admin-name">sigma_07</div>
+              <div class="role-dot admin">A</div>
+              <div class="admin-actions">
+                <div class="action-chip ban">Ban</div>
+              </div>
+            </div>
+            <div class="admin-member" style="border-bottom:none">
+              <div class="av-xs" style="width:28px;height:28px">
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><circle cx="12" cy="8" r="4" fill="#9B9BAD"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="#9B9BAD"/></svg>
+              </div>
+              <div class="admin-name">anon_4</div>
+              <div class="role-dot member">M</div>
+              <div class="admin-actions">
+                <div class="action-chip promote">Promote</div>
+                <div class="action-chip ban">Ban</div>
+              </div>
+            </div>
+            <div class="danger-btn">🗑 Delete this group permanently</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ──────────── 08 · PRIVACY ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">08</span>
+    <span class="s-title">Privacy</span>
+    <span class="s-path">/privacy</span>
+    <span class="s-badge badge-pro">Protected</span>
+    <span class="s-note">Purely static · no API calls · informational content + preference toggles</span>
+  </div>
+  <div class="phone-pair">
+    <div class="phone-col">
+      <div class="phone-col-label" style="color:#4060D4">Privacy settings</div>
+      <div class="phone">
+        <div class="sbar"><span>9:41</span><div class="sbar-r"><span>88%</span></div></div>
+        <div class="topbar"><div class="topbar-title">Privacy</div></div>
+        <div class="privacy-content">
+          <div class="privacy-card">
+            <div class="privacy-card-title">Anonymous messaging</div>
+            <div class="privacy-card-body">Messages sent to your page never reveal the sender's identity. No IP address or device info is logged or stored.</div>
+          </div>
+          <div class="privacy-card">
+            <div class="privacy-card-title">Preferences</div>
+            <div class="toggle-row"><span>Store read receipts</span><div class="toggle on"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span>Anonymous group posts</span><div class="toggle on"><div class="toggle-thumb"></div></div></div>
+            <div class="toggle-row"><span>Push notifications</span><div class="toggle off"><div class="toggle-thumb"></div></div></div>
+          </div>
+          <div class="privacy-card">
+            <div class="privacy-card-title">Data &amp; session</div>
+            <div class="privacy-card-body">Your session lives in sessionStorage only — cleared when you close the tab. We never sell your data.</div>
+          </div>
+          <div class="privacy-card">
+            <div class="privacy-card-title">Real-time connections</div>
+            <div class="privacy-card-body">WebSocket via Pusher is encrypted in transit. No message content is retained on Pusher servers.</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-tab"><div class="nav-icon">⊞</div>Home</div>
+          <div class="nav-tab"><div class="nav-icon">✉</div>Msgs</div>
+          <div class="nav-tab"><div class="nav-icon">⊕</div>Groups</div>
+          <div class="nav-tab active"><div class="nav-icon">⚙</div>Privacy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ──────────── 09 · API REFERENCE ──────────── -->
+<section class="section">
+  <div class="section-head">
+    <span class="s-num">09</span>
+    <span class="s-title">API endpoint reference</span>
+    <span class="s-path">Developer reference · not a user-facing route</span>
+    <span class="s-note">29 endpoints defined · 22 used by frontend · 7 backend-only or unused</span>
+  </div>
+  <div class="api-panel">
+    <div class="api-panel-header">
+      <div>
+        <div class="api-panel-title">All endpoints — used vs defined</div>
+        <div class="api-panel-sub">29 total · Auth, Messages, Groups, Admin, Pusher</div>
+      </div>
+      <div class="api-legend">
+        <div class="api-legend-row"><span class="u-dot yes"></span> Used by frontend</div>
+        <div class="api-legend-row"><span class="u-dot no"></span> Backend-only / unused</div>
+      </div>
+    </div>
+    <table class="ep-table">
+      <thead>
+        <tr><th style="width:18px"></th><th style="width:62px">Method</th><th>Endpoint</th><th style="width:110px">Called from</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/login</td><td style="font-size:10px;color:var(--ink-mute)">Login</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/register</td><td style="font-size:10px;color:var(--ink-mute)">Register</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/logout</td><td style="font-size:10px;color:var(--ink-mute)">Global sidebar</td></tr>
+        <tr><td><span class="u-dot no"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path unused">/api/verify</td><td style="font-size:10px;color:var(--ink-mute)">—</td></tr>
+        <tr><td><span class="u-dot no"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path unused">/api/auth/validate</td><td style="font-size:10px;color:var(--ink-mute)">—</td></tr>
+        <tr><td><span class="u-dot no"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path unused">/api/auth/user</td><td style="font-size:10px;color:var(--ink-mute)">—</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path">/api/messages</td><td style="font-size:10px;color:var(--ink-mute)">Messages</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/messages</td><td style="font-size:10px;color:var(--ink-mute)">Messages</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path">/api/groups</td><td style="font-size:10px;color:var(--ink-mute)">Groups</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups</td><td style="font-size:10px;color:var(--ink-mute)">Groups (modal)</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path">/api/groups/{id}</td><td style="font-size:10px;color:var(--ink-mute)">Group messages</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path">/api/groups/{id}/info</td><td style="font-size:10px;color:var(--ink-mute)">Group messages</td></tr>
+        <tr><td><span class="u-dot no"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path unused">/api/groups/{id}/members</td><td style="font-size:10px;color:var(--ink-mute)">—</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/members</td><td style="font-size:10px;color:var(--ink-mute)">Admin panel</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/members/remove</td><td style="font-size:10px;color:var(--ink-mute)">Admin panel</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/join</td><td style="font-size:10px;color:var(--ink-mute)">Group messages</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/leave</td><td style="font-size:10px;color:var(--ink-mute)">Group messages</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/messages</td><td style="font-size:10px;color:var(--ink-mute)">Group messages</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/markread</td><td style="font-size:10px;color:var(--ink-mute)">Group messages</td></tr>
+        <tr><td><span class="u-dot no"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path unused">/api/groups/{id}/is-admin</td><td style="font-size:10px;color:var(--ink-mute)">—</td></tr>
+        <tr><td><span class="u-dot no"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path unused">/api/groups/{id}/admins</td><td style="font-size:10px;color:var(--ink-mute)">—</td></tr>
+        <tr><td><span class="u-dot no"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path unused">/api/groups/{id}/update-settings</td><td style="font-size:10px;color:var(--ink-mute)">—</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/promote-admin</td><td style="font-size:10px;color:var(--ink-mute)">Admin panel</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/demote-admin</td><td style="font-size:10px;color:var(--ink-mute)">Admin panel</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/ban-user</td><td style="font-size:10px;color:var(--ink-mute)">Admin panel</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/unban-user</td><td style="font-size:10px;color:var(--ink-mute)">Admin panel</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/groups/{id}/delete</td><td style="font-size:10px;color:var(--ink-mute)">Admin panel</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-post">POST</span></td><td class="ep-path">/api/pusher/auth</td><td style="font-size:10px;color:var(--ink-mute)">Global (Pusher WS)</td></tr>
+        <tr><td><span class="u-dot yes"></span></td><td><span class="m-pill m-get">GET</span></td><td class="ep-path">/api/pusher/beam-auth</td><td style="font-size:10px;color:var(--ink-mute)">Messages / Groups</td></tr>
+      </tbody>
+    </table>
+    <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px;margin-top:12px">
+      <div class="api-alert warn">
+        <div class="api-alert-title">⚠ Known bug — /messages redirect</div>
+        <div class="api-alert-body">/messages redirects to /messages/:username but :username is never injected — users land on an invalid URL with no content rendered.</div>
+      </div>
+      <div class="api-alert info">
+        <div class="api-alert-title">Orphaned route — /groups/create</div>
+        <div class="api-alert-body">/groups/create is a live standalone page but is never linked to. Group creation uses the modal from the Groups list instead. Route is dead code.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer class="doc-footer">
+  <div><span class="footer-brand">Msgr — UI Wireframes v2</span>&nbsp;·&nbsp; 9 screens · Dark &amp; light variants · 29 API endpoints · Mobile first</div>
+  <div>Prepared for client review &nbsp;·&nbsp; Confidential</div>
+</footer>
+
+</body>
+</html>

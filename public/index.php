@@ -46,18 +46,9 @@ if (strpos($requestUriPath, '/api') !== 0) {
 // CORS Headers
 // =============================================================================
 
-// if (strpos($_SERVER['SERVER_HOST'], 'localhost') !== false) {
-//     header('Access-Control-Allow-Origin: http://localhost:5173');
-// } else {
-// header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
-// }
-// if($isHttps){
-//     header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
-// } else {
-//     header('Access-Control-Allow-Origin: http://localhost:5173');
-// }
-// header('Access-Control-Allow-Origin: http://localhost:5173');
-header('Access-Control-Allow-Origin: https://talkyourtalk.onrender.com');
+// Retrieve the frontend URL from environment variables, fallback to localhost for dev
+$frontendUrl = getenv('FRONTEND_URL') ?: 'http://localhost:5173';
+header("Access-Control-Allow-Origin: {$frontendUrl}");
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Access-Control-Allow-Origin, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
