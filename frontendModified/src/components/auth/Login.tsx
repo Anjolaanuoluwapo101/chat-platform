@@ -10,7 +10,8 @@ import {
   PasswordInput,
   SubmitButton,
   ErrorMessage,
-  AuthLink
+  AuthLink,
+  OrDivider
 } from './AuthShared';
 
 interface FormData {
@@ -93,8 +94,10 @@ const Login = () => {
           <SubmitButton
             loading={loading}
             loadingText="Logging in..."
-            text="Log In"
+            text="Sign in"
           />
+
+          <OrDivider />
 
           <AuthLink
             text="Don't have an account?"

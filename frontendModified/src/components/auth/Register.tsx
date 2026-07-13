@@ -11,7 +11,9 @@ import {
   SubmitButton,
   ErrorMessage,
   SuccessMessage,
-  AuthLink
+  AuthLink,
+  OrDivider,
+  PasswordStrengthMeter
 } from './AuthShared';
 
 interface FormData {
@@ -122,20 +124,27 @@ const Register = () => {
             onTogglePassword={() => setShowPassword(!showPassword)}
             error={errors?.password ?? ''}
           />
+          <PasswordStrengthMeter password={formData.password} />
 
           <ErrorMessage message={errors?.general} />
           <SuccessMessage message={message} />
 
-          <SubmitButton 
-            loading={loading} 
-            loadingText="Creating Account..." 
-            text="Create Account" 
+          <SubmitButton
+            loading={loading}
+            loadingText="Creating Account..."
+            text="Create Account"
           />
 
-          <AuthLink 
-            text="Already have an account?" 
-            linkText="Login here" 
-            href="/login" 
+          <p className="text-[11px] text-center text-lk-t3 dark:text-dk-t3 max-w-xs mx-auto leading-relaxed">
+            By signing up you agree to our Terms and Privacy Policy
+          </p>
+
+          <OrDivider />
+
+          <AuthLink
+            text="Already have an account?"
+            linkText="Login here"
+            href="/login"
           />
         </form>
       </AuthCard>

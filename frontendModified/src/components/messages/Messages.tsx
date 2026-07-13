@@ -37,13 +37,13 @@ const SentMessage = () => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center p-20 m-auto text-sm text-green-400 mb-3 text-center bg-slate-800/80 backdrop-blur-sm rounded-xl border border-slate-600"
+      className="flex flex-col items-center justify-center p-20 m-auto text-sm text-lk-accent2 dark:text-dk-accent mb-3 text-center bg-lk-s1 dark:bg-dk-s1 rounded-[14px] border border-lk-border dark:border-dk-border"
     >
       <p>Your Message has been delivered!</p>
       <p className="mt-2">
         <button onClick={() => {
           window.location.href = '/register'
-        }} className="text-amber-400 hover:text-amber-300 hover:underline">Create an account to send messages.</button>
+        }} className="text-lk-accent2 dark:text-dk-accent hover:underline font-medium">Create an account to send messages.</button>
       </p>
     </motion.div>
   );
@@ -185,7 +185,7 @@ const Messages = () => {
   if (loading) {
     return (
       <Layout navItems={navItems}>
-        <div className="min-h-screen  text-white relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="relative z-10">
             <ChatScreen>
               <ChatHeader
@@ -202,7 +202,7 @@ const Messages = () => {
 
   return (
     <Layout navItems={navItems}>
-      <div className="min-h-screen  text-white relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="relative z-10">
           <ChatScreen>
             <ChatHeader
@@ -213,15 +213,15 @@ const Messages = () => {
             <div className="grow overflow-y-auto p-6 scrollbar-hide">
               {/* Show network error with retry button */}
               {networkError && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-xl p-6 mb-6 text-center"
+                  className="bg-lk-danger-pale dark:bg-dk-danger-pale border border-lk-danger/30 dark:border-dk-danger/30 rounded-[14px] p-6 mb-6 text-center"
                 >
-                  <p className="text-red-400 mb-3">Connection problem. Please check your internet.</p>
+                  <p className="text-lk-danger dark:text-dk-danger mb-3">Connection problem. Please check your internet.</p>
                   <button
                     onClick={retryLoadMessages}
-                    className="bg-linear-to-r from-amber-500 to-orange-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+                    className="bg-lk-accent dark:bg-dk-accent text-white px-6 py-2 rounded-full font-medium hover:bg-lk-accent2 dark:hover:bg-dk-accent2 transition-colors duration-300"
                   >
                     Retry
                   </button>
@@ -235,22 +235,22 @@ const Messages = () => {
             </div>
 
             {!isOwnMessages && (
-              <div className="p-6 border-t border-slate-600 bg-slate-800/50 backdrop-blur-sm">
+              <div className="p-6 border-t border-lk-border2 dark:border-dk-border2 bg-lk-s2 dark:bg-dk-s2">
                 {/* Show status message above the form */}
                 {sendingMessage && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-sm text-slate-300 mb-3 text-center"
+                    className="text-sm text-lk-t3 dark:text-dk-t3 mb-3 text-center"
                   >
                     Sending...
                   </motion.div>
                 )}
                 {messageSentSuccess && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-sm text-green-400 mb-3 text-center"
+                    className="text-sm text-lk-accent2 dark:text-dk-accent mb-3 text-center"
                   >
                     ✓ Sent!
                   </motion.div>

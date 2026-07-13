@@ -67,6 +67,13 @@ class AuthService {
   async register(userData: RegisterData): Promise<RegisterResponse> {
     try {
       const response = await api.post('/register', userData);
+      // Handle response data
+      if (response.data.success) {
+        // Store user data in session storage
+        sessionStorage.setItem('user', JSON.stringify(response.data.user));
+        // store isAuthenticated in session storage with the time(seconds) it was stored
+        sessionStorage.setItem('isAuthenticated', String(Date.now() / 1000));
+      }
       return response.data;
     } catch (error) {
       return { success: false, errors: { general: 'Registration failed' } };

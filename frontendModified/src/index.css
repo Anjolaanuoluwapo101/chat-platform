@@ -1,8 +1,66 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: 'DM Sans', -apple-system, sans-serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+
+  /* Light mode (lk) tokens */
+  --color-lk-bg: #F5F6F0;
+  --color-lk-s1: #FFFFFF;
+  --color-lk-s2: #FAFAF7;
+  --color-lk-s3: #F2F2F6;
+  --color-lk-border: #E8E8EE;
+  --color-lk-border2: #F2F2F6;
+  --color-lk-accent: #1AC564;
+  --color-lk-accent2: #15A354;
+  --color-lk-accent-pale: #E8FAF1;
+  --color-lk-success: #12B886;
+  --color-lk-warning: #F5A623;
+  --color-lk-danger: #F03A47;
+  --color-lk-danger-pale: #FEF0F1;
+  --color-lk-t1: #1A1A2A;
+  --color-lk-t2: #4A4A5A;
+  --color-lk-t3: #9B9BAD;
+  --color-lk-bubble-in: #EDEDEE;
+  --color-lk-bubble-out: #CFCFD2;
+
+  /* Dark mode (dk) tokens */
+  --color-dk-bg: #14151A;
+  --color-dk-s1: #1C1E24;
+  --color-dk-s2: #22242B;
+  --color-dk-s3: #2A2D35;
+  --color-dk-border: #33363F;
+  --color-dk-border2: #2A2D35;
+  --color-dk-accent: #1AC564;
+  --color-dk-accent2: #15A354;
+  --color-dk-accent-pale: #103322;
+  --color-dk-success: #12B886;
+  --color-dk-warning: #F5A623;
+  --color-dk-danger: #F03A47;
+  --color-dk-danger-pale: #3A1418;
+  --color-dk-t1: #F5F6F8;
+  --color-dk-t2: #B4B6C0;
+  --color-dk-t3: #74778A;
+  --color-dk-bubble-in: #2A2D35;
+  --color-dk-bubble-out: #33363F;
+
+  --radius-card: 14px;
+  --radius-btn: 12px;
+  --radius-pill: 100px;
+
+  --shadow-card-sm: 0 2px 12px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04);
+  --shadow-card-md: 0 8px 32px rgba(0,0,0,.09), 0 2px 8px rgba(0,0,0,.05);
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: var(--font-sans);
+}
 
 /* Hide scrollbar utility */
 .scrollbar-hide {
@@ -13,4 +71,3 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
-

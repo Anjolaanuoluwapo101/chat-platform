@@ -65,7 +65,7 @@ const MessageForm = ({
       );
     } else {
       return (
-        <a key={idx} href={fullUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+        <a key={idx} href={fullUrl} target="_blank" rel="noopener noreferrer" className="text-lk-accent2 dark:text-dk-accent hover:underline">
           📎 {url.split('/').pop()}
         </a>
       );
@@ -127,24 +127,24 @@ const MessageForm = ({
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="px-4 py-2 bg-slate-800/80 border-b border-slate-600 flex items-start justify-between"
+          className="px-4 py-2 bg-lk-accent-pale dark:bg-dk-accent-pale border-l-2 border-lk-accent dark:border-dk-accent flex items-start justify-between"
         >
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-amber-400 truncate">
+            <div className="text-xs font-semibold text-lk-accent2 dark:text-dk-accent truncate">
               Replying to {replyToMessage.username}
             </div>
-            <div className="text-xs text-slate-300 truncate">
+            <div className="text-xs text-lk-t2 dark:text-dk-t2 truncate">
               {replyToMessage.content}
             </div>
             {replyToMessage.media_urls && replyToMessage.media_urls.length > 0 && (
               <div className="mt-1 flex flex-wrap gap-1">
                 {replyToMessage.media_urls.slice(0, 3).map((url, idx) => (
-                  <div key={idx} className="w-8 h-8 bg-slate-700 rounded overflow-hidden">
+                  <div key={idx} className="w-8 h-8 bg-lk-s3 dark:bg-dk-s3 rounded overflow-hidden">
                     {renderMedia(url, idx)}
                   </div>
                 ))}
                 {replyToMessage.media_urls.length > 3 && (
-                  <div className="w-8 h-8 bg-slate-600 rounded flex items-center justify-center text-xs text-slate-300">
+                  <div className="w-8 h-8 bg-lk-s3 dark:bg-dk-s3 rounded flex items-center justify-center text-xs text-lk-t3 dark:text-dk-t3">
                     +{replyToMessage.media_urls.length - 3}
                   </div>
                 )}
@@ -153,7 +153,7 @@ const MessageForm = ({
           </div>
           <button
             onClick={onCancelReply}
-            className="ml-2 text-slate-400 hover:text-slate-200"
+            className="ml-2 text-lk-t3 dark:text-dk-t3 hover:text-lk-t1 dark:hover:text-dk-t1"
             type="button"
           >
             ✕

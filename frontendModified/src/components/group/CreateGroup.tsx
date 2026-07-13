@@ -49,7 +49,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
       className="space-y-4"
     >
       <div className='mb-3'>
-        <label htmlFor="groupName" className="block text-sm font-medium text-slate-300 mb-1">
+        <label htmlFor="groupName" className="block text-[10px] font-bold uppercase tracking-wide text-lk-t3 dark:text-dk-t3 mb-1">
           Group Name
         </label>
         <input
@@ -59,7 +59,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
           onChange={(e) => setGroupName(e.target.value)}
           placeholder="Enter group name"
           disabled={loading}
-          className="w-full px-3 py-2 bg-slate-700 text-white border border-slate-600 rounded focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:bg-slate-600"
+          className="w-full px-4 py-2.5 bg-lk-s3 dark:bg-dk-s3 text-lk-t1 dark:text-dk-t1 border-2 border-lk-border dark:border-dk-border rounded-[10px] focus:outline-none focus:border-lk-accent dark:focus:border-dk-accent focus:bg-lk-accent-pale dark:focus:bg-dk-accent-pale transition-colors disabled:opacity-50"
         />
       </div>
       <div className="mb-3 flex items-center">
@@ -69,9 +69,9 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
           checked={isAnonymous}
           onChange={() => setIsAnonymous(!isAnonymous)}
           disabled={loading}
-          className="h-4 w-4 rounded border-slate-600 text-amber-500 focus:ring-amber-500"
+          className="h-4 w-4 rounded border-lk-border dark:border-dk-border text-lk-accent dark:text-dk-accent focus:ring-lk-accent dark:focus:ring-dk-accent"
         />
-        <label htmlFor="isAnonymous" className="ml-2 text-sm text-slate-300">
+        <label htmlFor="isAnonymous" className="ml-2 text-sm text-lk-t2 dark:text-dk-t2">
           Anonymous Group (usernames hidden)
         </label>
       </div>
@@ -79,7 +79,7 @@ const CreateGroup: React.FC<CreateGroupProps> = ({ onSuccess }) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-linear-to-r from-amber-500 to-orange-500 hover:shadow-lg text-white font-medium py-2 px-4 rounded transition-all duration-300 disabled:opacity-50"
+        className="w-full bg-lk-accent dark:bg-dk-accent hover:bg-lk-accent2 dark:hover:bg-dk-accent2 text-white font-display font-bold py-3 px-4 rounded-full transition-colors duration-300 disabled:opacity-50"
       >
         {loading ? 'Creating...' : 'Create Group'}
       </button>

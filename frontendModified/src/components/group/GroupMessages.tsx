@@ -422,7 +422,7 @@ const GroupMessages = () => {
 
     if (loading) return (
         <Layout>
-            <div className="min-h-screen  text-white relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> 
+            <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="relative z-10">
                     <ChatScreen>
                         <LoadingSpinner />
@@ -435,7 +435,7 @@ const GroupMessages = () => {
     return (
         <Layout navItems={navItems}>
             {/* Background Elements */}
-            <div className="min-h-screen  text-white relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="relative z-10">
                     {/* Error/Success Messages */}
                     {error && <ErrorMessage message={error} setMessage={setError} />}
@@ -456,14 +456,14 @@ const GroupMessages = () => {
                             <>
                                 {/* Show network error with retry button */}
                                 {networkError && (
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="bg-slate-800/80 backdrop-blur-sm border border-slate-600 rounded-xl p-6 m-6 text-center">
-                                        <p className="text-red-400 mb-3">Connection problem. Please check your internet.</p>
+                                        className="bg-lk-danger-pale dark:bg-dk-danger-pale border border-lk-danger/30 dark:border-dk-danger/30 rounded-[14px] p-6 m-6 text-center">
+                                        <p className="text-lk-danger dark:text-dk-danger mb-3">Connection problem. Please check your internet.</p>
                                         <button
                                             onClick={retryLoadGroup}
-                                            className="bg-linear-to-r from-amber-500 to-orange-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+                                            className="bg-lk-accent dark:bg-dk-accent text-white px-6 py-2 rounded-full font-medium hover:bg-lk-accent2 dark:hover:bg-dk-accent2 transition-colors duration-300"
                                         >
                                             Retry
                                         </button>
@@ -492,7 +492,7 @@ const GroupMessages = () => {
                                     {showScrollButton && (
                                         <button
                                             onClick={scrollToBottom}
-                                            className="fixed bottom-28 right-10 bg-linear-to-r from-amber-600 to-orange-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+                                            className="fixed bottom-28 right-10 bg-lk-accent dark:bg-dk-accent text-white px-6 py-3 rounded-full shadow-[0_8px_32px_rgba(0,0,0,.09),0_2px_8px_rgba(0,0,0,.05)] hover:bg-lk-accent2 dark:hover:bg-dk-accent2 transition-colors duration-300 flex items-center gap-2">
                                             New Messages ↓
                                         </button>
                                     )}
@@ -500,7 +500,7 @@ const GroupMessages = () => {
 
                                 {/* Show sending status above the message form */}
                                 {sendingMessage && (
-                                    <div className="text-sm text-amber-400 px-6 py-3 text-center border-t border-slate-600">
+                                    <div className="text-sm text-lk-t3 dark:text-dk-t3 px-6 py-3 text-center border-t border-lk-border2 dark:border-dk-border2">
                                         Sending...
                                     </div>
                                 )}
@@ -518,8 +518,12 @@ const GroupMessages = () => {
 
             {/* Admin Panel Modal */}
             {showAdminPanel && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-600">
+                <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 sm:p-4">
+                    <div className="bg-lk-s1 dark:bg-dk-s1 rounded-t-[20px] sm:rounded-[14px] shadow-[0_8px_32px_rgba(0,0,0,.09),0_2px_8px_rgba(0,0,0,.05)] max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-lk-border dark:border-dk-border">
+                        {/* Drag handle */}
+                        <div className="flex justify-center pt-3 sm:hidden">
+                          <div className="w-10 h-1 rounded-full bg-lk-border dark:bg-dk-border" />
+                        </div>
                         <AdminPanel
                             groupId={parseInt(groupId!)}
                             admins={admins}

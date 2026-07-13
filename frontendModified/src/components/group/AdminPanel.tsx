@@ -196,20 +196,20 @@ const AdminPanel = ({
   const renderMembersTab = () => (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold mb-2 text-white">Add Member</h3>
-        <div className="flex space-x-2 mb-4">
+        <h3 className="text-[10px] font-bold uppercase tracking-wide text-lk-t3 dark:text-dk-t3 mb-2">Add Member</h3>
+        <div className="flex gap-2 mb-4">
           <input
             type="text"
             placeholder="Enter username"
             value={newMemberUsername}
             onChange={(e) => setNewMemberUsername(e.target.value)}
-            className="flex-1 px-3 py-2 bg-slate-700 text-white border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="flex-1 px-4 py-2.5 bg-lk-s3 dark:bg-dk-s3 text-lk-t1 dark:text-dk-t1 border-2 border-lk-border dark:border-dk-border rounded-[10px] focus:outline-none focus:border-lk-accent dark:focus:border-dk-accent focus:bg-lk-accent-pale dark:focus:bg-dk-accent-pale transition-colors"
             disabled={loading}
           />
-          <button 
+          <button
             onClick={handleAddMember}
             disabled={loading || !newMemberUsername.trim()}
-            className="px-4 py-2 bg-linear-to-r from-amber-500 to-orange-500 text-white rounded-md hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+            className="px-5 py-2 bg-lk-accent dark:bg-dk-accent text-white font-medium rounded-full hover:bg-lk-accent2 dark:hover:bg-dk-accent2 transition-colors duration-300 disabled:opacity-50"
           >
             Add
           </button>
@@ -217,24 +217,27 @@ const AdminPanel = ({
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-2 text-white">Admins</h3>
+        <h3 className="text-[10px] font-bold uppercase tracking-wide text-lk-t3 dark:text-dk-t3 mb-2">Admins</h3>
         {admins.length > 0 ? (
           <ul className="space-y-2">
             {admins.map(admin => (
-              <li key={admin.id} className="flex justify-between items-center p-2 bg-slate-700/50 rounded border border-slate-600">
-                <span className="text-slate-200">{admin.username}</span>
-                <div className="space-x-2">
-                  <button 
+              <li key={admin.id} className="flex justify-between items-center p-3 bg-lk-s2 dark:bg-dk-s2 rounded-[10px] border border-lk-border2 dark:border-dk-border2">
+                <span className="flex items-center gap-2 text-lk-t1 dark:text-dk-t1">
+                  <span className="w-2 h-2 rounded-full bg-lk-accent dark:bg-dk-accent" />
+                  {admin.username}
+                </span>
+                <div className="flex gap-2">
+                  <button
                     onClick={() => handleDemoteAdmin(admin.id)}
                     disabled={loading}
-                    className="px-3 py-1 text-sm bg-linear-to-r from-amber-600 to-orange-600 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                    className="px-3 py-1 text-xs font-medium bg-lk-s3 dark:bg-dk-s3 text-lk-t2 dark:text-dk-t2 rounded-full hover:bg-lk-border dark:hover:bg-dk-border transition-colors duration-300 disabled:opacity-50"
                   >
                     Demote
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleBanUser(admin.id)}
                     disabled={loading}
-                    className="px-3 py-1 text-sm bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                    className="px-3 py-1 text-xs font-medium bg-lk-danger-pale dark:bg-dk-danger-pale text-lk-danger dark:text-dk-danger rounded-full hover:opacity-80 transition-opacity duration-300 disabled:opacity-50"
                   >
                     Ban
                   </button>
@@ -243,38 +246,41 @@ const AdminPanel = ({
             ))}
           </ul>
         ) : (
-          <p className="text-slate-400">No admins found</p>
+          <p className="text-lk-t3 dark:text-dk-t3 text-sm">No admins found</p>
         )}
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-2 text-white">Members</h3>
+        <h3 className="text-[10px] font-bold uppercase tracking-wide text-lk-t3 dark:text-dk-t3 mb-2">Members</h3>
         {members.length > 0 ? (
           <ul className="space-y-2">
             {members
               .filter(member => !admins.some(admin => admin.id === member.id))
               .map(member => (
-                <li key={member.id} className="flex justify-between items-center p-2 bg-slate-700/50 rounded border border-slate-600">
-                  <span className="text-slate-200">{member.username}</span>
-                  <div className="space-x-2">
-                    <button 
+                <li key={member.id} className="flex justify-between items-center p-3 bg-lk-s2 dark:bg-dk-s2 rounded-[10px] border border-lk-border2 dark:border-dk-border2">
+                  <span className="flex items-center gap-2 text-lk-t1 dark:text-dk-t1">
+                    <span className="w-2 h-2 rounded-full bg-lk-t3 dark:bg-dk-t3" />
+                    {member.username}
+                  </span>
+                  <div className="flex gap-2">
+                    <button
                       onClick={() => handlePromoteToAdmin(member.id)}
                       disabled={loading}
-                      className="px-3 py-1 text-sm bg-linear-to-r from-green-600 to-green-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                      className="px-3 py-1 text-xs font-medium bg-lk-accent-pale dark:bg-dk-accent-pale text-lk-accent2 dark:text-dk-accent rounded-full hover:opacity-80 transition-opacity duration-300 disabled:opacity-50"
                     >
                       Promote
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleRemoveMember(member.id)}
                       disabled={loading}
-                      className="px-3 py-1 text-sm bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                      className="px-3 py-1 text-xs font-medium bg-lk-s3 dark:bg-dk-s3 text-lk-t2 dark:text-dk-t2 rounded-full hover:bg-lk-border dark:hover:bg-dk-border transition-colors duration-300 disabled:opacity-50"
                     >
                       Remove
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleBanUser(member.id)}
                       disabled={loading}
-                      className="px-3 py-1 text-sm bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                      className="px-3 py-1 text-xs font-medium bg-lk-danger-pale dark:bg-dk-danger-pale text-lk-danger dark:text-dk-danger rounded-full hover:opacity-80 transition-opacity duration-300 disabled:opacity-50"
                     >
                       Ban
                     </button>
@@ -283,7 +289,7 @@ const AdminPanel = ({
               ))}
           </ul>
         ) : (
-          <p className="text-slate-400">No members found</p>
+          <p className="text-lk-t3 dark:text-dk-t3 text-sm">No members found</p>
         )}
       </div>
     </div>
@@ -291,16 +297,19 @@ const AdminPanel = ({
 
   const renderBannedUsersTab = () => (
     <div>
-      <h3 className="text-lg font-semibold mb-2 text-white">Banned Users</h3>
+      <h3 className="text-[10px] font-bold uppercase tracking-wide text-lk-t3 dark:text-dk-t3 mb-2">Banned Users</h3>
       {bannedUsers.length > 0 ? (
         <ul className="space-y-2">
           {bannedUsers.map(user => (
-            <li key={user.id} className="flex justify-between items-center p-2 bg-slate-700/50 rounded border border-slate-600">
-              <span className="text-slate-200">{user.username}</span>
-              <button 
+            <li key={user.id} className="flex justify-between items-center p-3 bg-lk-s2 dark:bg-dk-s2 rounded-[10px] border border-lk-border2 dark:border-dk-border2">
+              <span className="flex items-center gap-2 text-lk-t1 dark:text-dk-t1">
+                <span className="w-2 h-2 rounded-full bg-lk-danger dark:bg-dk-danger" />
+                {user.username}
+              </span>
+              <button
                 onClick={() => handleUnbanUser(user.id)}
                 disabled={loading}
-                className="px-3 py-1 text-sm bg-linear-to-r from-green-600 to-green-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                className="px-3 py-1 text-xs font-medium bg-lk-accent-pale dark:bg-dk-accent-pale text-lk-accent2 dark:text-dk-accent rounded-full hover:opacity-80 transition-opacity duration-300 disabled:opacity-50"
               >
                 Unban
               </button>
@@ -308,20 +317,20 @@ const AdminPanel = ({
           ))}
         </ul>
       ) : (
-        <p className="text-slate-400">No banned users found</p>
+        <p className="text-lk-t3 dark:text-dk-t3 text-sm">No banned users found</p>
       )}
     </div>
   );
 
   const renderSettingsTab = () => (
     <div className="space-y-4">
-      <div className="p-4 bg-slate-700/50 rounded border border-slate-600">
-        <h3 className="text-lg font-semibold text-red-400 mb-2">Danger Zone</h3>
-        <p className="text-slate-300 mb-4">Deleting a group is permanent and cannot be undone.</p>
-        <button 
+      <div className="p-4 bg-lk-danger-pale dark:bg-dk-danger-pale rounded-[10px] border border-lk-danger/30 dark:border-dk-danger/30">
+        <h3 className="text-sm font-display font-bold text-lk-danger dark:text-dk-danger mb-2">Danger Zone</h3>
+        <p className="text-sm text-lk-t2 dark:text-dk-t2 mb-4">Deleting a group is permanent and cannot be undone.</p>
+        <button
           onClick={handleDeleteGroup}
           disabled={loading}
-          className="px-4 py-2 bg-linear-to-r from-red-600 to-red-700 text-white rounded hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+          className="px-5 py-2.5 bg-lk-danger dark:bg-dk-danger text-white font-medium rounded-full hover:opacity-90 transition-opacity duration-300 disabled:opacity-50"
         >
           Delete Group
         </button>
@@ -330,53 +339,52 @@ const AdminPanel = ({
   );
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="bg-slate-800 rounded-lg shadow-xl p-6 border border-slate-600">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className="bg-lk-s1 dark:bg-dk-s1 p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-white">Admin Panel</h2>
-        <button 
+        <h2 className="font-display text-xl font-bold text-lk-t1 dark:text-dk-t1">Admin Panel</h2>
+        <button
           onClick={onClose}
-          className="text-slate-400 hover:text-slate-200"
+          className="text-lk-t3 dark:text-dk-t3 hover:text-lk-t1 dark:hover:text-dk-t1"
         >
           <CloseIcon className="w-6 h-6" />
         </button>
       </div>
 
-      <div className="border-b border-slate-600 mb-6">
-        <nav className="flex space-x-8">
-          <button
-            onClick={() => setActiveTab('members')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'members'
-                ? 'border-amber-500 text-amber-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
-            }`}
-          >
-            Members
-          </button>
-          <button
-            onClick={() => setActiveTab('banned')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'banned'
-                ? 'border-amber-500 text-amber-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
-            }`}
-          >
-            Banned Users
-          </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'settings'
-                ? 'border-amber-500 text-amber-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500'
-            }`}
-          >
-            Settings
-          </button>
-        </nav>
+      <div className="flex gap-2 mb-6 bg-lk-s3 dark:bg-dk-s3 p-1 rounded-full w-fit">
+        <button
+          onClick={() => setActiveTab('members')}
+          className={`py-1.5 px-4 rounded-full font-medium text-sm transition-colors ${
+            activeTab === 'members'
+              ? 'bg-lk-accent dark:bg-dk-accent text-white'
+              : 'text-lk-t2 dark:text-dk-t2 hover:text-lk-t1 dark:hover:text-dk-t1'
+          }`}
+        >
+          Members
+        </button>
+        <button
+          onClick={() => setActiveTab('banned')}
+          className={`py-1.5 px-4 rounded-full font-medium text-sm transition-colors ${
+            activeTab === 'banned'
+              ? 'bg-lk-accent dark:bg-dk-accent text-white'
+              : 'text-lk-t2 dark:text-dk-t2 hover:text-lk-t1 dark:hover:text-dk-t1'
+          }`}
+        >
+          Banned
+        </button>
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`py-1.5 px-4 rounded-full font-medium text-sm transition-colors ${
+            activeTab === 'settings'
+              ? 'bg-lk-accent dark:bg-dk-accent text-white'
+              : 'text-lk-t2 dark:text-dk-t2 hover:text-lk-t1 dark:hover:text-dk-t1'
+          }`}
+        >
+          Settings
+        </button>
       </div>
 
       <div>
@@ -386,11 +394,11 @@ const AdminPanel = ({
       </div>
 
       {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-slate-800 p-6 rounded-lg shadow-xl border border-slate-600">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-lk-s1 dark:bg-dk-s1 p-6 rounded-[14px] shadow-[0_8px_32px_rgba(0,0,0,.09),0_2px_8px_rgba(0,0,0,.05)] border border-lk-border dark:border-dk-border">
             <div className="flex items-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500 mr-3"></div>
-              <span className="text-white">Processing...</span>
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-lk-border dark:border-dk-border border-t-lk-accent dark:border-t-dk-accent mr-3"></div>
+              <span className="text-lk-t1 dark:text-dk-t1">Processing...</span>
             </div>
           </div>
         </div>

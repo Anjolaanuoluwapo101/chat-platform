@@ -56,7 +56,7 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
       );
     } else {
       return (
-        <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline mt-2 inline-block">
+        <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="text-lk-accent2 dark:text-dk-accent hover:underline mt-2 inline-block">
           📎 {url.split('/').pop()}
         </a>
       );
@@ -136,10 +136,10 @@ const MessageList = ({ messages, currentUser, groupType, onReply = () => { } }: 
                 {groupType && isSelected && (
                   <button
                     onClick={(e) => handleReplyClick(message, e)}
-                    className="absolute bottom-0 right-0 mb-2 mr-2 bg-slate-700 rounded-full p-1 shadow-md hover:bg-slate-600"
+                    className="absolute bottom-0 right-0 mb-2 mr-2 bg-lk-s1 dark:bg-dk-s1 border border-lk-border dark:border-dk-border rounded-full p-1 shadow-md hover:bg-lk-accent-pale dark:hover:bg-dk-accent-pale"
                     aria-label="Reply to message"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-lk-accent2 dark:text-dk-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                     </svg>
                   </button>

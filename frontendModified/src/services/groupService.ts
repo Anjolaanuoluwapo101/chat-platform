@@ -80,7 +80,9 @@ const groupService = {
 
   getGroupInfo: async (groupId: number): Promise<GroupResponse> => {
     try {
-      const response = await api.get(`/groups/${groupId}/info`);
+      const response = await api.get(`/groups/${groupId}/info`, {
+        cache: false
+      } as any);
       return response.data;
     } catch (error) {
       return { success: false, errors: error };

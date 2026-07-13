@@ -665,10 +665,15 @@ class GroupController extends BaseController
         $channelInfo = $channelManager->getChannel('group', $identifier);
         $channel = $channelInfo['name'];
 
+        // Determine anonymity
+        $groupInfo = $this->groupModel->getGroupInfo($groupId);
+        $isAnonymous = !empty($groupInfo['is_anonymous']);
+        $displayUsername = $isAnonymous ? 'Anonymous' : $user['username'];
+
         // Trigger Pusher event for real-time updates
         $pusherService = new PusherService();
         $eventData = [
-            'username' => $user['username'],
+            'username' => $displayUsername,
             'content' => htmlspecialchars($content),
             'created_at' => $time,
             'media_urls' => $mediaUrls,

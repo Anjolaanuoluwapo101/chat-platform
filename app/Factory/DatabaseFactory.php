@@ -6,6 +6,7 @@ use App\Database\DatabaseInterface;
 use App\Database\RedisDatabase;
 use App\Database\SQLiteDatabase;
 use App\Database\MySQLDatabase;
+use App\Database\PostgresDatabase;
 use App\Config\Config;
 
 class DatabaseFactory
@@ -19,6 +20,9 @@ class DatabaseFactory
                 return new SQLiteDatabase();
             case 'mysql':
                 return new MySQLDatabase();
+            case 'postgres':
+            case 'supabase':
+                return new PostgresDatabase();
             default:
                 throw new \InvalidArgumentException("Unsupported database type: $type");
         }

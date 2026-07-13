@@ -3,6 +3,8 @@ vendor
 /public/uploads/images
 /public/uploads/audios
 /public/uploads/videos
+/frontendModified/node_modules
+*/node_modules
 .blackboxrules
 TODO.md
 /node_modules

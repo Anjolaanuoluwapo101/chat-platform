@@ -1,297 +1,131 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
 import Layout from '../../layouts/Layout';
-import { Shield,Database, MessageCircle, Users, EyeOff } from 'lucide-react';
+import { Shield, Database, Lock, Radio } from 'lucide-react';
+import { getCommonNavItems } from '../nav/sharedNavItems';
 
-const navItems = [
-  { title: "Dashboard", to: "/dashboard", icon: <Shield /> },
-  { title: "Messages", to: "/messages", icon: <MessageCircle /> },
-  { title: "Groups", to: "/groups", icon: <Users /> },
+const navItems = getCommonNavItems();
+
+interface ToggleRowProps {
+  title: string;
+  description: string;
+  storageKey: string;
+  defaultOn?: boolean;
+}
+
+const ToggleRow = ({ title, description, storageKey, defaultOn = false }: ToggleRowProps) => {
+  const [on, setOn] = useState<boolean>(() => {
+    const stored = localStorage.getItem(storageKey);
+    return stored !== null ? stored === 'true' : defaultOn;
+  });
+
+  const handleToggle = () => {
+    const next = !on;
+    setOn(next);
+    localStorage.setItem(storageKey, String(next));
+  };
+
+  return (
+    <div className="flex items-center justify-between gap-4 py-4 px-5 border-b border-lk-border2 dark:border-dk-border2 last:border-b-0">
+      <div className="min-w-0">
+        <h3 className="font-medium text-lk-t1 dark:text-dk-t1">{title}</h3>
+        <p className="text-sm text-lk-t3 dark:text-dk-t3">{description}</p>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={on}
+        onClick={handleToggle}
+        className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${
+          on ? 'bg-lk-accent dark:bg-dk-accent' : 'bg-lk-border dark:bg-dk-border'
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+            on ? 'translate-x-5' : 'translate-x-0'
+          }`}
+        />
+      </button>
+    </div>
+  );
+};
+
+const infoCards = [
+  {
+    icon: <Lock className="w-6 h-6" />,
+    title: 'Secure Authentication',
+    desc: 'Auth tokens are managed via HTTP-only, SameSite=Lax cookies to prevent CSRF attacks.',
+  },
+  {
+    icon: <Shield className="w-6 h-6" />,
+    title: 'No Personal Data',
+    desc: 'We collect only a username and hashed password. No personal information is required.',
+  },
+  {
+    icon: <Database className="w-6 h-6" />,
+    title: 'Secure Storage',
+    desc: 'Dual storage system with Redis for real-time performance and a durable SQL database.',
+  },
+  {
+    icon: <Radio className="w-6 h-6" />,
+    title: 'Real-Time Messaging',
+    desc: 'Pusher WebSocket delivers messages instantly with no third-party analytics tracking you.',
+  },
 ];
 
 const Privacy = () => {
   return (
     <Layout navItems={navItems} title="Privacy - TYT!">
-      <div className="min-h-screen  text-white">
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          {/* Header Section */}
-          <header className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, y: 0 }}
-            >
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                <span className="block">Privacy & Security</span>
-                <span className="block text-2xl font-normal text-slate-300 mt-2">Your anonymity is our priority</span>
-              </h1>
-              
-              <p className="text-xl text-slate-100 max-w-3xl mx-auto leading-relaxed">
-                We take your privacy seriously. Learn how we protect your identity and secure your communications.
-              </p>
-            </motion.div>
+      <div className="min-h-screen text-lk-t1 dark:text-dk-t1">
+        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <header className="mb-8">
+            <h1 className="font-display text-3xl font-extrabold text-lk-t1 dark:text-dk-t1 mb-1">
+              Privacy & Security
+            </h1>
+            <p className="text-lk-t3 dark:text-dk-t3">Your anonymity is our priority.</p>
           </header>
 
-          {/* Privacy Features Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="mb-16"
-          >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Privacy Features</h2>
-              <p className="text-slate-300 max-w-2xl mx-auto">
-                Advanced privacy and security measures to protect your identity
-              </p>
-            </div>
+          {/* Toggle preferences */}
+          <div className="mb-10 bg-lk-s1 dark:bg-dk-s1 rounded-[14px] border border-lk-border dark:border-dk-border overflow-hidden">
+            <h2 className="font-display font-bold text-sm uppercase tracking-wide text-lk-t3 dark:text-dk-t3 px-5 pt-4 pb-2">
+              Preferences
+            </h2>
+            <ToggleRow
+              title="Store read receipts"
+              description="Let senders know when you've read their message"
+              storageKey="pref_read_receipts"
+              defaultOn={false}
+            />
+            <ToggleRow
+              title="Anonymous group posts"
+              description="Hide your username by default in anonymous groups"
+              storageKey="pref_anonymous_posts"
+              defaultOn={true}
+            />
+            <ToggleRow
+              title="Push notifications"
+              description="Get notified when you receive a new message"
+              storageKey="pref_push_notifications"
+              defaultOn={true}
+            />
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-6 border border-slate-600"
+          {/* Info cards */}
+          <div className="space-y-4">
+            {infoCards.map((card) => (
+              <div
+                key={card.title}
+                className="flex gap-4 p-5 bg-lk-s1 dark:bg-dk-s1 rounded-[14px] border border-lk-border dark:border-dk-border"
               >
-                <div className="p-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-lg w-12 h-12 mb-4 mx-auto">
-                  <Shield className="w-6 h-6 text-amber-400 mx-auto" />
+                <div className="w-11 h-11 shrink-0 flex items-center justify-center rounded-2xl bg-lk-accent-pale dark:bg-dk-accent-pale text-lk-accent2 dark:text-dk-accent">
+                  {card.icon}
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Secure Authentication</h3>
-                <p className="text-slate-200">User authentication tokens are securely managed via HTTP-only, SameSite=Lax cookies to prevent CSRF attacks.</p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-6 border border-slate-600"
-              >
-                <div className="p-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-lg w-12 h-12 mb-4 mx-auto">
-                  <EyeOff className="w-6 h-6 text-amber-400 mx-auto" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">No Personal Data</h3>
-                <p className="text-slate-200">We collect only a username and hashed password. No personal information is stored or required.</p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-6 border border-slate-600"
-              >
-                <div className="p-3 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-lg w-12 h-12 mb-4 mx-auto">
-                  <Database className="w-6 h-6 text-amber-400 mx-auto" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Secure Storage</h3>
-                <p className="text-slate-200">Dual storage system with Redis for real-time performance and MySQL for persistent data storage.</p>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Communication Modes */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            viewport={{ once: true }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="mb-16"
-          >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Communication Modes</h2>
-              <p className="text-slate-300 max-w-2xl mx-auto">
-                Multiple options to ensure your identity remains protected
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-8 border border-slate-600"
-              >
-                <h3 className="text-xl font-bold text-white mb-4">Single-Channel Anonymous</h3>
-                <ul className="space-y-3 text-slate-200">
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>One-way communication to any user</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Messages stored with recipient's username only</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Sender information never stored</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Recipients cannot identify sender</span>
-                  </li>
-                </ul>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-8 border border-slate-600"
-              >
-                <h3 className="text-xl font-bold text-white mb-4">Multi-Channel Anonymous</h3>
-                <ul className="space-y-3 text-slate-200">
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Anonymous group chats</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>All messages show as "Anonymous"</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Username replaced at database level</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Members cannot see identities</span>
-                  </li>
-                </ul>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="bg-slate-800/80 backdrop-blur-sm rounded-xl p-8 border border-slate-600"
-              >
-                <h3 className="text-xl font-bold text-white mb-4">Non-Anonymous Mode</h3>
-                <ul className="space-y-3 text-slate-200">
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Identified group chats</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Messages include username</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Set at group creation</span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <span>Cannot be changed later</span>
-                  </li>
-                </ul>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Data Handling & Security */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="mb-16"
-          >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Data Handling & Security</h2>
-              <p className="text-slate-300 max-w-2xl mx-auto">
-                How we securely manage and protect your data
-              </p>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-600"
-            >
-              <div className="space-y-8">
                 <div>
-                  <h3 className="text-xl font-bold text-white mb-4">Password Security</h3>
-                  <p className="text-slate-200">
-                    User passwords are securely hashed using PHP's password_hash() function with bcrypt algorithm, ensuring secure password storage.
-                  </p>
-                </div>
-                
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-4">Dual Storage System</h3>
-                  <p className="text-slate-200">
-                    Messages are stored in a durable SQL database (MySQL) for persistence and cached in Redis for real-time group chat performance.
-                  </p>
-                </div>
-                
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-4">Anonymous Message Handling</h3>
-                  <p className="text-slate-200">
-                    In single-channel mode, sender information is not stored. In anonymous groups, usernames are replaced with "Anonymous" before display.
-                  </p>
+                  <h3 className="font-display font-bold text-lk-t1 dark:text-dk-t1 mb-1">{card.title}</h3>
+                  <p className="text-sm text-lk-t3 dark:text-dk-t3">{card.desc}</p>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Privacy Guarantees */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            viewport={{ once: true }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="mb-16"
-          >
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Privacy Guarantees</h2>
-              <p className="text-slate-300 max-w-2xl mx-auto">
-                Our commitment to protecting your privacy and identity
-              </p>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8"
-            >
-              <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-600">
-                <h3 className="text-xl font-bold text-white mb-4">Minimal Data Collection</h3>
-                <p className="text-slate-200">
-                  We collect only username, password (hashed), and email for account creation and password recovery. No personal information beyond what's necessary for the service.
-                </p>
-              </div>
-
-              <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-600">
-                <h3 className="text-xl font-bold text-white mb-4">No Third-Party Analytics</h3>
-                <p className="text-slate-200">
-                  The platform does not use Google Analytics, Facebook Pixel, or any third-party tracking scripts. Your usage is not monitored by external parties.
-                </p>
-              </div>
-
-              <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-600">
-                <h3 className="text-xl font-bold text-white mb-4">Real-Time Messaging</h3>
-                <p className="text-slate-200">
-                  Uses Pusher WebSocket technology for instant message delivery. Messages appear in real-time without page refresh, ensuring seamless communication.
-                </p>
-              </div>
-
-              <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-8 border border-slate-600">
-                <h3 className="text-xl font-bold text-white mb-4">Secure Session Management</h3>
-                <p className="text-slate-200">
-                  All authenticated endpoints validate the user's session via PHP session mechanism before processing requests, ensuring server-side authentication checks are enforced.
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </Layout>

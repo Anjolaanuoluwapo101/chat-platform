@@ -113,7 +113,7 @@ const NavItem = ({ item, onClick }: NavItemProps) => {
       <a 
         href={item.to || '#'} 
         onClick={handleItemClick} 
-        className={`${baseClasses} ${expandedClasses} hover:bg-amber-700/50 hover:scale-[1.02] transition-all duration-200`}
+        className={`${baseClasses} ${expandedClasses} hover:bg-white/10 hover:scale-[1.02] transition-all duration-200`}
       >
         <span className={`${iconBaseClasses} ${iconExpandedClasses}`}>
           {item.icon}
@@ -164,8 +164,8 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
   return (
     <div className="flex">
       {/* Sidebar - Hidden on sm/md, always visible and open on lg+ */}
-      <aside 
-        className={`h-screen sticky top-0 bg-amber-600/80 backdrop-blur-sm text-white transition-all duration-300 ease-in-out hidden lg:flex lg:w-64 flex-col border rounded-lg ${
+      <aside
+        className={`h-screen sticky top-0 bg-lk-accent dark:bg-dk-s1 backdrop-blur-sm text-white transition-all duration-300 ease-in-out hidden lg:flex lg:w-64 flex-col border border-lk-accent2 dark:border-dk-border rounded-lg ${
           expanded ? 'w-64' : ''
         }`}
       >
@@ -205,8 +205,8 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
       )}
 
       {/* Mobile sidebar - Hidden on lg+, visible on sm/md when expanded */}
-      <aside 
-        className={`fixed top-0 left-0 h-screen bg-amber-600/80 backdrop-blur-sm text-white transition-all duration-300 ease-in-out lg:hidden z-50 ${
+      <aside
+        className={`fixed top-0 left-0 h-screen bg-lk-accent dark:bg-dk-s1 backdrop-blur-sm text-white transition-all duration-300 ease-in-out lg:hidden z-50 ${
           expanded ? 'w-64' : '-translate-x-full'
         }`}
       >
@@ -221,10 +221,10 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
                   <CursiveUnderline className="absolute left-0 right-0 -bottom-1 w-full h-1.5 text-white" />
                 </div>
               </div>
-              <button 
-                onClick={() => setExpanded(false)} 
-                aria-label="Close menu" 
-                className="p-2 rounded-full text-white hover:bg-amber-700/50"
+              <button
+                onClick={() => setExpanded(false)}
+                aria-label="Close menu"
+                className="p-2 rounded-full text-white hover:bg-white/10"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -252,7 +252,7 @@ const NavBar = ({ navItems = [], title = 'Navigation' }: NavBarProps) => {
       <button
         onClick={() => setExpanded(!expanded)}
         aria-label={expanded ? "Close menu" : "Open menu"}
-        className="fixed top-6 left-6 p-4 rounded-full bg-amber-600/80 backdrop-blur-sm text-white shadow-lg hover:bg-amber-700/80 transition-colors duration-300 lg:hidden z-40"
+        className="fixed top-6 left-6 p-4 rounded-full bg-lk-accent dark:bg-dk-accent backdrop-blur-sm text-white shadow-lg hover:bg-lk-accent2 dark:hover:bg-dk-accent2 transition-colors duration-300 lg:hidden z-40"
       >
         {/* {expanded ? (
           <CloseIcon className="w-6 h-6" />

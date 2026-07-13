@@ -145,3 +145,28 @@
 [2025-12-31 20:02:08] [INFO] User logged in via API: Anjola303
 [2025-12-31 20:23:15] [INFO] User logged in via API: Anjola303
 [2026-01-01 13:52:17] [INFO] Database connection failed: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[2026-05-23 16:08:14] [INFO] Database connection failed: SQLSTATE[08006] [7] connection to server at "127.0.0.1", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+[2026-05-23 16:09:08] [INFO] Database connection failed: SQLSTATE[08006] [7] connection to server at "aws-0-eu-west-1.pooler.supabase.com" (108.128.216.176), port 6543 failed: FATAL:  (ENOIDENTIFIER) no tenant identifier provided (external_id or sni_hostname required)
+connection to server at "aws-0-eu-west-1.pooler.supabase.com" (108.128.216.176), port 6543 failed: FATAL:  (ENOIDENTIFIER) no tenant identifier provided (external_id or sni_hostname required)
+[2026-05-23 16:30:50] [INFO] Saving user: anjola101
+[2026-05-23 16:30:51] [INFO] User registered: anjola101 (anjolaakinsoyinu@gmail.com)
+[2026-05-23 16:33:28] [INFO] User logged in via API: anjola101
+[2026-05-23 16:36:44] [INFO] Saving user: ayobami101
+[2026-05-23 16:36:46] [INFO] User registered: ayobami101 (anjolaforbusiness@gmail.com)
+[2026-05-23 16:40:28] [INFO] User logged in via API: ayobami101
+[2026-05-23 21:51:39] [INFO] Database connection failed: SQLSTATE[08006] [7] could not translate host name "aws-0-eu-west-1.pooler.supabase.com" to address: Unknown host
+[2026-05-23 21:51:55] [INFO] Database connection failed: SQLSTATE[08006] [7] could not translate host name "aws-0-eu-west-1.pooler.supabase.com" to address: Unknown host
+[2026-07-11 16:24:28] [WARNING] Failed API login attempt for: anjolaakinsoyinu@gmail.com
+[2026-07-11 16:25:10] [INFO] Saving user: Ragger1
+[2026-07-11 16:25:11] [INFO] User registered: Ragger1 (anjolaforbusiness@gmail.com)
+[2026-07-11 16:25:37] [INFO] User logged in via API: Ragger1
+[2026-07-12 00:55:05] [INFO] User logged in via API: Ragger1
+[2026-07-12 04:16:41] [INFO] Database connection failed: SQLSTATE[08006] [7] could not translate host name "aws-0-eu-west-1.pooler.supabase.com" to address: Unknown host
+[2026-07-12 05:10:50] [INFO] User logged in via API: Ragger1
+[2026-07-12 12:01:45] [INFO] Database connection failed: SQLSTATE[08006] [7] could not translate host name "aws-0-eu-west-1.pooler.supabase.com" to address: Unknown host
+[2026-07-13 10:48:14] [INFO] User logged in via API: Ragger1
+[2026-07-13 10:51:20] [INFO] SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "messages" violates foreign key constraint "messages_group_id_fkey"
+DETAIL:  Key (group_id)=(7) is not present in table "groups".
+[2026-07-13 10:52:41] [INFO] SQLSTATE[23503]: Foreign key violation: 7 ERROR:  insert or update on table "messages" violates foreign key constraint "messages_group_id_fkey"
+DETAIL:  Key (group_id)=(7) is not present in table "groups".
