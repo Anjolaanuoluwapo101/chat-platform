@@ -46,9 +46,22 @@ if (strpos($requestUriPath, '/api') !== 0) {
 // CORS Headers
 // =============================================================================
 
-// Retrieve the frontend URL from environment variables, fallback to localhost for dev
-$frontendUrl = getenv('FRONTEND_URL') ?: 'http://localhost:5173';
-header("Access-Control-Allow-Origin: {$frontendUrl}");
+// Allow both local dev and production frontends, matched dynamically against
+// the request's Origin header (can't use a single static value or a wildcard
+// since Access-Control-Allow-Credentials is true).
+$allowedOrigins = [
+    'http://localhost:5173',
+    'https://talkyourtalk.onrender.com',
+];
+$envFrontendUrl = getenv('FRONTEND_URL');
+if ($envFrontendUrl && !in_array($envFrontendUrl, $allowedOrigins, true)) {
+    $allowedOrigins[] = $envFrontendUrl;
+}
+
+$requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($requestOrigin, $allowedOrigins, true)) {
+    header("Access-Control-Allow-Origin: {$requestOrigin}");
+}
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Access-Control-Allow-Origin, X-CSRF-Token');
 header('Access-Control-Allow-Credentials: true');
