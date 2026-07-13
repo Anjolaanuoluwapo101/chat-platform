@@ -17,7 +17,7 @@ interface LayoutProps {
 
 const Layout = ({ navItems = [], title = 'TYT!', children }: LayoutProps) => {
   return (
-    <div className="min-h-screen flex bg-lk-bg dark:bg-dk-bg min-w-screen font-sans">
+    <div className="min-h-screen flex bg-lk-bg dark:bg-dk-bg font-sans">
       <NavBar navItems={navItems} title={title} />
 
       <main className="flex-1 overflow-auto z-20 ">

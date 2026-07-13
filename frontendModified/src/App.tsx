@@ -11,7 +11,6 @@ import Landing from './components/marketing/Landing';
 import Pricing from './components/marketing/Pricing';
 import About from './components/marketing/About';
 import Changelog from './components/marketing/Changelog';
-import './App.css';
 
 
 // Protected Route component

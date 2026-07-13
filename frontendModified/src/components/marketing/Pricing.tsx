@@ -53,7 +53,7 @@ const tiers = [
 const Pricing = () => {
   return (
     <MarketingLayout>
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-5xl lg:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
           <h1 className="font-display text-3xl md:text-4xl font-extrabold text-lk-t1 dark:text-dk-t1 mb-3">
             Simple, honest pricing

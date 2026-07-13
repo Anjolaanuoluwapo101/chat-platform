@@ -9,7 +9,7 @@ const team = [
 const About = () => {
   return (
     <MarketingLayout>
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-3xl lg:max-w-4xl 2xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h1 className="font-display text-3xl md:text-4xl font-extrabold text-lk-t1 dark:text-dk-t1 mb-4 text-center">
           About Talk Your Talk!
         </h1>

@@ -77,7 +77,7 @@ const Privacy = () => {
   return (
     <Layout navItems={navItems} title="TYT!">
       <div className="min-h-screen text-lk-t1 dark:text-dk-t1">
-        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="relative z-10 max-w-2xl lg:max-w-4xl 2xl:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <header className="mb-8">
             <h1 className="font-display text-3xl font-extrabold text-lk-t1 dark:text-dk-t1 mb-1">
               Privacy & Security

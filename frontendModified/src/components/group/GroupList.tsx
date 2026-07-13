@@ -102,7 +102,7 @@ const GroupList = () => {
 
   if (loading) return (
     <Layout>
-      <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl lg:max-w-5xl 2xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="relative z-10">
           <ChatScreen>
             <ChatHeader title="Your Groups" />
@@ -115,7 +115,7 @@ const GroupList = () => {
 
   if (error) return (
     <Layout>
-      <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl lg:max-w-5xl 2xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <div className="relative z-10">
           <ChatScreen>
@@ -136,7 +136,7 @@ const GroupList = () => {
 
   return (
     <Layout navItems={navItems}>
-      <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen text-lk-t1 dark:text-dk-t1 relative z-10 max-w-4xl lg:max-w-5xl 2xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <div className="relative z-10">
           <ChatScreen>

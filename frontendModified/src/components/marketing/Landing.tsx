@@ -34,7 +34,7 @@ const Landing = () => {
   return (
     <MarketingLayout>
       {/* Hero */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
+      <section className="max-w-4xl lg:max-w-5xl 2xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center">
         <h1 className="font-display text-4xl md:text-6xl font-extrabold text-lk-t1 dark:text-dk-t1 leading-tight mb-6">
           Talk Your Talk, <span className="text-lk-accent2 dark:text-dk-accent">Anonymously.</span>
         </h1>
@@ -60,7 +60,7 @@ const Landing = () => {
 
       {/* Stats strip */}
       <section className="border-y border-lk-border dark:border-dk-border bg-lk-s1 dark:bg-dk-s1">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-3 gap-4 text-center">
+        <div className="max-w-4xl lg:max-w-5xl 2xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-3 gap-4 text-center">
           {stats.map((s) => (
             <div key={s.label}>
               <div className="font-display text-2xl md:text-3xl font-extrabold text-lk-t1 dark:text-dk-t1">{s.value}</div>
@@ -71,7 +71,7 @@ const Landing = () => {
       </section>
 
       {/* Feature grid */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="max-w-5xl lg:max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="font-display text-2xl md:text-3xl font-extrabold text-lk-t1 dark:text-dk-t1 text-center mb-10">
           Everything you need to talk freely
         </h2>
@@ -81,7 +81,7 @@ const Landing = () => {
               key={f.title}
               className="p-6 bg-lk-s1 dark:bg-dk-s1 rounded-[14px] border border-lk-border dark:border-dk-border"
             >
-              <div className="w-11 h-11 flex items-center justify-center rounded-2xl bg-lk-accent-pale dark:bg-dk-accent-pale text-lk-accent2 dark:text-dk-accent mb-4">
+              <div className="w-11 h-11 p-auto flex items-center justify-center rounded-2xl bg-lk-accent-pale dark:bg-dk-accent-pale text-lk-accent2 dark:text-dk-accent mx-auto">
                 {f.icon}
               </div>
               <h3 className="font-display font-bold text-lk-t1 dark:text-dk-t1 mb-1">{f.title}</h3>
@@ -92,7 +92,7 @@ const Landing = () => {
       </section>
 
       {/* Testimonial */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <section className="max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <blockquote className="p-8 bg-lk-accent-pale dark:bg-dk-accent-pale rounded-[14px] text-center">
           <p className="text-lg text-lk-t1 dark:text-dk-t1 font-medium mb-4">
             "Finally a place where I can share honest feedback without worrying about who's reading it."
@@ -102,7 +102,7 @@ const Landing = () => {
       </section>
 
       {/* CTA */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 text-center">
+      <section className="max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 text-center">
         <h2 className="font-display text-2xl md:text-3xl font-extrabold text-lk-t1 dark:text-dk-t1 mb-4">
           Ready to communicate securely?
         </h2>
