@@ -1,6 +1,5 @@
 import api from './api';
 import PushNotificationService from './notifications';
-import cacheManager from './cacheManager';
 
 interface LoginCredentials {
   username: string;
@@ -95,8 +94,6 @@ class AuthService {
     } finally {
       // Clear local data regardless of API call success
       PushNotificationService.logout();
-      // Clear all cache on logout
-      cacheManager.clear();
       sessionStorage.clear();
       localStorage.clear();
       // PushNotificationService.removeAllInterests();

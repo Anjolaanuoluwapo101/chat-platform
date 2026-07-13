@@ -27,8 +27,9 @@ const ToggleRow = ({ title, description, storageKey, defaultOn = false }: Toggle
   return (
     <div className="flex items-center justify-between gap-4 py-4 px-5 border-b border-lk-border2 dark:border-dk-border2 last:border-b-0">
       <div className="min-w-0">
-        <h3 className="font-medium text-lk-t1 dark:text-dk-t1">{title}</h3>
-        <p className="text-sm text-lk-t3 dark:text-dk-t3">{description}</p>
+        {/* make both float to the left */}
+        <p className="font-medium text-lk-t1 dark:text-dk-t1 text-left">{title}</p>
+        <p className="text-sm text-lk-t3 dark:text-dk-t3 text-left">{description}</p>
       </div>
       <button
         type="button"
@@ -74,7 +75,7 @@ const infoCards = [
 
 const Privacy = () => {
   return (
-    <Layout navItems={navItems} title="Privacy - TYT!">
+    <Layout navItems={navItems} title="TYT!">
       <div className="min-h-screen text-lk-t1 dark:text-dk-t1">
         <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <header className="mb-8">
@@ -116,12 +117,12 @@ const Privacy = () => {
                 key={card.title}
                 className="flex gap-4 p-5 bg-lk-s1 dark:bg-dk-s1 rounded-[14px] border border-lk-border dark:border-dk-border"
               >
-                <div className="w-11 h-11 shrink-0 flex items-center justify-center rounded-2xl bg-lk-accent-pale dark:bg-dk-accent-pale text-lk-accent2 dark:text-dk-accent">
+                <div className="w-16 h-auto shrink-0 flex items-center justify-center rounded-2xl bg-lk-accent-pale dark:bg-dk-accent-pale text-lk-accent2 dark:text-dk-accent">
                   {card.icon}
                 </div>
                 <div>
-                  <h3 className="font-display font-bold text-lk-t1 dark:text-dk-t1 mb-1">{card.title}</h3>
-                  <p className="text-sm text-lk-t3 dark:text-dk-t3">{card.desc}</p>
+                  <h3 className="font-display font-bold text-lk-t1 dark:text-dk-t1 mb-1 text-left">{card.title}</h3>
+                  <p className="text-sm text-lk-t3 dark:text-dk-t3 text-left">{card.desc}</p>
                 </div>
               </div>
             ))}
