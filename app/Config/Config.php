@@ -30,14 +30,13 @@ class Config
         @self::loadEnv();
         
         $config = [
-            'name' => getenv('APP_NAME') ?: $_ENV['APP_NAME'],
+            'name' => getenv('APP_NAME') ?: ($_ENV['APP_NAME'] ?? null),
             // default database driver: 'sqlite', 'mysql' or 'redis'
             'database_driver' => getenv('DATABASE_DRIVER') ?: 'redis',
             // redis / upstash config
             'redis' => [
-                // 'url' => getenv('REDIS_URL') ?: $_ENV['REDIS_URL'],
-                'url' => $_ENV['REDIS_URL'],
-                'password' => getenv('REDIS_PASSWORD') ?: $_ENV['REDIS_PASSWORD'],
+                'url' => getenv('REDIS_URL') ?: ($_ENV['REDIS_URL'] ?? null),
+                'password' => getenv('REDIS_PASSWORD') ?: ($_ENV['REDIS_PASSWORD'] ?? null),
                 'fallback_driver' => getenv('REDIS_FALLBACK_DRIVER') ?: ($_ENV['REDIS_FALLBACK_DRIVER'] ?? 'postgres'),
             ],
             // for sqlite
@@ -46,11 +45,11 @@ class Config
             ],
             // for mysql
             'mysql' => [
-                'host' => getenv('MYSQL_HOST') ?: $_ENV['MYSQL_HOST'],
-                'dbname' => getenv('MYSQL_DBNAME') ?: $_ENV['MYSQL_DBNAME'],
-                'username' => getenv('MYSQL_USERNAME') ?: $_ENV['MYSQL_USERNAME'],
-                'password' => getenv('MYSQL_PASSWORD') ?: $_ENV['MYSQL_PASSWORD'],
-                'port' => getenv('MYSQL_PORT') ?: $_ENV['MYSQL_PORT'],
+                'host' => getenv('MYSQL_HOST') ?: ($_ENV['MYSQL_HOST'] ?? null),
+                'dbname' => getenv('MYSQL_DBNAME') ?: ($_ENV['MYSQL_DBNAME'] ?? null),
+                'username' => getenv('MYSQL_USERNAME') ?: ($_ENV['MYSQL_USERNAME'] ?? null),
+                'password' => getenv('MYSQL_PASSWORD') ?: ($_ENV['MYSQL_PASSWORD'] ?? null),
+                'port' => getenv('MYSQL_PORT') ?: ($_ENV['MYSQL_PORT'] ?? null),
             ],
             // for postgres / supabase
             'postgres' => [
@@ -62,41 +61,40 @@ class Config
                 'port' => getenv('PG_PORT') ?: ($_ENV['PG_PORT'] ?? 5432),
             ],
             'app' => [
-                'name' => getenv('APP_NAME') ?: $_ENV['APP_NAME'],
-                'url' => getenv('APP_URL') ?: $_ENV['APP_URL'],
+                'name' => getenv('APP_NAME') ?: ($_ENV['APP_NAME'] ?? null),
+                'url' => getenv('APP_URL') ?: ($_ENV['APP_URL'] ?? null),
             ],
             'mail' => [
-                'from' => getenv('MAIL_FROM') ?: $_ENV['MAIL_FROM'],
-                'smtp_host' => getenv('MAIL_SMTP_HOST') ?: $_ENV['MAIL_SMTP_HOST'],
-                'smtp_username' => getenv('MAIL_SMTP_USERNAME') ?: $_ENV['MAIL_SMTP_USERNAME'],
-                'smtp_password' => getenv('MAIL_SMTP_PASSWORD') ?: $_ENV['MAIL_SMTP_PASSWORD'],
-                'smtp_secure' => getenv('MAIL_SMTP_SECURE') ?: $_ENV['MAIL_SMTP_SECURE'],
-                'smtp_port' => getenv('MAIL_SMTP_PORT') ?: $_ENV['MAIL_SMTP_PORT'],
+                'from' => getenv('MAIL_FROM') ?: ($_ENV['MAIL_FROM'] ?? null),
+                'smtp_host' => getenv('MAIL_SMTP_HOST') ?: ($_ENV['MAIL_SMTP_HOST'] ?? null),
+                'smtp_username' => getenv('MAIL_SMTP_USERNAME') ?: ($_ENV['MAIL_SMTP_USERNAME'] ?? null),
+                'smtp_password' => getenv('MAIL_SMTP_PASSWORD') ?: ($_ENV['MAIL_SMTP_PASSWORD'] ?? null),
+                'smtp_secure' => getenv('MAIL_SMTP_SECURE') ?: ($_ENV['MAIL_SMTP_SECURE'] ?? null),
+                'smtp_port' => getenv('MAIL_SMTP_PORT') ?: ($_ENV['MAIL_SMTP_PORT'] ?? null),
             ],
             'pusher' => [
-                'app_id' => getenv('PUSHER_APP_ID') ?: $_ENV['PUSHER_APP_ID'],
-                'key' => getenv('PUSHER_APP_KEY') ?: $_ENV['PUSHER_APP_KEY'],
-                'secret' => getenv('PUSHER_APP_SECRET') ?: $_ENV['PUSHER_APP_SECRET'],
-                'cluster' => getenv('PUSHER_APP_CLUSTER') ?: $_ENV['PUSHER_APP_CLUSTER'],
-                'beam_instance_id' => getenv('PUSHER_BEAM_INSTANCE_ID') ?: $_ENV['PUSHER_BEAM_INSTANCE_ID'],
-                'beam_secret_key' => getenv('PUSHER_BEAM_SECRET_KEY') ?: $_ENV['PUSHER_BEAM_SECRET_KEY'],
+                'app_id' => getenv('PUSHER_APP_ID') ?: ($_ENV['PUSHER_APP_ID'] ?? null),
+                'key' => getenv('PUSHER_APP_KEY') ?: ($_ENV['PUSHER_APP_KEY'] ?? null),
+                'secret' => getenv('PUSHER_APP_SECRET') ?: ($_ENV['PUSHER_APP_SECRET'] ?? null),
+                'cluster' => getenv('PUSHER_APP_CLUSTER') ?: ($_ENV['PUSHER_APP_CLUSTER'] ?? null),
+                'beam_instance_id' => getenv('PUSHER_BEAM_INSTANCE_ID') ?: ($_ENV['PUSHER_BEAM_INSTANCE_ID'] ?? null),
+                'beam_secret_key' => getenv('PUSHER_BEAM_SECRET_KEY') ?: ($_ENV['PUSHER_BEAM_SECRET_KEY'] ?? null),
             ],
             'jwt' => [
-                'secret' => getenv('JWT_SECRET') ?: $_ENV['JWT_SECRET'],
+                'secret' => getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? null),
             ],
             'filelu' => [
-                'secret' => getenv('FILELU_SECRET') ?: $_ENV['FILELU_SECRET'],
+                'secret' => getenv('FILELU_SECRET') ?: ($_ENV['FILELU_SECRET'] ?? null),
             ],
             'filestack' => [
-                'api_key' => getenv('FILESTACK_API_KEY') ?: $_ENV['FILESTACK_API_KEY'],
+                'api_key' => getenv('FILESTACK_API_KEY') ?: ($_ENV['FILESTACK_API_KEY'] ?? null),
             ],
             'r2' => [
-                // 'region' => getenv('R2_REGION') ?: $_ENV['R2_REGION'],
-                'access_key_id' => getenv('R2_ACCESS_KEY_ID') ?: $_ENV['R2_ACCESS_KEY_ID'],
-                'secret_access_key' => getenv('R2_SECRET_ACCESS_KEY') ?: $_ENV['R2_SECRET_ACCESS_KEY'],
-                'account_id' => getenv('R2_ACCOUNT_ID') ?: $_ENV['R2_ACCOUNT_ID'],
-                'bucket_name' => getenv('R2_BUCKET_NAME') ?: $_ENV['R2_BUCKET_NAME'],
-                'public_bucket_url' => getenv('R2_PUBLIC_BUCKET_URL') ?: $_ENV['R2_PUBLIC_BUCKET_URL'],
+                'access_key_id' => getenv('R2_ACCESS_KEY_ID') ?: ($_ENV['R2_ACCESS_KEY_ID'] ?? null),
+                'secret_access_key' => getenv('R2_SECRET_ACCESS_KEY') ?: ($_ENV['R2_SECRET_ACCESS_KEY'] ?? null),
+                'account_id' => getenv('R2_ACCOUNT_ID') ?: ($_ENV['R2_ACCOUNT_ID'] ?? null),
+                'bucket_name' => getenv('R2_BUCKET_NAME') ?: ($_ENV['R2_BUCKET_NAME'] ?? null),
+                'public_bucket_url' => getenv('R2_PUBLIC_BUCKET_URL') ?: ($_ENV['R2_PUBLIC_BUCKET_URL'] ?? null),
             ]
         ];
 

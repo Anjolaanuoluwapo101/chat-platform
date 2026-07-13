@@ -58,6 +58,7 @@ class AuthService {
       }
       return response.data;
     } catch (error) {
+      console.error('Login error:', error);
       return { success: false, errors: { general: 'Login failed' } };
     }
   }
@@ -75,6 +76,7 @@ class AuthService {
       }
       return response.data;
     } catch (error) {
+      console.error('Registration error:', error);
       return { success: false, errors: { general: 'Registration failed' } };
     }
   }
