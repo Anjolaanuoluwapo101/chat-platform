@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout';
 import { getCommonNavItems } from '../nav/sharedNavItems';
 import auth from '../../services/auth';
 import { MessageSquare, Users, ShieldCheck, ChevronRight } from 'lucide-react';
+import ShareLinkCard from './ShareLinkCard';
 
 interface NavItem {
   title: string;
@@ -74,6 +75,8 @@ function Dashboard() {
               Fast and secure, private communication platform.
             </p>
           </header>
+
+          {currentUser?.username && <ShareLinkCard username={currentUser.username} />}
 
           <div className="space-y-4 mb-10">
             <HomeCard

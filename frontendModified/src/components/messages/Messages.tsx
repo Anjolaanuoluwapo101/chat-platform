@@ -10,6 +10,7 @@ import { ChatScreen, ChatHeader, LoadingSpinner } from './MessagesShared';
 import { getCommonNavItems } from '../nav/sharedNavItems';
 import PushNotificationService from '../../services/notifications';
 import { motion } from 'framer-motion';
+import { Copy, Check } from 'lucide-react';
 
 
 interface Message {
@@ -57,6 +58,7 @@ const Messages = () => {
   const [sendingMessage, setSendingMessage] = useState(false); // Track if we're sending a message
   const [messageSentSuccess, setMessageSentSuccess] = useState(false); // Show "Sent!" confirmation
   const [networkError, setNetworkError] = useState(false); // Track if we're offline
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const currentUser: User = authService.getCurrentUser() || { id: 0, username: '', email: '' };
 
@@ -179,6 +181,12 @@ const Messages = () => {
 
   const isOwnMessages = currentUser && currentUser.username === username;
 
+  const copyOwnLink = async () => {
+    await navigator.clipboard.writeText(`${window.location.origin}/messages/${username}`);
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  };
+
   // Define navigation items using shared common items
   const navItems = getCommonNavItems();
 
@@ -209,6 +217,15 @@ const Messages = () => {
               title={isOwnMessages ? `Your Private Messages` : `Send Message to ${username}`}
               onToggleMembers={handleLogout}
             />
+            {isOwnMessages && (
+              <button
+                onClick={copyOwnLink}
+                className="flex items-center justify-center gap-1.5 w-full px-4 py-2 text-xs text-lk-t3 dark:text-dk-t3 hover:text-lk-t1 dark:hover:text-dk-t1 border-b border-lk-border2 dark:border-dk-border2 transition-colors"
+              >
+                {linkCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                {linkCopied ? 'Link copied' : `Copy your link: ${window.location.origin}/messages/${username}`}
+              </button>
+            )}
             {/* Message list with consistent padding */}
             <div className="grow overflow-y-auto p-6 scrollbar-hide">
               {/* Show network error with retry button */}
